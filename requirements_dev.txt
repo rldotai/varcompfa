@@ -1,0 +1,10 @@
+# Testing
+bumpversion
+coverage
+coveralls
+invoke
+pytest
+pytest-cov
+pytest-flakes
+
+-e .[all]

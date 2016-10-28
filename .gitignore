@@ -1,5 +1,8 @@
+# Sandbox directoy should be ignored
+sandbox/*
 
 # Created by https://www.gitignore.io/api/c,c++,linux,osx,python,sublimetext,windows
+
 
 ### C ###
 # Object files
@@ -88,7 +91,8 @@
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
