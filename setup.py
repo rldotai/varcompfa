@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Based on https://github.com/pypa/sampleproject/blob/master/setup.py."""
 from __future__ import unicode_literals
 # To use a consistent encoding
 import codecs
 from setuptools import setup, find_packages
 import sys, os.path
+
 
 def parse_reqs(req_path='./requirements.txt'):
     """Recursively parse requirements from nested pip files."""
