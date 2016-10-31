@@ -57,6 +57,22 @@ def print_dict(dct):
         format_string = '{0:%d}: {1}'%longest
         print(format_string.format(key, dct[key]))
 
+class Union:
+    """A feature vector created from appending two or more feature vectors together."""
+    def __init__(self, *children):
+        self.children = children
+        self._length = sum(len(child) for child in children)
+
+    def __call__(self, obs):
+        """Get the features and concatenate them."""
+        return np.hstack((child(obs) for child in self.children))
+
+    @property
+    def size(self):
+        return self._length
+
+    def __len__(self):
+        return self._length
 
 # Testing linear-Q learning
 if True and __name__ == "__main__":    
@@ -66,15 +82,24 @@ if True and __name__ == "__main__":
 
     # Set up the experiment
     env = gym.make('MountainCar-v0')
-    tiling = vcf.UniformTiling(env.observation_space, 20)
-    phi = vcf.BinaryVector(tiling.high, tiling)
+    
+    # Tile coding for discretization
+    tiling_1    = vcf.UniformTiling(env.observation_space, 8)
+    tiling_2    = vcf.UniformTiling(env.observation_space, 5)
+    tiling_3    = vcf.UniformTiling(env.observation_space, [20, 3])
+    # Convert tile indices to binary vector
+    bvec_1      = vcf.BinaryVector(tiling_1.high, tiling_1) 
+    bvec_2      = vcf.BinaryVector(tiling_2.high, tiling_2)
+    bvec_3      = vcf.BinaryVector(tiling_3.high, tiling_3)
+    # Concatenate binary vectors
+    phi         = vcf.Union(bvec_1, bvec_2, bvec_3)
 
     # Set up agent
     nf = phi.size
     na = env.action_space.n
     agent = vcf.DiscreteQ(nf, na, epsilon=0.05)
     alpha = 0.01
-    gamma = 0.5
+    gamma = 0.99
     lmbda = 0.0
 
     # Optimistic Q-value initialization
@@ -139,13 +164,23 @@ if True and __name__ == "__main__":
         stepcount.append(j)
 
     # plot the results of the run
+    # run length 
+    fig, ax = plt.subplots()
+    ax.plot(stepcount)
+    ax.set_title('run length')
+    ax.set_xlabel('episode')
+    ax.set_ylabel('steps')
+    plt.show()
+
+
     # errors over time
     fig, ax = plt.subplots()
-    errors = subsample(window_avg(errlst, 10), 300)
+    errors      = subsample(window_avg(errlst, 10), 300)
     # rewards = subsample(window_avg(rwdlst, 10), 300)
     ax.plot(errors)
     # ax.plot(rewards)
     plt.show()
+
 
     # # heatmap of values
     fig, ax = plt.subplots()

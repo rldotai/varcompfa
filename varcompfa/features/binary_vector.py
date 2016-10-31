@@ -23,3 +23,6 @@ class BinaryVector:
     @property 
     def size(self):
         return self._length
+
+    def __len__(self):
+        return self._length
