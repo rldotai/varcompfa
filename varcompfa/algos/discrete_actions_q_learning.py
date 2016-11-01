@@ -68,10 +68,18 @@ class DiscreteQ:
         a  : int
         """
         if a is None:
-            return np.max(np.dot(self.w, x))
+            return np.max(np.dot(self.w, x), axis=0)
         else:
             return np.dot(self.w[a], x)
 
     def greedy_action(self, x):
         """Return the action that would be taken following the greedy (w/r/t Q-values) policy."""
-        return np.argmax(np.dot(self.w, x))
+        return np.argmax(np.dot(self.w, x), axis=0)
+
+    def save_weights(self, fname):
+        """Save the weights to a file."""
+        np.save(fname, self.w)
+
+    def load_weights(self, fname):
+        """Load the weights from a file."""
+        self.w = np.load(fname)

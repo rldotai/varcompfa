@@ -4,8 +4,10 @@ from .tile_coding import UniformTiling
 
 # TODO: Move this into its own file? Or a collection of similar miscellaneous features?
 import numpy as np
-class Union:
+from .base import Feature
+class Union(Feature):
     """A feature vector created from appending two or more feature vectors together."""
+    NAME = "Union"
     def __init__(self, *children):
         self.children = children
         self._length = sum(len(child) for child in children)
@@ -14,9 +16,12 @@ class Union:
         """Get the features and concatenate them."""
         return np.hstack((child(obs) for child in self.children))
 
-    @property
-    def size(self):
-        return self._length
-
     def __len__(self):
         return self._length
+
+    @property 
+    def params(self):
+        return {
+            "name" : self.NAME,
+            "children": [child for child in self.children],
+        }

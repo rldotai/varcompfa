@@ -31,3 +31,9 @@ Things that aren't suitable for prime-time should be worked on in the `sandbox` 
 The sandbox is protected from accidental commits via the `.gitignore` in the root directory.
 
 Large files (e.g., data generated from runs and plots) may eventually merit separate directories of their own.
+
+## Fancy Coding
+
+There are a few places where the code is not as straightforward as I'd like-- for example, using abstract base classes that feature functions inherit from.
+I view these things as necessary in order to ensure that certain methods are actually implemented.
+Otherwise, things may not work as expected, and it's better to know this as soon as possible rather than via an obscure bug that crops up near submission time.

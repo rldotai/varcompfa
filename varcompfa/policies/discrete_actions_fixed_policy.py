@@ -12,7 +12,7 @@ class DiscreteGreedy:
     @classmethod
     def from_file(cls, fname):
         """Initialize the policy from a file containing the weights."""
-        weights = np.loadtxt(fname)
+        weights = np.load(fname)
         return cls(weights) 
 
     def act(self, x):

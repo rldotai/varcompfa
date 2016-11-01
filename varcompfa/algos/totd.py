@@ -8,6 +8,7 @@ ICML. Vol. 14. 2014.](http://www.jmlr.org/proceedings/papers/v32/seijen14.pdf)
 """
 
 
+# TODO: TEST THIS CODE
 class TOTD:
     """True-online temporal difference learning with linear function approximation."""
     def __init__(self, n):
@@ -72,3 +73,11 @@ class TOTD:
         """Reset weights, traces, and other parameters."""
         self.w = np.zeros(self.n)
         self.z = np.zeros(self.n)
+
+    def save_weights(self, fname):
+        """Save the weights to a file."""
+        np.save(fname, self.w)
+
+    def load_weights(self, fname):
+        """Load the weights from a file."""
+        self.w = np.load(fname)

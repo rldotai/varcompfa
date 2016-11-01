@@ -73,3 +73,11 @@ class DiscreteSARSA:
             return np.max(np.dot(self.w, x))
         else:
             return np.dot(self.w[a], x)
+
+    def save_weights(self, fname):
+        """Save the weights to a file."""
+        np.save(fname, self.w)
+
+    def load_weights(self, fname):
+        """Load the weights from a file."""
+        self.w = np.load(fname)

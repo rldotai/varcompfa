@@ -117,3 +117,11 @@ class TD:
         """Reset weights, traces, and other parameters."""
         self.w = np.zeros(self.n)
         self.z = np.zeros(self.n)
+
+    def save_weights(self, fname):
+        """Save the weights to a file."""
+        np.save(fname, self.w)
+
+    def load_weights(self, fname):
+        """Load the weights from a file."""
+        self.w = np.load(fname)

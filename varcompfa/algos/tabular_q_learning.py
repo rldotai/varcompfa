@@ -63,3 +63,11 @@ class TabularQ:
 
     def greedy_action(self, s):
         return np.argmax(self.qv[s])
+
+    def save_weights(self, fname):
+        """Save the weights to a file."""
+        np.save(fname, self.qv)
+
+    def load_weights(self, fname):
+        """Load the weights from a file."""
+        self.qv = np.load(fname)
