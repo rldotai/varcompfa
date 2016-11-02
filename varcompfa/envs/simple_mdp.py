@@ -16,12 +16,15 @@ class SimpleMDP(gym.Env):
         self.action_space = spaces.Discrete(2)
         self.observation_space = spaces.Discrete(3)
         self.reward_range = (-1.0, 1.0)
-        self._terminals = set([self.observation_space.n - 1])
-        # reset the environment
-        self._reset()
+        self._terminals = tuple([self.observation_space.n - 1])
+
+    @property
+    def state(self):
+        """Ensure that state is always of type `numpy.ndarray`."""
+        return np.array(self._state)
 
     def _reset(self):
-        self.state = 0
+        self._state = 0
         return self.state
 
     def _transition(self, s, a):
@@ -42,7 +45,7 @@ class SimpleMDP(gym.Env):
         info    = {}
 
         # Modify state and return the step tuple
-        self.state = obs_p
+        self._state = obs_p
         return (obs_p, reward, done, info)
 
     def _configure(self, *args, **kwargs):
