@@ -71,8 +71,9 @@ class TOTD:
 
     def reset(self):
         """Reset weights, traces, and other parameters."""
-        self.w = np.zeros(self.n)
-        self.z = np.zeros(self.n)
+        self.w      = np.zeros(self.n)
+        self.w_old  = np.zeros(self.n)
+        self.z      = np.zeros(self.n)
 
     def save_weights(self, fname):
         """Save the weights to a file."""
