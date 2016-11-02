@@ -1,3 +1,9 @@
+"""
+This code represents an extremely early stage in development, and should not
+be used for anything other than reference.
+Most of it will likely be refactored once the codebase stabilizes, and the
+file itself will be deleted or pared down into an example.
+"""
 import numpy as np 
 import gym
 
@@ -146,8 +152,6 @@ def serialize_feature(feat):
     """Serializing the features and their implicit dependency graph."""
     def expand_children(ff):
         _params = ff.params
-        print(_params)
-        print()
         if 'children' in _params:
             _params['children'] = [expand_children(i) for i in _params['children'] if i]
         return _params
