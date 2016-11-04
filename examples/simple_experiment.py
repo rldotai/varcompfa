@@ -64,7 +64,10 @@ if __name__ == "__main__":
             xp = phi(obs_p)
 
             # update learning algorithm
-            delta = agent.learn(x, action, reward, xp, alpha, gamma, lmbda)
+            gm   = gamma
+            gm_p = gamma
+            lm   = lmbda
+            delta = agent.learn(x, action, reward, xp, alpha, gm, lm)
 
             # log information about the timestep
             history.append(dict(
@@ -75,17 +78,36 @@ if __name__ == "__main__":
                 x=x.copy(),
                 delta=delta,
                 alpha=alpha,
-                gm=gamma if not done else 0,
-                lm=lmbda,
+                gm=gm,
+                lm=lm,
             ))
 
             # set up next iteration
-            x = xp
+            x   = xp
+            obs = obs_p
 
-            # exit if done, otherwise set up for next iteration
+            # exit if done
             if done:
                 # perform final update
-                agent.learn(xp, action, 0, np.zeros_like(xp), alpha, gamma, 0)
+                action  = agent.act(x)
+                xp      = np.zeros_like(x)
+                reward  = 0
+                gm      = 0
+                lm      = 0
+                delta   = agent.learn(xp, action, reward, np.zeros_like(xp), alpha, gm, lm)
+
+                # log information about the timestep
+                history.append(dict(
+                    obs=obs_p.copy(),
+                    action=action, 
+                    reward=reward,
+                    done=done,
+                    x=x.copy(),
+                    delta=delta,
+                    alpha=alpha,
+                    gm=gm,
+                    lm=lm,
+                ))
                 logger.info("Reached terminal state in %d steps"%(j+1))
                 break
         else:
