@@ -19,8 +19,8 @@ def calculate_return(rewards, gamma):
     # Work backwards through the 
     for r, gm in reversed(list(zip(rewards, gamma))):
         g += r 
-        ret.append(g)
         g *= gm
+        ret.append(g)
     # inverse of reverse
     ret.reverse()
     return np.array(ret)
@@ -35,9 +35,9 @@ def episode_return(epi):
     g = 0
     # work backwards from the end of the episode
     for step in reversed(epi):
+        g *= step['gm']
         g += step['reward']
         ret.append(g)
-        g *= step['gm']
     # inverse of reverse 
     ret.reverse()
     return ret
