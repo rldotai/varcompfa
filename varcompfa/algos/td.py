@@ -87,11 +87,11 @@ class TD:
 
         Parameters
         ----------
-        x : array_like
+        x : Vector[float]
             The observation/features from the current timestep.
         r : float
             The reward from the transition.
-        xp : array_like
+        xp : Vector[float]
             The observation/features from the next timestep.
         alpha : float
             The step-size parameter for updating the weight vector.

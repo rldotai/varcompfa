@@ -50,11 +50,11 @@ class LSTD:
 
         Parameters
         ----------
-        x : array_like
+        x : Vector[float]
             The observation/features from the current timestep.
         r : float
             The reward from the transition.
-        xp : array_like
+        xp : Vector[float]
             The observation/features from the next timestep.
         gm : float
             Gamma, abbreviated `gm`, the discount factor for the current state.

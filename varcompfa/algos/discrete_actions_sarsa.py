@@ -22,7 +22,12 @@ class DiscreteSARSA:
         self.z  = np.zeros((self.num_actions, self.num_features))
 
     def act(self, x):
-        """Select an action following the ε-greedy policy."""
+        """Select an action following the ε-greedy policy.
+
+        Parameters
+        ----------
+        x  : Vector[float]
+        """
         if np.random.random() <= self.epsilon:
             action = np.random.randint(self.num_actions)
         else:
@@ -35,11 +40,11 @@ class DiscreteSARSA:
 
         Parameters
         ----------
-        x  : array_like
+        x  : Vector[float]
         a  : int
         r  : float
         ap : int
-        xp : array_like
+        xp : Vector[float]
         α  : float
         γ  : float 
         λ  : float 
@@ -66,7 +71,7 @@ class DiscreteSARSA:
         
         Parameters
         ----------
-        x  : array_like
+        x  : Vector[float]
         a  : int
         """
         if a is None:

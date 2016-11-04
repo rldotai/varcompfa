@@ -22,7 +22,12 @@ class DiscreteQ:
         self.z  = np.zeros((self.num_actions, self.num_features))
 
     def act(self, x):
-        """Select an action following the ε-greedy policy."""
+        """Select an action following the ε-greedy policy.
+
+        Parameters
+        ----------
+        x  : Vector[float]
+        """
         if np.random.random() <= self.epsilon:
             action = np.random.randint(self.num_actions)
         else:
@@ -34,10 +39,10 @@ class DiscreteQ:
 
         Parameters
         ----------
-        x  : array_like
+        x  : Vector[float]
         a  : int
         r  : float
-        xp : array_like
+        xp : Vector[float]
         α  : float
         γ  : float 
         λ  : float 
@@ -64,7 +69,7 @@ class DiscreteQ:
         
         Parameters
         ----------
-        x  : array_like
+        x  : Vector(float)
         a  : int
         """
         if a is None:

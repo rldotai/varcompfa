@@ -21,11 +21,11 @@ class TOTD:
         
         Attributes
         ----------
-        w : array(float)
+        w : Vector(float)
             The current weight vector.
-        w_old : array(float)
+        w_old : Vector(float)
             The previous time-step's weight vector.
-        z : array(float)
+        z : Vector(float)
             The array of the eligibility traces.
         """
         self.n      = n
@@ -43,11 +43,11 @@ class TOTD:
 
         Parameters
         ----------
-        x : array_like
+        x : Vector(float)
             The observation/features from the current timestep.
         r : float
             The reward from the transition.
-        xp : array_like
+        xp : Vector(float)
             The observation/features from the next timestep.
         alpha : float
             The step-size parameter for updating the weight vector.
