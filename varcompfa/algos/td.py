@@ -81,6 +81,10 @@ class TD:
         """Get the approximate value for feature vector `x`."""
         return np.dot(self.w, x)
 
+    def learn(self, x, r, xp, alpha, gm, gm_p, lm):
+        """Alias of `update`."""
+        return self.update(x, r, xp, alpha, gm, gm_p, lm)
+
     def update(self, x, r, xp, alpha, gm, gm_p, lm):
         """Update from new experience, i.e. from a transition `(x,r,xp)`.
 
@@ -112,6 +116,7 @@ class TD:
         delta = r + gm_p*np.dot(self.w, xp) - np.dot(self.w, x)
         self.z = x + gm*lm*self.z
         self.w += alpha*delta*self.z
+        return delta
 
     def reset(self):
         """Reset weights, traces, and other parameters."""

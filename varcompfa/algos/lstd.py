@@ -45,6 +45,10 @@ class LSTD:
         _theta = np.dot(np.linalg.pinv(self.A), self.b)
         return _theta
 
+    def learn(self, x, r, xp, alpha, gm, gm_p, lm):
+        """Alias of `update`."""
+        self.update(x, r, xp, alpha, gm, gm_p, lm)
+
     def update(self, x, reward, xp, gm, gm_p, lm):
         """Update from new experience, i.e. from a transition `(x,r,xp)`.
 

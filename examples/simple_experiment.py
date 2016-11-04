@@ -1,3 +1,6 @@
+"""
+A simple example of getting an agent to learn with an extremely easy MDP.
+"""
 import numpy as np 
 import gym
 
@@ -25,7 +28,7 @@ from varcompfa.misc.analysis import *
 
 if __name__ == "__main__":
     # Specify experiment
-    num_episodes = 10
+    num_episodes = 1000
     max_steps = 3000
 
     # Set up the experiment
@@ -81,6 +84,8 @@ if __name__ == "__main__":
 
             # exit if done, otherwise set up for next iteration
             if done:
+                # perform final update
+                agent.learn(xp, action, 0, np.zeros_like(xp), alpha, gamma, 0)
                 logger.info("Reached terminal state in %d steps"%(j+1))
                 break
         else:

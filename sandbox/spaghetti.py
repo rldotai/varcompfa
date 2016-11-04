@@ -238,6 +238,8 @@ if True and __name__ == "__main__":
 
             # exit if done, otherwise set up for next iteration
             if done:
+                # perform final update
+                agent.learn(xp, action, 0, np.zeros_like(xp), alpha, gamma, 0)
                 logger.info("Reached terminal state in %d steps"%j)
                 # reduce exploration slightly each time goal is reached 
                 agent.epsilon *= 0.95

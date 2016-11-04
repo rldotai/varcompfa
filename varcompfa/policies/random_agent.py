@@ -7,6 +7,14 @@ import numpy as np
 class DiscreteRandomAgent:
     """An agent that chooses randomly from (discrete) actions."""
     def __init__(self, num_actions):
+        """
+        Initialize the random agent.
+        
+        Parameters
+        ----------
+        num_actions : int 
+            The number of actions available in each state.
+        """
         self.num_actions = num_actions
 
     def act(self, *args):

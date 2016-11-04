@@ -37,6 +37,10 @@ class TOTD:
         """Get the approximate value for feature vector `x`."""
         return np.dot(self.w, x)
 
+    def learn(self, x, r, xp, alpha, gm, gm_p, lm):
+        """Alias of `update`."""
+        return self.update(x, r, xp, alpha, gm, gm_p, lm)
+
     def update(self, x, r, xp, alpha, gm, gm_p, lm):
         """Update from new experience, i.e. from a transition `(x,r,xp)`.
 
@@ -68,6 +72,7 @@ class TOTD:
         delta = r + gm_p*np.dot(self.w, xp) - np.dot(self.w, x)
         self.z = gm*lm*self.z + alpha*x - alpha*gm*lm*np.dot(self.z, x)*x
         self.w += delta*self.z + alpha*(np.dot(self.w_old, x) - np.dot(self.w, x))*x
+        return delta
 
     def reset(self):
         """Reset weights, traces, and other parameters."""
