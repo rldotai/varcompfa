@@ -5,7 +5,7 @@ in the `varcompfa` package.
 from . import envs
 from . import misc
 from .algos import DiscreteQ, TD, TabularQ
-from .features import BinaryVector, UniformTiling, Union
+from .features import BiasUnit, BinaryVector, UniformTiling, Union
 from .policies import DiscreteGreedy, DiscreteSoftmax, DiscreteRandomAgent
 from .misc import serialize_features
 
