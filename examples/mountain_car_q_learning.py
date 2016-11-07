@@ -72,6 +72,7 @@ if __name__ == "__main__":
     stepcount = []
     for i in range(num_episodes):
         # decrease learning rate
+        # CRAIG: why are you affecting alpha this way?
         alpha = alpha_0/(1 + alpha_0**(1/2))
         # reset environment and get initial feature
         obs = env.reset()
@@ -84,11 +85,15 @@ if __name__ == "__main__":
             xp = phi(obs_p)
 
             # update learning algorithms
+            # CRAIG: gm and gm_p makes me nervous. Maybe it doesn't matter, but I feel like the learning
+            # agent should track what it's last gamma was all by itself. It shouldn't be a parameter that you
+            # provide.
             gm    = gamma
             gm_p  = gamma if not done else 0
             lm    = lmbda
             control_delta   = control_agent.learn(x, action, reward, xp, alpha, gm, lm)
             value_delta     = value_agent.learn(x, reward, xp, alpha, gm, gm_p, lm)
+            # CRAIG: why are you tracking delta as a cumulant?
             delta_delta     = delta_agent.learn(x, value_delta, xp, alpha, gm, gm_p, lm)
             square_delta    = square_agent.learn(x, value_delta**2, xp, alpha, gm, gm_p, lm)
 
@@ -98,6 +103,7 @@ if __name__ == "__main__":
                 action=action, 
                 reward=reward,
                 done=done,
+                # CRAIG: ...this could be big
                 x=x.copy(),
                 control_delta=control_delta,
                 value_delta=value_delta,
@@ -115,6 +121,8 @@ if __name__ == "__main__":
 
             # exit if done, otherwise set up for next iteration
             if done:
+                # CRAIG: this feels weird to me to perform this one last step. I assume this is a bit of a quirk
+                # from the way OpenGym implemented things? So x is the penultimate terminal state, not the terminal one?
                 # perform final update
                 xp = np.zeros_like(x)
                 reward = 0
@@ -250,6 +258,9 @@ if __name__ == "__main__":
 
     ###########################################################################
     # Plotting returns
+    
+    # CRAIG: It's strange to me that you're plotting the estimates in time. I would have
+    # expected them to be plotted in state-space instead.
     history = lconcat(episodes[-100:])[-1000:]
     xa = apluck('x', history)
     ra = apluck('reward', history)
@@ -266,6 +277,7 @@ if __name__ == "__main__":
     g_va = np.dot(xa, value_agent.w)
     g_vd = np.dot(xa, delta_agent.w)
 
+    # CRAIG: where's the plot for the squared delta?
     fig, axes = plt.subplots(5)
     # true return
     axes[0].plot(ga)
