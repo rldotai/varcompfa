@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>tabular_variance_inaccurate_value_function</title>
+<title>variance_estimate_under_function_approximation</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -11791,10 +11791,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h1><p>We provide code for a few different ways of estimating the variance and second moment of cumulants in a finite MDP.</p>
-<p>We apply this code to analyzing some cumulants in particular: the reward, the TD-error ($\delta$), and the squared TD-error ($\delta^2$).</p>
-<p>We show that in the setting where the estimate of the value function is exact ($\hat{v} = v_{\pi}$), the $\delta^2$-return (sum of discounted squared TD-errors) gives the variance (and trivially the mean squared error.</p>
-<p>We show also that the second moment of the $\delta$-return (discounted sum of TD-errors$) gives the mean squared error even in settings where the approximate value function is perturbed from the true value function.</p>
+<h1 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h1><p>We provide code for a few different ways of estimating variance and second moments of various cumulants in a discrete MDP.
+In this notebook we focus on the case where linear function approximation is used.</p>
 
 </div>
 </div>
@@ -11804,7 +11802,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Problem-Setup">Problem Setup<a class="anchor-link" href="#Problem-Setup">&#182;</a></h1><p>Here we define an MDP and solve it analytically, computing both the expected return (i.e., the value function <code>v_pi</code>) and its variance (<code>v_var</code>, using Sobel's approach) for each state.</p>
+<h1 id="Problem-Setup">Problem Setup<a class="anchor-link" href="#Problem-Setup">&#182;</a></h1><p>We define and solve an MDP for its value function and its variance (using Sobel's method).</p>
 
 </div>
 </div>
@@ -11857,12 +11855,11 @@ div#notebook {
         <span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">gvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">v_pi</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
 
 <span class="c1"># Alternatively,</span>
-<span class="c1"># T = np.sum(P * (R + G @ v_pi)**2, axis=1) - v_pi**2</span>
+<span class="n">T</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="n">G</span> <span class="o">@</span> <span class="n">v_pi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">-</span> <span class="n">v_pi</span><span class="o">**</span><span class="mi">2</span>
         
 <span class="c1"># Solve Bellman equation for variance of return</span>
 <span class="n">v_var</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">T</span> 
 
-<span class="c1"># print(T)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;v_pi:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">v_pi</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;per-state variance:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">v_var</span><span class="p">)</span>
 </pre></div>
@@ -11894,12 +11891,7 @@ per-state variance:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Trying-It-Out-Empirically">Trying It Out Empirically<a class="anchor-link" href="#Trying-It-Out-Empirically">&#182;</a></h1><p>Empirically checking via simulation is useful for finding errors.
-The code for simulating the MDP is somewhat inefficient but simple to write and debug.</p>
-<p>We use the same MDP as above.</p>
-<p>Note that the use of state-dependent γ allows for an effectively episodic problem without requiring us to actually break the trajectory into episodes.</p>
-<p>The trajectory is kept as a list of dictionaries that record all relevant data for each time step.
-We then compute additional quantities, the <em>return</em> and the <em>squared return</em>, taking the expression for the latter from the VTD paper (White &amp; White).</p>
+<h2 id="Second-Moment-of-Return">Second Moment of Return<a class="anchor-link" href="#Second-Moment-of-Return">&#182;</a></h2><p>We calculate the second moment of the return following the approach in the VTD paper (White &amp; White, 2016).</p>
 
 </div>
 </div>
@@ -11907,355 +11899,6 @@ We then compute additional quantities, the <em>return</em> and the <em>squared r
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compute_return</span><span class="p">(</span><span class="n">history</span><span class="p">):</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">history</span><span class="p">):</span>
-        <span class="n">g</span> <span class="o">*=</span> <span class="n">step</span><span class="p">[</span><span class="s1">&#39;gm&#39;</span><span class="p">]</span>
-        <span class="n">g</span> <span class="o">+=</span> <span class="n">step</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="n">g</span><span class="p">,</span> <span class="o">**</span><span class="n">step</span><span class="p">})</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">compute_squared_return</span><span class="p">(</span><span class="n">history</span><span class="p">):</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">g_sq</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">g_next</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">history</span><span class="p">):</span>
-        <span class="n">g_sq</span> <span class="o">*=</span> <span class="n">step</span><span class="p">[</span><span class="s1">&#39;gm&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
-        <span class="n">g_sq</span> <span class="o">+=</span> <span class="n">step</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">step</span><span class="p">[</span><span class="s1">&#39;gm&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">step</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">g_next</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;g_sq&#39;</span><span class="p">:</span> <span class="n">g_sq</span><span class="p">,</span> <span class="o">**</span><span class="n">step</span><span class="p">})</span>
-        <span class="n">g_next</span> <span class="o">=</span> <span class="n">step</span><span class="p">[</span><span class="s1">&#39;g&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">ret</span><span class="p">))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Simulate our MDP</span>
-<span class="n">num_steps</span> <span class="o">=</span> <span class="mi">10000</span>
-
-<span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
-<span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">ns</span><span class="p">)]</span>
-
-<span class="c1"># Initial state</span>
-<span class="n">s0</span>  <span class="o">=</span> <span class="mi">0</span>
-<span class="n">s</span>   <span class="o">=</span> <span class="n">s0</span>
-<span class="n">x</span>   <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
-
-<span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
-    <span class="n">p_next</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="n">P</span>
-    <span class="n">sp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p_next</span><span class="p">)</span>
-    <span class="n">xp</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="n">sp</span><span class="p">]</span>
-    <span class="n">gm</span> <span class="o">=</span> <span class="n">gvec</span><span class="p">[</span><span class="n">sp</span><span class="p">]</span>
-    <span class="n">reward</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">sp</span><span class="p">]</span>
-    
-    <span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;sp&#39;</span><span class="p">:</span> <span class="n">sp</span><span class="p">,</span> <span class="s1">&#39;gm&#39;</span><span class="p">:</span> <span class="n">gm</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">:</span> <span class="n">reward</span><span class="p">})</span>
-    
-    <span class="c1"># Next iteration</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">sp</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    
-<span class="c1"># Augment the history with the return at each timestep</span>
-<span class="n">history</span> <span class="o">=</span> <span class="n">compute_return</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
-<span class="n">history</span> <span class="o">=</span> <span class="n">compute_squared_return</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
-
-<span class="c1"># Convert to pandas dataframe</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[5]:</div>
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>g</th>
-      <th>g_sq</th>
-      <th>gm</th>
-      <th>r</th>
-      <th>s</th>
-      <th>sp</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>-1.0</td>
-      <td>1.00</td>
-      <td>0.0</td>
-      <td>-1.0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>-1.0</td>
-      <td>1.00</td>
-      <td>0.0</td>
-      <td>-1.0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>-1.9</td>
-      <td>3.61</td>
-      <td>0.9</td>
-      <td>-1.0</td>
-      <td>0</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>-1.0</td>
-      <td>1.00</td>
-      <td>0.0</td>
-      <td>-1.0</td>
-      <td>1</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>-1.0</td>
-      <td>1.00</td>
-      <td>0.0</td>
-      <td>-1.0</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Check expected squared return</span>
-<span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">g_sq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grouped</span><span class="o">.</span><span class="n">aggregate</span><span class="p">({</span><span class="s1">&#39;g_sq&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">}))</span>
-
-<span class="c1"># Display results</span>
-<span class="n">grouped</span><span class="o">.</span><span class="n">aggregate</span><span class="p">({</span><span class="s1">&#39;g&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="s1">&#39;g_sq&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">})</span><span class="o">.</span><span class="n">T</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[6]:</div>
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>s</th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>g</th>
-      <td>-1.765136</td>
-      <td>-1.691986</td>
-      <td>-1.570935</td>
-      <td>-1.228483</td>
-      <td>-0.525641</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>g_sq</th>
-      <td>3.958318</td>
-      <td>3.508798</td>
-      <td>2.837292</td>
-      <td>1.662601</td>
-      <td>0.525641</td>
-      <td>0.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Variance via squared-return minus expected return squared</span>
-<span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grouped</span><span class="o">.</span><span class="n">aggregate</span><span class="p">({</span><span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">})</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grouped</span><span class="o">.</span><span class="n">aggregate</span><span class="p">({</span><span class="s1">&#39;g_sq&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">}))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variance via E[G^2] - E[G]^2:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Analytical variance (Sobel):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_var</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Variance via E[G^2] - E[G]^2:
- [ 0.8426  0.646   0.3695  0.1534  0.2493  0.    ]
-Analytical variance (Sobel):
- [ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compare with variance computed directly</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variance (via numpy.var):&quot;</span><span class="p">)</span>
-<span class="n">grouped</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
-<span class="n">grouped</span><span class="o">.</span><span class="n">aggregate</span><span class="p">({</span><span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">})</span><span class="o">.</span><span class="n">T</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Variance (via numpy.var):
-</pre>
-</div>
-</div>
-
-<div class="output_area"><div class="prompt output_prompt">Out[8]:</div>
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>s</th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>g</th>
-      <td>0.84278</td>
-      <td>0.646235</td>
-      <td>0.36975</td>
-      <td>0.153668</td>
-      <td>0.250144</td>
-      <td>0.0</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>This suggests that we our formulas were accurate, although more simulations could further improve the accuracy.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Second-Moment-of-the-Return">Second Moment of the Return<a class="anchor-link" href="#Second-Moment-of-the-Return">&#182;</a></h1><p>An alternative way to compute the variance analytically is by defining and solving a Bellman equation for the second moment of the return and using the fact that $\operatorname{Var}[X] = \mathbb{E}[X^2] - \mathbb{E}[X]^2$.</p>
-<p>In <em>A Greedy Approach to Adapting the Trace Parameter for Temporal Difference Learning</em>, White &amp; White provide just such a Bellman equation, which we use here.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Using the VTD paper to calculate second moments of the return.</span>
@@ -12295,8 +11938,8 @@ Analytical variance (Sobel):
 
 <span class="c1"># An alternative approach, which is somewhat more concise</span>
 <span class="c1"># Second moment of return</span>
-<span class="n">rr</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span> <span class="o">@</span> <span class="n">v_pi</span>
-<span class="n">vv</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
+<span class="c1"># rr = (P*R**2) @ np.ones(ns) + (2*P @ G * R) @ v_pi</span>
+<span class="c1"># vv = pinv(I - P @ G @ G)@(rr)</span>
 </pre></div>
 
 </div>
@@ -12328,52 +11971,254 @@ Sobel variance:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Takeaway">Takeaway<a class="anchor-link" href="#Takeaway">&#182;</a></h2><p>The two methods produce the same result, as expected.</p>
-<h2 id="Implementation-Notes">Implementation Notes<a class="anchor-link" href="#Implementation-Notes">&#182;</a></h2><p>We calculated things as carefully as we can (and with as complete information as possible) to avoid mis-specifying things.
-Of note is that in a few cases whether the expected reward <em>matrix</em> vs. expected reward <em>vector</em> is used substantially affects the calculations.
-So while there are less verbose ways to solve the problem, the following is perhaps a little cleaner to examine and debug.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Second-Moment-of-&#948;-return">Second Moment of &#948;-return<a class="anchor-link" href="#Second-Moment-of-&#948;-return">&#182;</a></h1><p>Using the equations in the White &amp; White paper, we can calculate the second moment of the δ-return.
-The δ-return is the discounted sum of future TD-errors, which we can define via:</p>
-$$
-G^{\delta, \lambda}_{t} = \sum_{n=0}^{\infty} \delta_{t+n} \prod_{k=1}^{n-1} \gamma_{t+k} \lambda_{t+k}
-$$<p>Note that the δ-return also encodes the bias (difference between the expected λ-return for each state and the approximate value function).</p>
-$$G^{\lambda}_{t} - \hat{v}(S_t) = \sum_{n=0}^{\infty} \delta_{t+n} \prod_{k=1}^{n-1} \gamma_{t+k} \lambda_{t+k}$$<p>This means that for $\lambda = 1$ we have a way of computing the bias with respect to the Monte Carlo return:</p>
-$$
-G^{\lambda=1}_{t} - \hat{v}(S_t) = v_{\pi} - \hat{v} 
-$$<p>Disregarding the values of λ used in the approximation process for $\hat{v}$, we can choose alternative values to get the bias with respect to a particular λ-return.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Sanity-Check:-Exact-Value-Function">Sanity Check: Exact Value Function<a class="anchor-link" href="#Sanity-Check:-Exact-Value-Function">&#182;</a></h2><p>We check that our algorithm works by computing the second moment of the δ-return for when the approximate and 'true' value functions are identical.
-The expected TD-error for each state should be zero, as should the bias (which should be equal to the δ-return).</p>
-<p>The second moment of the δ-return may be nonzero.
-In fact, it should be equal to both the $\delta^2$-return and the variance, and since the bias is zero, the mean squared-error as well.</p>
+<h1 id="Linear-Function-Approximation">Linear Function Approximation<a class="anchor-link" href="#Linear-Function-Approximation">&#182;</a></h1><p>Linear function approximation is an important test case when analyzing the utility of a learning algorithm.</p>
+<p>Here we use a relatively simple scheme where we take the binary representation of the state's number as its feature representation, with a bias unit.</p>
+<p>So state #2 becomes <code>[1, 0, 1, 0]</code> and state #3 becomes <code>[1, 0, 1, 1]</code>.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Approximate value function is identical to true value function</span>
-<span class="n">v_hat</span> <span class="o">=</span> <span class="n">v_pi</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># hacky way of computing binary representation of state number</span>
+<span class="n">blst</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">ns</span><span class="p">))))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">)]</span>
+<span class="c1"># convert strings to array form while prepending a bias unit</span>
+<span class="n">flst</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">s</span><span class="p">]))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">blst</span><span class="p">]</span>
+<span class="c1"># feature matrix</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">flst</span><span class="p">)</span>
+<span class="c1"># set terminal state features to zero vector</span>
+<span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">0</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[5]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[1, 0, 0, 0],
+       [1, 0, 0, 1],
+       [1, 0, 1, 0],
+       [1, 0, 1, 1],
+       [1, 1, 0, 0],
+       [0, 0, 0, 0]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="TD(&#955;)-fixed-point">TD(&#955;) fixed point<a class="anchor-link" href="#TD(&#955;)-fixed-point">&#182;</a></h2><p>We compute the weights that TD(λ) converges to asymptotically, and the associated value function.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute TD(λ) fixed point</span>
+<span class="n">w_hat</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L</span><span class="p">)</span> <span class="o">@</span> <span class="n">r</span>
+<span class="n">v_hat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w_hat</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;TD(λ) fixed point weights:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">w_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;TD(λ) approximate value function:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">v_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;v_pi - v_hat:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error due to bias:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>TD(λ) fixed point weights:
+ [-1.7646  1.2646  0.2232  0.12  ]
+TD(λ) approximate value function:
+ [-1.7646 -1.6445 -1.5414 -1.4214 -0.5     0.    ]
+v_pi - v_hat:
+ [ 0.0005 -0.0535 -0.0098  0.1964 -0.     -0.    ]
+Error due to bias:
+ 0.0415271656424
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Least-Squares-/-Monte-Carlo-Approximation">Least-Squares / Monte Carlo Approximation<a class="anchor-link" href="#Least-Squares-/-Monte-Carlo-Approximation">&#182;</a></h2><p>We can also calculate the fixed point for when $\lambda=1$ and we are approximating the Monte Carlo return.</p>
+<p>This is also called the least-squares approximation, because we are essentially performing a weighted least-squares regression on the value function.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute least-squares / TD(1) fixed point</span>
+<span class="n">w_lsq</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">r</span>
+<span class="n">v_lsq</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w_lsq</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Least-squares weights:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">w_lsq</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Least-squares approximate value function:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">v_lsq</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;v_pi - v_lsq:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_lsq</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error due to bias (least-squares):</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_lsq</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Least-squares weights:
+ [-1.7815  1.2815  0.2996  0.1181]
+Least-squares approximate value function:
+ [-1.7815 -1.6634 -1.4819 -1.3638 -0.5     0.    ]
+v_pi - v_lsq:
+ [ 0.0173 -0.0347 -0.0694  0.1388  0.     -0.    ]
+Error due to bias (least-squares):
+ 0.0255740100645
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Second-Moment-Calculation">Second Moment Calculation<a class="anchor-link" href="#Second-Moment-Calculation">&#182;</a></h1><p>In a previous notebook analyzing the tabular case, we found that the second moment of the $\delta$-return provides us with the mean squared error for a given function approximator, and that in some situations the $\delta^2$-return is a good approximation to this quantity.</p>
+<h2 id="Remarks-and-Review">Remarks and Review<a class="anchor-link" href="#Remarks-and-Review">&#182;</a></h2><p>Recall that the $\delta$-return is defined as</p>
+$$
+G^{\delta, \lambda}_{t} = \sum_{n=0}^{\infty} \delta_{t+n} \prod_{k=1}^{n-1} \gamma_{t+k} \lambda_{t+k}
+$$<p>Furthermore, we have the following identity for what the $\delta$-return represents:</p>
+$$
+G^{\lambda}_{t} - \hat{v}(S_t) = \sum_{n=0}^{\infty} \delta_{t+n} \prod_{k=1}^{n-1} \gamma_{t+k} \lambda_{t+k}
+$$<p>So the second moment of the $\delta$-return (setting $\lambda=1$) gives us $\mathbb{E}[(G_{t} - \hat{v}(S_t))^2]$.
+Although a more careful analysis is required, it was enough to conjecture that this quantity is really the MSE, incorporating both the error introduced via bias in the value function and the variance in the MDP.</p>
+<p>The $\delta^2$-return, defined as:</p>
+$$
+G^{\delta^{2}, \lambda}_{t} = \sum_{n=0}^{\infty} \delta_{t+n}^2 \prod_{k=1}^{n-1} \gamma_{t+k}^2 \lambda_{t+k}^2
+$$<p>Is well-defined, and likely more amenable to approximation via LFA, but except when the bias is small doesn't really capture either the variance or the bias.
+This is because it is missing the 'cross-terms' of the full second moment expansion.</p>
+$$
+\begin{aligned}
+(G^{\lambda}_{t} - \hat{v}(S_{t}))^2 
+&= \Bigg( \sum_{n=0}^{\infty} \delta_{t+n} \prod_{k=1}^{n-1} \gamma_{t+k} \lambda_{t+k}\Bigg)^2
+\\
+&= \sum_{n=0}^{\infty} \delta_{t+n} \prod_{k=1}^{n-1} \gamma_{t+k} \lambda_{t+k}
+\Bigg(
+\sum_{m=0}^{\infty} \delta_{t+m} \prod_{j=1}^{m-1} \gamma_{t+j} \lambda_{t+j}
+\Bigg)
+\\
+&= \delta_{t}^2 
++ \delta_{t} \Bigg(
+\sum_{m=1}^{\infty} \delta_{t+m} \prod_{j=1}^{m-1} \gamma_{t+j} \lambda_{t+j}
+\Bigg)
++ \sum_{n=1}^{\infty} \delta_{t+n} \prod_{k=1}^{n-1} \gamma_{t+k} \lambda_{t+k}
+\Bigg(
+\sum_{m=1}^{\infty} \delta_{t+m} \prod_{j=1}^{m-1} \gamma_{t+j} \lambda_{t+j}
+\Bigg)
+\\
+&= \delta_{t}^{2} + (G^{\lambda}_{t+1} - \hat{v}(S_{t+1}))^2 
++ \underbrace{\delta_{t} \Bigg(
+\sum_{m=1}^{\infty} \delta_{t+m} \prod_{j=1}^{m-1} \gamma_{t+j} \lambda_{t+j}
+\Bigg)}_{\text{'cross terms'}}
+\\
+&= G_{t}^{\delta^{2}, \lambda} 
++ \delta_{t} \Bigg(
+\sum_{m=1}^{\infty} \delta_{t+m} \prod_{j=1}^{m-1} \gamma_{t+j} \lambda_{t+j}
+\Bigg)
+\end{aligned}
+$$<p>When the bias is zero, these cross terms disappear (because in expectation $\delta_{t}$ is zero for all times $t$).
+When the bias is sufficiently small, the combination of discounting and randomness tends to diminish their contribution as well.
+As the bias gets larger, or if it is correlated (persistently over/underestimating the value function), the difference between the $\delta^2$-return and the second moment of the $\delta$-return grows rapidly.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Checking-results-for-LFA">Checking results for LFA<a class="anchor-link" href="#Checking-results-for-LFA">&#182;</a></h2><p>We check what happens when we use the value function derived under LFA with our simple representation.</p>
+<p>Note that this assumes we are able to estimate the $\delta$-return, its second moment, and the $\delta^2$-return exactly, which is likely not the case in the 'real-world' given that we had to make an approximation in order to get the value function.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="TD(&#955;)-Fixed-Point">TD(&#955;) Fixed Point<a class="anchor-link" href="#TD(&#955;)-Fixed-Point">&#182;</a></h3><p>We first examine the various quantities using the value function that TD(λ) converges to.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute TD(λ) fixed point</span>
+<span class="n">w_hat</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L</span><span class="p">)</span> <span class="o">@</span> <span class="n">r</span>
+<span class="n">v_hat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w_hat</span>
 
 <span class="c1"># Bias of approximate value function</span>
 <span class="n">bias</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span>
@@ -12400,6 +12245,7 @@ In fact, it should be equal to both the $\delta^2$-return and the variance, and 
 <span class="n">dd</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">gd</span>
 <span class="n">gd_second</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span>
 
+<span class="c1"># Print summary of results</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_π:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_hat:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_hat</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bias:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="o">-</span><span class="n">v_hat</span><span class="p">)</span>
@@ -12407,7 +12253,7 @@ In fact, it should be equal to both the $\delta^2$-return and the variance, and 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ^2-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_sq</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second moment expected &#39;reward&#39; (r-bar):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">dd</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second moment of delta-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_second</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sobel variance:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_var</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variance of return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_var</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Expected squared error:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
 </pre></div>
 
@@ -12424,21 +12270,21 @@ In fact, it should be equal to both the $\delta^2$-return and the variance, and 
 <pre>v_π:
  [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
 v_hat:
- [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
+ [-1.7646 -1.6445 -1.5414 -1.4214 -0.5     0.    ]
 bias:
- [ 0.  0.  0.  0.  0.  0.]
+ [ 0.0005 -0.0535 -0.0098  0.1964 -0.     -0.    ]
 δ-return:
- [ 0. -0.  0.  0.  0.  0.]
+ [ 0.0005 -0.0535 -0.0098  0.1964 -0.      0.    ]
 δ^2-return:
- [ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
+ [ 0.8254  0.6844  0.4959  0.1904  0.25    0.    ]
 Second moment expected &#39;reward&#39; (r-bar):
- [ 0.5839  0.4873  0.3039  0.0506  0.25    0.    ]
+ [ 0.5827  0.4901  0.2884  0.0892  0.25    0.    ]
 Second moment of delta-return:
- [ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
-Sobel variance:
+ [ 0.8412  0.6381  0.3655  0.1904  0.25    0.    ]
+Variance of return:
  [ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
 Expected squared error:
- [ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
+ [ 0.8412  0.6381  0.3655  0.1904  0.25    0.    ]
 </pre>
 </div>
 </div>
@@ -12452,28 +12298,216 @@ Expected squared error:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We get the expected results.</p>
-<p>Incidentally, this provides an alternative route for proving the efficacy of algorithms estimating the $\delta^2$-return for computing variance in the tabular setting.</p>
+<h3 id="Least-Squares-Fixed-Point">Least-Squares Fixed Point<a class="anchor-link" href="#Least-Squares-Fixed-Point">&#182;</a></h3><p>We now check the results using the least-squares approximation as our value function.
+This will be more accurate (less biased) almost by definition.</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute TD(λ) fixed point</span>
+<span class="n">w_hat</span> <span class="o">=</span> <span class="n">w_lsq</span>
+<span class="n">v_hat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w_hat</span>
+
+<span class="c1"># Bias of approximate value function</span>
+<span class="n">bias</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span>
+
+<span class="c1"># TD error matrix, for error given transition i--&gt;j</span>
+<span class="n">Δ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
+        <span class="n">Δ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">gvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">v_hat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+<span class="c1"># Expected TD-error</span>
+<span class="n">δ</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+        
+<span class="c1"># Expected δ^2</span>
+<span class="n">δ_sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+        
+<span class="c1"># δ-return</span>
+<span class="n">gd</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ</span>
+
+<span class="c1"># δ^2-return</span>
+<span class="n">gd_sq</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ_sq</span>
+
+<span class="c1"># Second moment of δ-return</span>
+<span class="n">dd</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">gd</span>
+<span class="n">gd_second</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span>
+
+<span class="c1"># Variance using Sobel&#39;s method and approximate value function</span>
+<span class="n">T_hat</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="n">G</span> <span class="o">@</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">-</span> <span class="n">v_hat</span><span class="o">**</span><span class="mi">2</span>
+        
+<span class="c1"># Solve Bellman equation for variance of return w/ approx value function</span>
+<span class="n">var_hat</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">T_hat</span>
+
+<span class="c1"># Print summary of results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_π:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_hat:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bias:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="o">-</span><span class="n">v_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ^2-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_sq</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variance of return using v_hat:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">var_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second moment expected &#39;reward&#39; (r-bar):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">dd</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second moment of delta-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_second</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variance of return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_var</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Expected squared error:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>v_π:
+ [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
+v_hat:
+ [-1.7815 -1.6634 -1.4819 -1.3638 -0.5     0.    ]
+bias:
+ [ 0.0173 -0.0347 -0.0694  0.1388  0.     -0.    ]
+δ-return:
+ [ 0.0173 -0.0347 -0.0694  0.1388  0.      0.    ]
+δ^2-return:
+ [ 0.8175  0.6323  0.4633  0.1711  0.25    0.    ]
+Variance of return using v_hat:
+ [ 0.7436  0.74    0.7007 -0.2074  0.25    0.    ]
+Second moment expected &#39;reward&#39; (r-bar):
+ [ 0.5837  0.4865  0.3009  0.0699  0.25    0.    ]
+Second moment of delta-return:
+ [ 0.8415  0.6365  0.3702  0.1711  0.25    0.    ]
+Variance of return:
+ [ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
+Expected squared error:
+ [ 0.8415  0.6365  0.3702  0.1711  0.25    0.    ]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Inaccurate-Value-Function">Inaccurate Value Function<a class="anchor-link" href="#Inaccurate-Value-Function">&#182;</a></h1><p>We now examine what happens to the $\delta$-return and its second moment (as well as the $\delta^2$-return) in the case where the value function is no longer exact.</p>
+<h2 id="Can-we-approximate-the-&#948;-return-with-the-same-features?">Can we approximate the &#948;-return with the same features?<a class="anchor-link" href="#Can-we-approximate-the-&#948;-return-with-the-same-features?">&#182;</a></h2><p>In short, the answer is 'no, not really'.
+This can be shown from some linear algebra, but in essence the problem is that if you were able to estimate how biased your predictor was with certainty, then you wouldn't need to be biased at all.</p>
+<p>We are still not computing these quantities online. 
+The current approach is similar to a batch setting, where for some reason we have access to the full problem, but elect to approximate the value function and then also approximate these quantities as well.</p>
+<p>We use the value function from the TD(0) fixed point, and estimate the δ- and δ^2-returns using the TD(1) fixed point.</p>
+<p>This allows for us to arrive at a nonzero value function for the δ-return.</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute TD(0) fixed point</span>
+<span class="n">L</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span><span class="o">*</span><span class="mi">0</span>
+<span class="n">A_inv</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span>
+<span class="n">w_hat</span> <span class="o">=</span> <span class="n">A_inv</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L</span><span class="p">)</span> <span class="o">@</span> <span class="n">r</span>
+<span class="n">v_hat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w_hat</span>
+
+<span class="c1"># Bias of approximate value function</span>
+<span class="n">bias</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span>
+
+<span class="c1"># TD error matrix, for error given transition i--&gt;j</span>
+<span class="n">Δ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
+        <span class="n">Δ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">gvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">v_hat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+<span class="c1"># Expected TD-error</span>
+<span class="n">δ</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+        
+<span class="c1"># Expected δ^2</span>
+<span class="n">δ_sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+        
+<span class="c1"># δ-return</span>
+<span class="n">gd</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ</span>
+
+<span class="c1"># δ^2-return</span>
+<span class="n">gd_sq</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ_sq</span>
+
+<span class="c1"># Second moment of δ-return</span>
+<span class="n">dd</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">gd</span>
+<span class="n">gd_second</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span>
+
+<span class="c1">################################################################################</span>
+<span class="c1"># LFA for δ-return, δ^2-return, and moments</span>
+
+<span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+<span class="n">wd_hat</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ</span>
+<span class="n">vd_hat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">wd_hat</span>
+
+<span class="c1"># This may not be right</span>
+<span class="n">Gbar</span> <span class="o">=</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span>
+<span class="n">Lbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">))</span>
+<span class="n">A_sq_inv</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">Gbar</span> <span class="o">@</span> <span class="n">Lbar</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">Gbar</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span>
+<span class="n">wdsq_hat</span> <span class="o">=</span> <span class="n">A_sq_inv</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">Gbar</span> <span class="o">@</span> <span class="n">Lbar</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ_sq</span>
+<span class="n">vdsq_hat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">wdsq_hat</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_π:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_hat:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bias:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="o">-</span><span class="n">v_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ^2-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_sq</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Approximate δ-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">vd_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Approximate δ^2-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">vdsq_hat</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>v_π:
+ [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
+v_hat:
+ [-1.7646 -1.6445 -1.5414 -1.4214 -0.5     0.    ]
+bias:
+ [ 0.0005 -0.0535 -0.0098  0.1964 -0.     -0.    ]
+δ-return:
+ [ 0.0005 -0.0535 -0.0098  0.1964 -0.      0.    ]
+δ^2-return:
+ [ 0.8254  0.6844  0.4959  0.1904  0.25    0.    ]
+Approximate δ-return:
+ [-0.0169 -0.0188  0.0596  0.0576 -0.      0.    ]
+Approximate δ^2-return:
+ [ 0.8364  0.6625  0.4521  0.2781  0.25    0.    ]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Large-Perturbation,-Single-State">Large Perturbation, Single State<a class="anchor-link" href="#Large-Perturbation,-Single-State">&#182;</a></h2><p>We first examine the impact of a relatively large perturbation to a single state's value function.</p>
+<h2 id="Variations-on-Approximation-Approach">Variations on Approximation Approach<a class="anchor-link" href="#Variations-on-Approximation-Approach">&#182;</a></h2><p>We note that it is not necessary to use the same bootstrapping parameter (λ) when approximating the various quantities of interest.</p>
+<p>Using a different $\lambda$ <em>might</em> allow us to approximate the $\delta$-return with the same representation, although intuitively it seems like it still won't be possible to capture everything.</p>
 
 </div>
 </div>
@@ -12483,8 +12517,11 @@ Expected squared error:
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Approximate value function</span>
-<span class="n">v_hat</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute TD(λ) fixed point</span>
+<span class="n">L1</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span><span class="o">*</span><span class="mi">1</span>
+<span class="n">A_inv</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L1</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span>
+<span class="n">w_hat</span> <span class="o">=</span> <span class="n">A_inv</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L1</span><span class="p">)</span> <span class="o">@</span> <span class="n">r</span>
+<span class="n">v_hat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w_hat</span>
 
 <span class="c1"># Bias of approximate value function</span>
 <span class="n">bias</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span>
@@ -12501,29 +12538,43 @@ Expected squared error:
 <span class="c1"># Expected δ^2</span>
 <span class="n">δ_sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
         
-<span class="c1"># Second moment of δ-return </span>
-<span class="n">rr</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span> <span class="o">@</span> <span class="n">v_pi</span>
-<span class="n">vv</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
-
 <span class="c1"># δ-return</span>
 <span class="n">gd</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ</span>
 
 <span class="c1"># δ^2-return</span>
 <span class="n">gd_sq</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ_sq</span>
 
-<span class="c1"># Second moment</span>
+<span class="c1"># Second moment of δ-return</span>
 <span class="n">dd</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">gd</span>
 <span class="n">gd_second</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span>
 
+<span class="c1">################################################################################</span>
+<span class="c1"># LFA for δ-return, δ^2-return, and moments</span>
+<span class="c1"># with potentially distinct lambda</span>
+
+<span class="n">L2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span><span class="o">*</span><span class="mi">0</span>
+
+<span class="n">wd_hat</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L2</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L2</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ</span>
+<span class="n">vd_hat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">wd_hat</span>
+
+<span class="c1"># This may not be right</span>
+<span class="n">L3</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span><span class="o">*</span><span class="mi">0</span>
+<span class="n">Gbar</span> <span class="o">=</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L3</span> <span class="o">@</span> <span class="n">L3</span>
+<span class="n">Lbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+<span class="n">A_sq_inv</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">Gbar</span> <span class="o">@</span> <span class="n">Lbar</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">Gbar</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span>
+<span class="n">wdsq_hat</span> <span class="o">=</span> <span class="n">A_sq_inv</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">Gbar</span> <span class="o">@</span> <span class="n">Lbar</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ_sq</span>
+<span class="n">vdsq_hat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">wdsq_hat</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;λ for v_hat:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">L1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;λ for δ-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">L2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;λ for δ^2-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">L3</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_π:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_hat:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_hat</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bias:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="o">-</span><span class="n">v_hat</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ^2-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_sq</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second moment of delta-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_second</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sobel variance:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_var</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bias^2:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bias</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Expected squared error:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Approximate δ-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">vd_hat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Approximate δ^2-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">vdsq_hat</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12536,24 +12587,26 @@ Expected squared error:
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>v_π:
+<pre>λ for v_hat:
+ [ 1.  1.  1.  1.  1.  1.]
+λ for δ-return:
+ [ 0.  0.  0.  0.  0.  0.]
+λ for δ^2-return:
+ [ 0.  0.  0.  0.  0.  0.]
+v_π:
  [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
 v_hat:
- [-1.7641 -1.6981 -1.0513 -1.225  -0.5    -0.    ]
+ [-1.7815 -1.6634 -1.4819 -1.3638 -0.5     0.    ]
 bias:
- [ 0.   0.  -0.5  0.   0.   0. ]
+ [ 0.0173 -0.0347 -0.0694  0.1388  0.     -0.    ]
 δ-return:
- [ 0.  -0.  -0.5  0.   0.   0. ]
+ [ 0.0173 -0.0347 -0.0694  0.1388  0.      0.    ]
 δ^2-return:
- [ 0.796   0.5236  0.6154  0.1519  0.25    0.    ]
-Second moment of delta-return:
- [ 0.8412  0.6353  0.6154  0.1519  0.25    0.    ]
-Sobel variance:
- [ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
-Bias^2:
- [ 0.    0.    0.25  0.    0.    0.  ]
-Expected squared error:
- [ 0.8412  0.6353  0.6154  0.1519  0.25    0.    ]
+ [ 0.8175  0.6323  0.4633  0.1711  0.25    0.    ]
+Approximate δ-return:
+ [ 0.0169  0.0188 -0.0596 -0.0576  0.      0.    ]
+Approximate δ^2-return:
+ [ 0.5752  0.417   0.3387  0.1805  0.25    0.    ]
 </pre>
 </div>
 </div>
@@ -12567,10 +12620,102 @@ Expected squared error:
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The bias is still given by the δ-return, and the $\delta^2$-return still accurately gives the variance for states that do not bootstrap from the state where the error was introduced.</p>
-<p>As hypothesized, the second moment of the δ-return now gives the MSE rather than the variance.</p>
-<p>The $\delta^2$-return for the state whose value was perturbed also gives the MSE (as do other states which do not bootstrap from it).
-For the states that <em>do</em> bootstrap from the perturbation in the value function, we note that they underestimate both the MSE and the variance (although they would <em>overestimate</em> if the sign of the variance were to be changed).</p>
+<h3 id="Results">Results<a class="anchor-link" href="#Results">&#182;</a></h3><p>Here we present some selected results for using different values of $\lambda$.</p>
+<h4 id="TD(0)-for-value-function,-TD(0)-for-&#948;--and-&#948;^2-returns">TD(0) for value function, TD(0) for &#948;- and &#948;^2-returns<a class="anchor-link" href="#TD(0)-for-value-function,-TD(0)-for-&#948;--and-&#948;^2-returns">&#182;</a></h4>
+<pre><code>λ for v_hat:
+ [ 0.  0.  0.  0.  0.  0.]
+λ for δ-return:
+ [ 0.  0.  0.  0.  0.  0.]
+λ for δ^2-return:
+ [ 0.  0.  0.  0.  0.  0.]
+v_π:
+ [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
+v_hat:
+ [-1.7646 -1.6445 -1.5414 -1.4214 -0.5     0.    ]
+bias:
+ [ 0.0005 -0.0535 -0.0098  0.1964 -0.     -0.    ]
+δ-return:
+ [ 0.0005 -0.0535 -0.0098  0.1964 -0.      0.    ]
+δ^2-return:
+ [ 0.8254  0.6844  0.4959  0.1904  0.25    0.    ]
+Approximate δ-return:
+ [-0. -0.  0.  0. -0.  0.]
+Approximate δ^2-return:
+ [ 0.5659  0.4482  0.3481  0.2304  0.25    0.    ]</code></pre>
+<p>The δ-return is not approximable in this case, as expected.</p>
+<p>The δ^2-return is not particularly well approximated in this case.
+It appears that the errors in the early states are higher because they incorporate both the inaccuracies in the approximate value function <em>and</em> bootstrap from states which have errors themselves.</p>
+<h4 id="TD(1)-for-value-function,-TD(1)-for-&#948;--and-&#948;^2-returns">TD(1) for value function, TD(1) for &#948;- and &#948;^2-returns<a class="anchor-link" href="#TD(1)-for-value-function,-TD(1)-for-&#948;--and-&#948;^2-returns">&#182;</a></h4>
+<pre><code>λ for v_hat:
+ [ 1.  1.  1.  1.  1.  1.]
+λ for δ-return:
+ [ 1.  1.  1.  1.  1.  1.]
+λ for δ^2-return:
+ [ 1.  1.  1.  1.  1.  1.]
+v_π:
+ [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
+v_hat:
+ [-1.7815 -1.6634 -1.4819 -1.3638 -0.5     0.    ]
+bias:
+ [ 0.0173 -0.0347 -0.0694  0.1388  0.     -0.    ]
+δ-return:
+ [ 0.0173 -0.0347 -0.0694  0.1388  0.      0.    ]
+δ^2-return:
+ [ 0.8175  0.6323  0.4633  0.1711  0.25    0.    ]
+Approximate δ-return:
+ [ 0.  0.  0.  0.  0.  0.]
+Approximate δ^2-return:
+ [ 0.8246  0.6181  0.4348  0.2282  0.25    0.    ]</code></pre>
+<p>As expected, the δ-return is not approximable in this case where all the parameters are the same.</p>
+<p>The δ^2-return is approximated rather well in this case.</p>
+<h4 id="TD(0)-for-value-function,-TD(1)-for-&#948;--and-&#948;^2-returns">TD(0) for value function, TD(1) for &#948;- and &#948;^2-returns<a class="anchor-link" href="#TD(0)-for-value-function,-TD(1)-for-&#948;--and-&#948;^2-returns">&#182;</a></h4>
+<pre><code>λ for v_hat:
+ [ 0.  0.  0.  0.  0.  0.]
+λ for δ-return:
+ [ 1.  1.  1.  1.  1.  1.]
+λ for δ^2-return:
+ [ 1.  1.  1.  1.  1.  1.]
+v_π:
+ [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
+v_hat:
+ [-1.7646 -1.6445 -1.5414 -1.4214 -0.5     0.    ]
+bias:
+ [ 0.0005 -0.0535 -0.0098  0.1964 -0.     -0.    ]
+δ-return:
+ [ 0.0005 -0.0535 -0.0098  0.1964 -0.      0.    ]
+δ^2-return:
+ [ 0.8254  0.6844  0.4959  0.1904  0.25    0.    ]
+Approximate δ-return:
+ [-0.0169 -0.0188  0.0596  0.0576 -0.      0.    ]
+Approximate δ^2-return:
+ [ 0.8364  0.6625  0.4521  0.2781  0.25    0.    ]</code></pre>
+<p>The approximation for the δ-return is nonzero, but it's not particularly robust.</p>
+<p>The δ^2-return is approximated rather well.</p>
+<h4 id="TD(1)-for-value-function,-TD(0)-for-&#948;--and-&#948;^2-returns">TD(1) for value function, TD(0) for &#948;- and &#948;^2-returns<a class="anchor-link" href="#TD(1)-for-value-function,-TD(0)-for-&#948;--and-&#948;^2-returns">&#182;</a></h4>
+<pre><code>λ for v_hat:
+ [ 1.  1.  1.  1.  1.  1.]
+λ for δ-return:
+ [ 0.  0.  0.  0.  0.  0.]
+λ for δ^2-return:
+ [ 0.  0.  0.  0.  0.  0.]
+v_π:
+ [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
+v_hat:
+ [-1.7815 -1.6634 -1.4819 -1.3638 -0.5     0.    ]
+bias:
+ [ 0.0173 -0.0347 -0.0694  0.1388  0.     -0.    ]
+δ-return:
+ [ 0.0173 -0.0347 -0.0694  0.1388  0.      0.    ]
+δ^2-return:
+ [ 0.8175  0.6323  0.4633  0.1711  0.25    0.    ]
+Approximate δ-return:
+ [ 0.0169  0.0188 -0.0596 -0.0576  0.      0.    ]
+Approximate δ^2-return:
+ [ 0.5752  0.417   0.3387  0.1805  0.25    0.    ]</code></pre>
+<p>The δ-return is approximable, and apparently it's not too far off from the true δ-return.
+More analysis would be necessary to say whether this is the case in general.</p>
+<p>The δ^2-return is not well approximated, as might be expected given that TD(0) relies on having a good estimate of subsequent states in order to bootstrap properly.
+Interestingly, the approximate value is very similar to the approximation for the δ^2-return with TD(0) for the value function and TD(0) for the δ^2-return listed above.</p>
 
 </div>
 </div>
@@ -12580,7 +12725,10 @@ For the states that <em>do</em> bootstrap from the perturbation in the value fun
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Small-Perturbation,-Single-State">Small Perturbation, Single State<a class="anchor-link" href="#Small-Perturbation,-Single-State">&#182;</a></h2>
+<h1 id="Variance-Computations-With-Approximate-Value-Function">Variance Computations With Approximate Value Function<a class="anchor-link" href="#Variance-Computations-With-Approximate-Value-Function">&#182;</a></h1><p>We have some unfinished work examining whether it's either possible or useful to compute the variance with an approximate value function in lieu of $v_{\pi}$.</p>
+<p>From a cursory examination that does not appear to be the case, because we can easily end up with negative values and rather large deviations from the 'true' variance of the return.</p>
+<p>What this means is unclear at the present.</p>
+
 </div>
 </div>
 </div>
@@ -12589,47 +12737,53 @@ For the states that <em>do</em> bootstrap from the perturbation in the value fun
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Approximate value function</span>
-<span class="n">v_hat</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TD(λ)</span>
+<span class="n">w_hat</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="p">)</span> <span class="o">@</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">D</span> <span class="o">@</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">L</span><span class="p">)</span> <span class="o">@</span> <span class="n">r</span>
+<span class="n">v_hat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w_hat</span>
 
-<span class="c1"># Bias of approximate value function</span>
-<span class="n">bias</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span>
+<span class="c1"># Least-squares</span>
+<span class="c1"># w_hat = w_lsq</span>
+<span class="c1"># v_hat = X @ w_hat</span>
 
-<span class="c1"># TD error matrix, for error given transition i--&gt;j</span>
-<span class="n">Δ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+<span class="c1"># Using the VTD paper to calculate second moments of the return.</span>
+<span class="n">Pbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ns</span><span class="p">,</span> <span class="n">ns</span><span class="p">))</span>
+<span class="n">Rbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ns</span><span class="p">,</span><span class="n">ns</span><span class="p">))</span>
+<span class="n">rbar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+
+<span class="c1"># Specify parameters</span>
+<span class="n">lvec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+<span class="c1"># lvec = np.zeros(ns)</span>
+
+<span class="c1"># Calculate R-bar transition matrix</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
-        <span class="n">Δ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">gvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">v_hat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">Rbar</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">gvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">lvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">v_hat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
 
-<span class="c1"># Expected TD-error</span>
-<span class="n">δ</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
+<span class="c1"># Calculate r-bar vector</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
+        <span class="n">rbar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">Rbar</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+
+<span class="c1"># Calculate P-bar</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
+        <span class="n">Pbar</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">gvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">lvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         
-<span class="c1"># Expected δ^2</span>
-<span class="n">δ_sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
         
-<span class="c1"># Second moment of δ-return </span>
-<span class="n">rr</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span> <span class="o">@</span> <span class="n">v_pi</span>
-<span class="n">vv</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
+<span class="c1"># Calculate second moment of return</span>
+<span class="n">r_second</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">Pbar</span><span class="p">)</span> <span class="o">@</span> <span class="n">rbar</span>
 
-<span class="c1"># δ-return</span>
-<span class="n">gd</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ</span>
+<span class="c1"># Variance using Sobel&#39;s method and approximate value function</span>
+<span class="n">T_hat</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span> <span class="o">+</span> <span class="n">G</span> <span class="o">@</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">-</span> <span class="n">v_hat</span><span class="o">**</span><span class="mi">2</span>
+        
+<span class="c1"># Solve Bellman equation for variance of return</span>
+<span class="n">var_hat</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">T_hat</span>
 
-<span class="c1"># δ^2-return</span>
-<span class="n">gd_sq</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ_sq</span>
-
-<span class="c1"># Second moment</span>
-<span class="n">dd</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">gd</span>
-<span class="n">gd_second</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_π:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_hat:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_hat</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bias:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="o">-</span><span class="n">v_hat</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ^2-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_sq</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second moment of delta-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_second</span><span class="p">)</span>
+<span class="c1"># Print the results</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second moment of return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">r_second</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Estimated variance via second moment of return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">r_second</span> <span class="o">-</span> <span class="n">v_hat</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sobel variance (using v_hat):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">var_hat</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sobel variance:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_var</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bias^2:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bias</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Expected squared error:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12642,583 +12796,18 @@ For the states that <em>do</em> bootstrap from the perturbation in the value fun
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>v_π:
- [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
-v_hat:
- [-1.7641 -1.6981 -1.4513 -1.225  -0.5    -0.    ]
-bias:
- [ 0.   0.  -0.1  0.   0.   0. ]
-δ-return:
- [ 0.   0.  -0.1  0.   0.   0. ]
-δ^2-return:
- [ 0.819   0.5805  0.3754  0.1519  0.25    0.    ]
-Second moment of delta-return:
- [ 0.8412  0.6353  0.3754  0.1519  0.25    0.    ]
+<pre>Second moment of return:
+ [ 3.9173  3.5068  2.8967  1.6525  0.5     0.    ]
+Estimated variance via second moment of return:
+ [ 0.7436  0.74    0.7007 -0.2074  0.25    0.    ]
+Sobel variance (using v_hat):
+ [ 0.7436  0.74    0.7007 -0.2074  0.25    0.    ]
 Sobel variance:
  [ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
-Bias^2:
- [ 0.    0.    0.01  0.    0.    0.  ]
-Expected squared error:
- [ 0.8412  0.6353  0.3754  0.1519  0.25    0.    ]
 </pre>
 </div>
 </div>
 
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We see similar results as in the large-perturbation, but note that the difference between the $\delta^2-return and the analytical variance actually seems to decrease the further 'away' we get from the perturbed state.</p>
-<p>The second moment of the $\delta$-return continues to reflect the MSE.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gd_sq</span> <span class="o">-</span> <span class="n">v_var</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[13]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([-0.0222, -0.0547,  0.01  ,  0.    ,  0.    , -0.    ])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gd_second</span> <span class="o">-</span> <span class="p">((</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[14]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([ 0., -0.,  0.,  0.,  0.,  0.])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Small-Perturbations,-Multiple-States">Small Perturbations, Multiple States<a class="anchor-link" href="#Small-Perturbations,-Multiple-States">&#182;</a></h2><p>We now check a small uniform perturbation to the value function of all states.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Approximate value function</span>
-<span class="n">v_hat</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">+</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-
-<span class="c1"># Bias of approximate value function</span>
-<span class="n">bias</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span>
-
-<span class="c1"># TD error matrix, for error given transition i--&gt;j</span>
-<span class="n">Δ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
-        <span class="n">Δ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">gvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">v_hat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-<span class="c1"># Expected TD-error</span>
-<span class="n">δ</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
-        
-<span class="c1"># Expected δ^2</span>
-<span class="n">δ_sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
-        
-<span class="c1"># Second moment of δ-return </span>
-<span class="n">rr</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span> <span class="o">@</span> <span class="n">v_pi</span>
-<span class="n">vv</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
-
-<span class="c1"># δ-return</span>
-<span class="n">gd</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ</span>
-
-<span class="c1"># δ^2-return</span>
-<span class="n">gd_sq</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ_sq</span>
-
-<span class="c1"># Second moment</span>
-<span class="n">dd</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">gd</span>
-<span class="n">gd_second</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_π:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_hat:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_hat</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bias:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="o">-</span><span class="n">v_hat</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ^2-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_sq</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second moment of delta-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_second</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sobel variance:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_var</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bias^2:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bias</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Expected squared error:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>v_π:
- [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
-v_hat:
- [-1.6641 -1.5981 -1.4513 -1.125  -0.4    -0.    ]
-bias:
- [-0.1 -0.1 -0.1 -0.1 -0.1  0. ]
-δ-return:
- [-0.1 -0.1 -0.1 -0.1 -0.1  0. ]
-δ^2-return:
- [ 0.746   0.5576  0.3163  0.1407  0.26    0.    ]
-Second moment of delta-return:
- [ 0.8512  0.6453  0.3754  0.1619  0.26    0.    ]
-Sobel variance:
- [ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
-Bias^2:
- [ 0.01  0.01  0.01  0.01  0.01  0.  ]
-Expected squared error:
- [ 0.8512  0.6453  0.3754  0.1619  0.26    0.    ]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The MSE is still the same as the second moment of the $\delta$-return.</p>
-<p>The $\delta^2$ return has its errors compound as perturbed bootstraps bootstrap from perturbed states.
-The start state is off by almost a factor of ten with respect to its perturbation.
-Note that it is not accounting for the bias, it is just incorrect.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gd_sq</span> <span class="o">-</span> <span class="n">v_var</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[16]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([-0.0952, -0.0777, -0.0491, -0.0111,  0.01  , -0.    ])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gd_sq</span> <span class="o">-</span> <span class="p">((</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[17]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([-0.1052, -0.0877, -0.0591, -0.0211,  0.    , -0.    ])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gd_second</span> <span class="o">-</span> <span class="p">((</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[18]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([ 0., -0.,  0.,  0.,  0., -0.])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Small-Perturbations-of-Alternating-Sign">Small Perturbations of Alternating Sign<a class="anchor-link" href="#Small-Perturbations-of-Alternating-Sign">&#182;</a></h2><p>We can check if having the perturbations be somewhat less correlated (a far more likely case in real-world settings) affects the various estimators under consideration.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Approximate value function</span>
-<span class="n">v_hat</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">+</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-
-<span class="c1"># Bias of approximate value function</span>
-<span class="n">bias</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span>
-
-<span class="c1"># TD error matrix, for error given transition i--&gt;j</span>
-<span class="n">Δ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
-        <span class="n">Δ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">gvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">v_hat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-<span class="c1"># Expected TD-error</span>
-<span class="n">δ</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
-        
-<span class="c1"># Expected δ^2</span>
-<span class="n">δ_sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
-        
-<span class="c1"># Second moment of δ-return </span>
-<span class="n">rr</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">R</span><span class="p">)</span> <span class="o">@</span> <span class="n">v_pi</span>
-<span class="n">vv</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
-
-<span class="c1"># δ-return</span>
-<span class="n">gd</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ</span>
-
-<span class="c1"># δ^2-return</span>
-<span class="n">gd_sq</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">δ_sq</span>
-
-<span class="c1"># Second moment</span>
-<span class="n">dd</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span> <span class="o">*</span> <span class="n">Δ</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">*</span> <span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">gd</span>
-<span class="n">gd_second</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_π:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;v_hat:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_hat</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;bias:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_pi</span><span class="o">-</span><span class="n">v_hat</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;δ^2-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_sq</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Second moment of delta-return:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">gd_second</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sobel variance:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">v_var</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bias^2:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bias</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Expected squared error:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>v_π:
- [-1.7641 -1.6981 -1.5513 -1.225  -0.5    -0.    ]
-v_hat:
- [-1.8641 -1.5981 -1.6513 -1.125  -0.6    -0.    ]
-bias:
- [ 0.1 -0.1  0.1 -0.1  0.1  0. ]
-δ-return:
- [ 0.1 -0.1  0.1 -0.1  0.1  0. ]
-δ^2-return:
- [ 0.829   0.7182  0.358   0.1992  0.26    0.    ]
-Second moment of delta-return:
- [ 0.8512  0.6453  0.3754  0.1619  0.26    0.    ]
-Sobel variance:
- [ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
-Bias^2:
- [ 0.01  0.01  0.01  0.01  0.01  0.  ]
-Expected squared error:
- [ 0.8512  0.6453  0.3754  0.1619  0.26    0.    ]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The MSE is still the same as the second moment of the $\delta$-return.</p>
-<p>For the $\delta^2$-return, the results are somewhat more mixed.
-The errors cancel in some places (state 3) and compound in others when we compare it with the variance.</p>
-<p>Overall it doesn't really seem to improve things, although a more carefully crafted set of perturbations could likely be found. One strategy might be to select improve feature selection to ensure that as many of the errors cancel each other out as possible.</p>
-<p>However, in general this suggests that some method of accounting for the cross-terms in the expansion is desirable, if we want to continue to use the $\delta^2$-return in lieu of the approximation morass that is estimating the $\delta$-return online under function approximation.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gd_sq</span> <span class="o">-</span> <span class="n">v_var</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[20]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([-0.0122,  0.0829, -0.0074,  0.0474,  0.01  ,  0.    ])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gd_sq</span> <span class="o">-</span> <span class="p">((</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[21]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([-0.0222,  0.0729, -0.0174,  0.0374,  0.    ,  0.    ])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">gd_second</span> <span class="o">-</span> <span class="p">((</span><span class="n">v_pi</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v_var</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt output_prompt">Out[22]:</div>
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([ 0., -0.,  0.,  0.,  0., -0.])</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Closing-Notes">Closing Notes<a class="anchor-link" href="#Closing-Notes">&#182;</a></h1><p>While the above may seem appealing, there is still work to be done to get things into a more useful form.</p>
-<p>At the very least, it's a way of directly computing the MSE for a given value function, assuming the full MDP is known.
-This could be interesting to pursue, although I am not sure how practical the results would be.</p>
-<p>Optimizing the bias-variance trade-off via finding the minimum of the MSE using the second moment of the $\delta$-return looks interesting, but requires more analysis to derive the appropriate equations.</p>
-<p>We note that under function approximation, the fixed point for the weights when approximating the $\delta$-return is zero, meaning a different strategy might have to be employed if we were to actually use this.
-I can think of a few strategies for overcoming this (using multiple representations, or splitting the representations to make it possible to estimate the $\delta$-return under LFA, perhaps a re-weighting method in the style of Emphatic TD, or choosing a more approximable target that still imparts useful information by modifying the bootstrapping/discount factors).</p>
-<p>Suggestions or comments are welcome.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Variance-of-&#948;-return">Variance of &#948;-return<a class="anchor-link" href="#Variance-of-&#948;-return">&#182;</a></h1><p>Given the popularity of the movie <em>Inception</em>, it behooves us to go deeper.</p>
-<p>On a more serious note, I am not really sure how to interpret this but kept it in anyways because I wish to avoid having to redo it if it turns out to be relevant.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Approximate value function</span>
-<span class="c1"># v_hat = v_pi + 0.1*np.arange(len(v_hat))</span>
-<span class="n">v_hat</span> <span class="o">=</span> <span class="n">v_pi</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-
-
-<span class="c1"># TD error matrix, for error given transition i--&gt;j</span>
-<span class="n">Δ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
-        <span class="n">Δ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">gvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">v_hat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">v_hat</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-
-<span class="c1"># Expected per-state TD-error</span>
-<span class="n">δ</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="o">*</span><span class="n">Δ</span><span class="p">)</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
-        
-<span class="c1"># Sobel-like method for variance of δ-return </span>
-<span class="n">T_d</span> <span class="o">=</span> <span class="o">-</span><span class="n">δ</span><span class="o">**</span><span class="mi">2</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
-        <span class="n">T_d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">P</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Δ</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">gvec</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">δ</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
-
-<span class="c1"># Alternatively,</span>
-<span class="c1"># T_d = np.sum(P * (Δ + G @ δ)**2, axis=1) - δ**2</span>
-
-<span class="c1"># Calculating variance of δ-return</span>
-<span class="n">dd</span> <span class="o">=</span> <span class="n">pinv</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">P</span> <span class="o">@</span> <span class="n">G</span> <span class="o">@</span> <span class="n">G</span><span class="p">)</span> <span class="o">@</span> <span class="n">T_d</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">v_var</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">v_var</span> <span class="o">-</span> <span class="n">dd</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[ 0.8412  0.6353  0.3654  0.1519  0.25    0.    ]
-[ 0.6662  0.5396  0.3654  0.1519  0.25    0.    ]
-[ 0.175   0.0956 -0.     -0.     -0.     -0.    ]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-</div>
 </div>
 </div>
 
