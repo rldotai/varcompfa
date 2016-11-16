@@ -42,6 +42,32 @@ def episode_return(epi):
     ret.reverse()
     return ret
 
+def squared_error(a, b):
+    """Return the squared difference between sequences `a` and `b`."""
+    a = np.array(a)
+    b = np.array(b)
+    return np.sum((a - b)**2)
+
+def mse(a, b):
+    a = np.array(a)
+    b = np.array(b)
+    return np.mean((a - b)**2)
+
+
+# def rescale(arr, axis=None):
+#     """Rescale an array so its entry with largest absolute value is 1.
+
+#     TODO: Rename?
+#     """
+#     return arr/np.max(np.abs(arr), axis=axis)
+
+# def normalize(arr, axis=None):
+#     """Normalize along an axis.
+
+#     TODO: Get this working for general axis operations 
+#     (May have implemented this before?)
+#     """
+#     pass
 
 ##############################################################################
 # Helper functions for manipulating data into more workable forms
