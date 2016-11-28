@@ -67,6 +67,25 @@ if __name__ == "__main__":
     control = vcf.Agent(q_algo, q_phi, q_params)
 
 
-    agents = [control]#, td_agent, td_agent2]
+    # Define some other agents that simply learn the value function
+    phi1 = vcf.BinaryVector(ns)
+    td_params = {
+        'alpha' : Constant(0.01),
+        'gm'    : Constant(0.999, 0),
+        'gm_p'  : Constant(0.999, 0),
+        'lm'    : Constant(0.01, 0),
+    }
+    td_agent1 = vcf.Agent(vcf.TD(len(phi1)), phi1, td_params)
+
+    phi2 = vcf.BiasUnit()
+    td_params2 = {
+        'alpha' : Constant(0.01),
+        'gm'    : Constant(0.999, 0),
+        'gm_p'  : Constant(0.999, 0),
+        'lm'    : Constant(0.01, 0),
+    }
+    td_agent2 = vcf.Agent(vcf.TD(len(phi2)), phi2, td_params2)
+
+    agents = [control, td_agent1, td_agent2]
     experiment = vcf.PolicyEvaluation(env, control, agents=agents)
     experiment.run(100, 10, [ExampleCallback()])
