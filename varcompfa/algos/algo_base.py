@@ -59,4 +59,4 @@ class LearningAlgorithm(metaclass=LearningAlgorithmMeta):
         """
         # Extract parameters to feed to `self.learn` from `params`
         args = [context[key] for key in self._learn_params]
-        return self.learn(*args)
+        return {**context, 'result': self.learn(*args)}

@@ -56,9 +56,6 @@ class TabularQ(LearningAlgorithm):
         # Return the TD-error, for lack of something more informative
         return δ
 
-    def update(self, params):
-        pass
-
     def get_value(self, s, a=None):
         if a is None:
             return np.max(self.qv[s])

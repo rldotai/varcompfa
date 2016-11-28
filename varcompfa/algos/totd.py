@@ -71,9 +71,6 @@ class TOTD(LearningAlgorithm):
         self.w += delta*self.z + alpha*(np.dot(self.w_old, x) - np.dot(self.w, x))*x
         return delta
 
-    def update(self, x, r, xp, alpha, gm, gm_p, lm):
-        return self.learn(*args, **kwargs)
-
     def reset(self):
         """Reset weights, traces, and other parameters."""
         self.w      = np.zeros(self.n)
