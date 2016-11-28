@@ -6,8 +6,9 @@ from . import envs
 from . import misc
 from .algos import DiscreteQ, TD, TabularQ
 from .features import BiasUnit, BinaryVector, UniformTiling, Union
-from .policies import DiscreteGreedy, DiscreteSoftmax, DiscreteRandomAgent
+from .policies import DiscreteGreedy, DiscreteSoftmax, DiscreteRandomControl
 from .misc import serialize_features
+
 
 
 # TODO: Check that `__all__` really includes everything we wish to import

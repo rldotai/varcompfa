@@ -18,7 +18,7 @@ class BiasUnit(Feature):
     def __len__(self):
         return 1
 
-    @property 
+    @property
     def params(self):
         return {
             "name" : self.NAME,
@@ -40,9 +40,13 @@ class Union(Feature):
     def __len__(self):
         return self._length
 
-    @property 
+    @property
     def params(self):
         return {
             "name" : self.NAME,
             "children": [child for child in self.children],
         }
+
+class Identity(Feature):
+    # TODO: Implement this or rework the whole thing
+    pass

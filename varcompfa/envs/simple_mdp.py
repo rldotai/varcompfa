@@ -1,7 +1,7 @@
 """
 A simple Markov Decision Process environment.
 """
-import numpy as np 
+import numpy as np
 import gym
 from gym import spaces
 

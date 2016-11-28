@@ -19,7 +19,7 @@ install:
 	pip install -r requirements.txt
 
 test:
-	py.test 
+	py.test
 	
 # Convert Jupyter Notebooks to HTML
 notebooks:

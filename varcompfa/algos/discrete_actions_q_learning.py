@@ -2,12 +2,13 @@
 Q-Learning using LFA with discrete actions.
 """
 import numpy as np
+from .algo_base import LearningAlgorithm
 
 
-class DiscreteQ:
+class DiscreteQ(LearningAlgorithm):
     """Q-Learning with linear function approximation.
 
-    Actions are assumed to be discrete, while states are represented via a 
+    Actions are assumed to be discrete, while states are represented via a
     feature vector. That is, `Q(s,a) = [〈w, x〉]_a`
     Exploration occurs via an ε-greedy policy.
     """
@@ -34,7 +35,7 @@ class DiscreteQ:
             action = np.argmax(np.dot(self.w, x))
         return action
 
-    def learn(self, x, a, r, xp, α, γ, λ):
+    def learn(self, x, a, r, xp, alpha, gm, lm):
         """Update value function approximation from new experience.
 
         Parameters
@@ -43,30 +44,30 @@ class DiscreteQ:
         a  : int
         r  : float
         xp : Vector[float]
-        α  : float
-        γ  : float 
-        λ  : float 
+        alpha  : float
+        gm  : float
+        lm  : float
         """
         v = np.dot(self.w[a], x)
         vp = np.max(np.dot(self.w, xp))
 
         # Compute TD-error
-        δ = r + γ*vp - v
+        δ = r + gm*vp - v
 
-        # Update eligibility trace 
-        self.z *= γ*λ
+        # Update eligibility trace
+        self.z *= gm*lm
         self.z[a] += x
 
         # Update Q-values
-        self.w += α * δ * self.z
+        self.w += alpha * δ * self.z
 
         # Return the TD-error, for lack of something more informative
         return δ
 
     def get_value(self, x, a=None):
-        """Get the value for a given state and action, or if action is left unspecified, just the 
+        """Get the value for a given state and action, or if action is left unspecified, just the
         value for the best action in the given state.
-        
+
         Parameters
         ----------
         x  : Vector(float)

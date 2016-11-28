@@ -1,10 +1,11 @@
 """
 Least-squares temporal difference learning, also known as LSTD(λ).
 """
-import numpy as np 
+import numpy as np
+from .algo_base import LearningAlgorithm
 
 
-class LSTD:
+class LSTD(LearningAlgorithm):
     """Least-squares temporal difference learning.
 
     Attributes
@@ -32,7 +33,7 @@ class LSTD:
         """
         self.n = n
         self.reset(epsilon)
-    
+
     def reset(self, epsilon=0):
         """Reset weights, traces, and other parameters."""
         self.z = np.zeros(self.n)
@@ -46,10 +47,6 @@ class LSTD:
         return _theta
 
     def learn(self, x, r, xp, alpha, gm, gm_p, lm):
-        """Alias of `update`."""
-        self.update(x, r, xp, alpha, gm, gm_p, lm)
-
-    def update(self, x, reward, xp, gm, gm_p, lm):
         """Update from new experience, i.e. from a transition `(x,r,xp)`.
 
         Parameters
@@ -67,6 +64,13 @@ class LSTD:
         lm : float
             Lambda, abbreviated `lm`, is the bootstrapping parameter for the
             current timestep.
+        """
+        self.z = (gm * lm * self.z + x)
+        self.A += np.outer(self.z, (x - gm_p*xp))
+        self.b += self.z * reward
+
+    def update(self, params):
+        """
         """
         self.z = (gm * lm * self.z + x)
         self.A += np.outer(self.z, (x - gm_p*xp))

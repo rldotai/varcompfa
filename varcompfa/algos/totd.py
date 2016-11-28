@@ -3,13 +3,14 @@ True-online TD(λ), sometimes known as temporal difference learning with 'Dutch 
 
 ---
 
-0 : [van Seijen, Harm, and Richard S. Sutton. "True Online TD (lambda)." 
+0 : [van Seijen, Harm, and Richard S. Sutton. "True Online TD (lambda)."
 ICML. Vol. 14. 2014.](http://www.jmlr.org/proceedings/papers/v32/seijen14.pdf)
 """
+from .algo_base import LearningAlgorithm
 
 
 # TODO: TEST THIS CODE
-class TOTD:
+class TOTD(LearningAlgorithm):
     """True-online temporal difference learning with linear function approximation."""
     def __init__(self, n):
         """Initialize the learning algorithm.
@@ -18,7 +19,7 @@ class TOTD:
         -----------
         n : int
             The number of features, i.e. expected length of the feature vector.
-        
+
         Attributes
         ----------
         w : Vector(float)
@@ -38,10 +39,6 @@ class TOTD:
         return np.dot(self.w, x)
 
     def learn(self, x, r, xp, alpha, gm, gm_p, lm):
-        """Alias of `update`."""
-        return self.update(x, r, xp, alpha, gm, gm_p, lm)
-
-    def update(self, x, r, xp, alpha, gm, gm_p, lm):
         """Update from new experience, i.e. from a transition `(x,r,xp)`.
 
 
@@ -73,6 +70,9 @@ class TOTD:
         self.z = gm*lm*self.z + alpha*x - alpha*gm*lm*np.dot(self.z, x)*x
         self.w += delta*self.z + alpha*(np.dot(self.w_old, x) - np.dot(self.w, x))*x
         return delta
+
+    def update(self, x, r, xp, alpha, gm, gm_p, lm):
+        return self.learn(*args, **kwargs)
 
     def reset(self):
         """Reset weights, traces, and other parameters."""

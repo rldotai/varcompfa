@@ -4,15 +4,15 @@ Random agents, useful for various sanity checks.
 import numpy as np
 
 
-class DiscreteRandomAgent:
+class DiscreteRandomControl:
     """An agent that chooses randomly from (discrete) actions."""
     def __init__(self, num_actions):
         """
         Initialize the random agent.
-        
+
         Parameters
         ----------
-        num_actions : int 
+        num_actions : int
             The number of actions available in each state.
         """
         self.num_actions = num_actions
@@ -22,8 +22,8 @@ class DiscreteRandomAgent:
         return np.random.randint(self.num_actions)
 
 
-class ContinuousRandomAgent:
-    """An agent that chooses randomly from the (uniform) distribution of the 
+class ContinuousRandomControl:
+    """An agent that chooses randomly from the (uniform) distribution of the
     space enclosed by `bounds`.
 
     NB: UNTESTED.
