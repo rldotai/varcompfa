@@ -16,7 +16,6 @@ class LearningAlgorithmMeta(type, metaclass=abc.ABCMeta):
             # More complicated setup might be required if we start incorporating
             # keyword parameters or ones that are optional
 
-        print(name) # TODO: Remove
         return super(LearningAlgorithmMeta, meta).__new__(meta, name, parents, attrs)
 
     @abc.abstractmethod
@@ -48,9 +47,13 @@ class LearningAlgorithmMeta(type, metaclass=abc.ABCMeta):
 class LearningAlgorithm(metaclass=LearningAlgorithmMeta):
     """Learning algorithm base class."""
     def update(self, context):
-        """Update from new experience, using the supplied parameters which are
-        then fed to `learn` according to `_learn_params`, which is determined
-        at class creation.
+        """Update from new experience.
+        Uses the supplied parameters from `context` which are then fed to the
+        agent's `learn` function according to `_learn_params`.
+
+        Via some metaclass programming, we determine the signature of `learn`
+        at class creation, and define `_learn_params` accordingly.
+
 
         Parameters
         ----------
