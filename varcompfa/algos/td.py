@@ -59,24 +59,46 @@ class TD(LearningAlgorithm):
 
     Attributes
     ----------
-    n : int
+    num_features : int
         The number of features (and therefore the length of the weight vector).
     z : Vector[float]
         The eligibility trace vector.
     w : Vector[float]
         The weight vector.
     """
-    def __init__(self, n):
+    def __init__(self, num_features):
         """Initialize the learning algorithm.
 
         Parameters
         -----------
-        n : int
+        num_features : int
             The number of features, i.e. expected length of the feature vector.
         """
-        self.n = n
-        self.w = np.zeros(self.n)
-        self.z = np.zeros(self.n)
+        self.num_features = num_features
+        self.w = np.zeros(self.num_features)
+        self.z = np.zeros(self.num_features)
+
+    def get_config(self):
+        """Return the parameters needed to specify the algorithm's state."""
+        ret = {
+            'num_features' : self.num_features,
+            'weights' : self.w.copy(),
+            'traces': self.z.copy(),
+        }
+        return ret
+
+    @classmethod
+    def from_config(cls, config):
+        """Initialize from a configuration dictionary."""
+        num_features = config['num_features']
+        weights = np.ravel(config['weights'])
+        traces = np.ravel(config['traces'])
+        obj = cls(num_features)
+        if num_features != len(weights) or num_features != len(traces):
+            raise Exception("Invalid configuration, mismatched array lengths")
+        obj.w = weights
+        obj.z = traces
+        return obj
 
     def get_value(self, x):
         """Get the approximate value for feature vector `x`."""
@@ -115,8 +137,8 @@ class TD(LearningAlgorithm):
 
     def reset(self):
         """Reset weights, traces, and other parameters."""
-        self.w = np.zeros(self.n)
-        self.z = np.zeros(self.n)
+        self.w = np.zeros(self.num_features)
+        self.z = np.zeros(self.num_features)
 
     def save_weights(self, fname):
         """Save the weights to a file."""

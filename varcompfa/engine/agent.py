@@ -3,15 +3,51 @@ Implementation of agent wrapper classes
 """
 import numpy as np
 
+# TODO: Set up logging for the whole package
+import logging
+_logger = logging.getLogger()
+
 
 class Agent:
     """Agent class, for encapsulating a learning algorithm, its function
     approximator, and the possibly state-dependent parameters for updating it.
+
+
+    Parameters
+    ----------
+    algo : varcompfa.algos.LearningAgent
+        The learning algorithm that the Agent wraps.
+        It must have an `update` method capable of handling a dictionary
+        containing the information needed to perform updates.
+    phi : callable
+        A function that maps observations to features used by the learning algo.
+    params: dict
+        A dictionary of parameters, of the form `param_name: <value>`, where
+        `<value>` can be either a constant (e.g., a float) or a callable that
+        accepts a context.
+
+
+    Note
+    ----
+    We make use of contexts to make it possible to compute things without
+    knowing too much in advance about what we're computing.
+    Taken to extremes, this approach would devolve into making everything a
+    global variable, which is probably not a good idea.
+    However, since this codebase is oriented towards reinforcement learning,
+    we can restrict what the context exposes.
+
+    The baseline context is the state, action, reward, and next state.
+    From this, we can compute the features for the state and its successor,
+    and add those to the context.
+    If the parameters are functions (e.g., state-dependent), we compute those
+    as well and include them, passing them to the learning algorithm.
+    At this point, everything necessary for the learning algorithm to perform
+    an update should be available.
     """
-    def __init__(self, algo, phi, param_funcs=dict()):
+    def __init__(self, algo, phi, params=dict()):
         self.algo = algo
         self.phi = phi
-        self.param_funcs = param_funcs
+        self.params = params
 
     def update(self, context):
         """Update the learning agent from the current context (e.g., the
@@ -20,32 +56,18 @@ class Agent:
         # Compute features from context
         context['x'] = self.phi(context['obs'])
         context['xp'] = self.phi(context['obs_p'])
-        # Check if we clobber anything in `context` with param_funcs
-        _intersect = set(self.param_funcs).intersection(context)
+        # Check if we clobber anything in `context` with `params`
+        _intersect = set(self.params).intersection(context)
         if _intersect:
-            logger.warn("agent.update(): parameter name conflict: %s"%_intersect)
+            _logger.warn("agent.update(): parameter name conflict: %s"%_intersect)
 
         # Compute parameters given the current context
-        _params = {key: func(context) for key, func in self.param_funcs.items()}
+        _params = {key: val(context) if callable(val) else val
+                        for key, val in self.params.items()}
         _ctx = {**_params, **context}
         # print(_ctx) # TODO: REMOVE
         ret = self.algo.update(_ctx)
         return ret
-
-    def terminal_update(self, context):
-        """Perform update in the terminal state.
-
-        TODO: Unneeded? Maybe enforcing termination conditions can be done
-        separately.
-        """
-        context['x'] = self.phi(context['obs'])
-        context['xp'] = np.zeros_like(context['x'])
-        _params = {key: func(context) for key, func in self.param_funcs.items()}
-        _ctx = {**_params, **context}
-        # print(_ctx)
-        ret = self.algo.update(_ctx)
-        return ret
-
 
     def act(self, obs):
         """Select an action according to the current observation using the
@@ -64,11 +86,6 @@ class Agent:
         """Evaluate the parameter functions for the supplied context."""
         return {key: func(context) for key, func in self.param_funcs.items()}
 
-    def save(self):
+    def get_config(self):
+        # TODO: Finish this, or eliminate it if unnecessary
         pass
-
-    def load(self):
-        pass
-
-    def __str__(self):
-        return super().__str__()

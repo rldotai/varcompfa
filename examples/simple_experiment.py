@@ -1,14 +1,14 @@
 """
 A simple example of getting an agent to learn with an extremely easy MDP.
 """
-import numpy as np 
+import numpy as np
 import gym
 
 # Analysis
 import matplotlib.pyplot as plt
 from matplotlib import cm
-import pandas as pd 
-import scipy as sp 
+import pandas as pd
+import scipy as sp
 import scipy.linalg
 import itertools
 import toolz
@@ -22,7 +22,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 # The package itself
-import varcompfa as vcf 
+import varcompfa as vcf
 from varcompfa.misc.analysis import *
 
 
@@ -67,18 +67,19 @@ if __name__ == "__main__":
             gm   = gamma
             gm_p = gamma
             lm   = lmbda
-            delta = agent.learn(x, action, reward, xp, alpha, gm, lm)
+            delta = agent.learn(x, action, reward, xp, alpha, gm, gm_p, lm)
 
             # log information about the timestep
             history.append(dict(
                 obs=obs.copy(),
-                action=action, 
+                action=action,
                 reward=reward,
                 done=done,
                 x=x.copy(),
                 delta=delta,
                 alpha=alpha,
                 gm=gm,
+                gm_p=gm_p,
                 lm=lm,
             ))
 
@@ -94,18 +95,19 @@ if __name__ == "__main__":
                 reward  = 0
                 gm      = 0
                 lm      = 0
-                delta   = agent.learn(xp, action, reward, np.zeros_like(xp), alpha, gm, lm)
+                delta   = agent.learn(xp, action, reward, np.zeros_like(xp), alpha, gm, gm_p, lm)
 
                 # log information about the timestep
                 history.append(dict(
                     obs=obs_p.copy(),
-                    action=action, 
+                    action=action,
                     reward=reward,
                     done=done,
                     x=x.copy(),
                     delta=delta,
                     alpha=alpha,
                     gm=gm,
+                    gm_p=gm_p,
                     lm=lm,
                 ))
                 logger.info("Reached terminal state in %d steps"%(j+1))

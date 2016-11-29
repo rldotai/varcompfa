@@ -34,6 +34,7 @@ class TestTD:
 
 
     def test_update(self):
+        """Test that updating the algorithm works (or at least doesn't fail)."""
         for ns in range(1, 10):
             algo = vcf.algos.TD(ns)
             params = dict(
@@ -56,3 +57,36 @@ class TestTD:
             # Check that something happened
             assert(np.any(algo.w != w_0))
             assert(np.any(algo.z != z_0))
+
+    def test_get_params(self):
+        """Test that `get_params()` returns the correct information."""
+        ns = 10
+        algo = vcf.algos.TD(ns)
+        params = algo.get_config()
+        assert(isinstance(params, dict))
+        assert(isinstance(params['num_features'], int))
+        assert(isinstance(params['traces'], np.ndarray))
+        assert(isinstance(params['weights'], np.ndarray))
+        assert(params['num_features'] == ns)
+        assert(len(params['traces']) == ns)
+        assert(len(params['weights']) == ns)
+
+
+    def test_from_config(self):
+        """Test loading the algorithm from a config."""
+        ns = 10
+        algo_1 = vcf.algos.TD(ns)
+        cfg = algo_1.get_config()
+
+        # Try to load from config
+        algo_2 = vcf.algos.TD.from_config(cfg)
+
+        # Check that everything loaded correctly
+        params = algo_2.get_config()
+        assert(isinstance(params, dict))
+        assert(isinstance(params['num_features'], int))
+        assert(isinstance(params['traces'], np.ndarray))
+        assert(isinstance(params['weights'], np.ndarray))
+        assert(params['num_features'] == ns)
+        assert(len(params['traces']) == ns)
+        assert(len(params['weights']) == ns)

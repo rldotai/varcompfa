@@ -1,8 +1,9 @@
 """
 Tile coding implementations, for discretizing a continuous space.
 """
-import numpy as np 
-from .base import Feature
+import numpy as np
+from .feature_base import Feature
+from .generic_features import Identity
 
 
 class UniformTiling(Feature):
@@ -13,7 +14,7 @@ class UniformTiling(Feature):
     where that point would lie.
     """
     NAME = "UniformTiling"
-    def __init__(self, space, num_tiles, child=None):
+    def __init__(self, space, num_tiles, child=Identity()):
         """
         Parameters
         ----------
@@ -45,6 +46,13 @@ class UniformTiling(Feature):
         # maximum value of feature vector
         self._max = np.prod(self.num_tiles)
 
+    def get_config(self):
+        pass
+
+    @classmethod
+    def from_config(cls, config):
+        pass
+
     def __call__(self, obs):
         """Compute the coordinates of the tile for the supplied observation."""
         if self.child:
@@ -53,7 +61,7 @@ class UniformTiling(Feature):
         # essentially it is the same as the below code, but vectorized (for broadcasting)
         # [int(i//j) for i, j in zip(self.num_tiles*(obs-self._low), self.intervals)]
         coords = np.floor_divide((self.num_tiles-1)*(obs-self._low), self.intervals).astype(int)
-        
+
         # get the tile's index as a flat vector
         index = np.ravel_multi_index(coords.T, self.num_tiles)
         return index
@@ -66,7 +74,7 @@ class UniformTiling(Feature):
     def low(self):
         return 0
 
-    @property 
+    @property
     def params(self):
         """The parameters necessary to fully specify the feature."""
         return {
@@ -81,11 +89,11 @@ class UniformTiling(Feature):
         return 1
 
 
-class LayeredTiling:
-    """Tile coding with multiple layers. Currently unimplemented."""
-    pass
+# class LayeredTiling:
+#     """Tile coding with multiple layers. Currently unimplemented."""
+#     pass
 
 
-class HashedTiling:
-    """Tile coding with multiple layers and hashing. Currently unimplemented."""
-    pass
+# class HashedTiling:
+#     """Tile coding with multiple layers and hashing. Currently unimplemented."""
+#     pass

@@ -34,6 +34,15 @@ class LSTD(LearningAlgorithm):
         self.n = n
         self.reset(epsilon)
 
+    def get_config(self):
+        """Return the parameters needed to specify the algorithm's state."""
+        # ret = {
+        #     'num_features' : self.num_features,
+        #     'weights' : self.w.copy(),
+        #     'traces': self.z.copy(),
+        # }
+        return ret
+
     def reset(self, epsilon=0):
         """Reset weights, traces, and other parameters."""
         self.z = np.zeros(self.n)

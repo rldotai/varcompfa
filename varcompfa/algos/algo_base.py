@@ -1,6 +1,7 @@
 """Base class for learning algorithms."""
 import abc
 import inspect
+from varcompfa.utils import get_class_string, load_class
 
 
 class LearningAlgorithmMeta(type, metaclass=abc.ABCMeta):
@@ -43,6 +44,18 @@ class LearningAlgorithmMeta(type, metaclass=abc.ABCMeta):
     def reset(self):
         pass
 
+    @abc.abstractmethod
+    def get_config(self):
+        """Get the configuration for the algorithm, i.e., all information that
+        would be needed to instantiate it, as a `dict`.
+        """
+        pass
+
+    @abc.abstractclassmethod
+    def from_config(cls, config):
+        """Load the algorithm from a configuration stored in a dict."""
+        pass
+
 
 class LearningAlgorithm(metaclass=LearningAlgorithmMeta):
     """Learning algorithm base class."""
@@ -59,7 +72,44 @@ class LearningAlgorithm(metaclass=LearningAlgorithmMeta):
         ----------
         context: dict
             A dictionary containing all information needed by `self.learn`.
+
+
+        Returns
+        -------
+        update_information: dict
+            A dict containing the keys 'args' and 'result', with 'args' being
+            the arguments passed to `self.learn()`, and 'result' containing the
+            value returned by `self.learn()`.
         """
         # Extract parameters to feed to `self.learn` from `params`
         args = [context[key] for key in self._learn_params]
-        return {**context, 'result': self.learn(*args)}
+        return {'args': args, 'result': self.learn(*args)}
+
+    def to_dict(self):
+        """Get the algorithm's class string and its configuration, which
+        should provide all the information necessary to preserve/instantiate it.
+        """
+        cfg = {
+            'class_name': get_class_string(self),
+            'config': self.get_config()
+        }
+        return cfg
+
+    @staticmethod
+    def from_dict(dct):
+        """Load an algorithm from a `dict` of the form returned by `to_dict`"""
+        class_name = dct['class_name']
+        config = dct['config']
+        cls = load_class(class_name)
+        return cls.from_config(config)
+
+
+def load_algorithm(class_name, config):
+    """Load an algorithm from a configuration.
+
+    The configuration should be of the sort returned by an algorithm's
+    `get_config` method, which is defined generically by the parent class
+    `LearningAlgorithm`.
+    """
+    cls = load_class(class_name)
+    return cls.from_config(config)

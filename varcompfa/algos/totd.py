@@ -22,17 +22,26 @@ class TOTD(LearningAlgorithm):
 
         Attributes
         ----------
-        w : Vector(float)
+        w : Vector[float]
             The current weight vector.
-        w_old : Vector(float)
+        w_old : Vector[float]
             The previous time-step's weight vector.
-        z : Vector(float)
+        z : Vector[float]
             The array of the eligibility traces.
         """
         self.n      = n
         self.w      = np.zeros(self.n)
         self.w_old  = np.zeros(self.n)
         self.z      = np.zeros(self.n)
+
+    def get_config(self):
+        """Return the parameters needed to specify the algorithm's state."""
+        # ret = {
+        #     'num_features' : self.num_features,
+        #     'weights' : self.w.copy(),
+        #     'traces': self.z.copy(),
+        # }
+        return ret
 
     def get_value(self, x):
         """Get the approximate value for feature vector `x`."""

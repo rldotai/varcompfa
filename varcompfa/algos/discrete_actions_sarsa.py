@@ -21,6 +21,15 @@ class DiscreteSARSA(LearningAlgorithm):
         # Eligibility traces
         self.z  = np.zeros((self.num_actions, self.num_features))
 
+    def get_config(self):
+        """Return the parameters needed to specify the algorithm's state."""
+        # ret = {
+        #     'num_features' : self.num_features,
+        #     'weights' : self.w.copy(),
+        #     'traces': self.z.copy(),
+        # }
+        return ret
+
     def act(self, x):
         """Select an action following the ε-greedy policy.
 

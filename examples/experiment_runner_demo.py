@@ -1,7 +1,9 @@
 import datetime
+import json
 import os
 import time
 import numpy as np
+from pprint import pprint
 
 import varcompfa as vcf
 
@@ -12,40 +14,34 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
-class Constant:
-    """A constant parameter, which has the option to return a different value
-    if the terminal state has been reached.
-    """
-    def __init__(self, value, terminal_value=None):
-        if terminal_value is None:
-            terminal_value = value
-        self.value = value
-        self.terminal_value = terminal_value
-
-    def __call__(self, context):
-        if context['done']:
-            return self.terminal_value
-        return self.value
-
 
 class ExampleCallback(vcf.callbacks.Callback):
-    def on_train_begin(self):
+    """An example callback that pretty-prints all information it has access to
+    at each point when it gets called.
+    """
+    def on_experiment_begin(self, info=dict()):
         print("Started training")
+        pprint(info)
 
-    def on_train_end(self):
+    def on_experiment_end(self, info=dict()):
         print("End of training")
+        pprint(info)
 
-    def on_episode_begin(self, episode_ix):
+    def on_episode_begin(self, episode_ix, info=dict()):
         print("Started episode: %d"%episode_ix)
+        pprint(info)
 
-    def on_episode_end(self, episode_ix):
+    def on_episode_end(self, episode_ix, info=dict()):
         print("End of episode: %d"%episode_ix)
+        pprint(info)
 
-    def on_step_begin(self, step_ix):
+    def on_step_begin(self, step_ix, info=dict()):
         print("Begin step: %d"%step_ix)
+        pprint(info)
 
-    def on_step_end(self, step_ix):
+    def on_step_end(self, step_ix, info=dict()):
         print("End step: %d"%step_ix)
+        pprint(info)
 
 
 
@@ -70,16 +66,16 @@ if __name__ == "__main__":
     # Define some other agents that simply learn the value function
     phi1 = vcf.BinaryVector(ns)
     td_params = {
-        'alpha' : Constant(0.01),
-        'gm'    : Constant(0.999, 0),
-        'gm_p'  : Constant(0.999, 0),
-        'lm'    : Constant(0.01, 0),
+        'alpha' : vcf.Constant(0.01),
+        'gm'    : vcf.Constant(0.999, 0),
+        'gm_p'  : vcf.Constant(0.999, 0),
+        'lm'    : vcf.Constant(0.01, 0),
     }
     td_agent1 = vcf.Agent(vcf.TD(len(phi1)), phi1, td_params)
 
     phi2 = vcf.BiasUnit()
     td_params2 = {
-        'alpha' : Constant(0.01),
+        'alpha' : 0.01,
         'gm'    : Constant(0.999, 0),
         'gm_p'  : Constant(0.999, 0),
         'lm'    : Constant(0.01, 0),

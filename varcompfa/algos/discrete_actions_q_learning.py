@@ -22,6 +22,32 @@ class DiscreteQ(LearningAlgorithm):
         # Eligibility traces
         self.z  = np.zeros((self.num_actions, self.num_features))
 
+    def get_config(self):
+        ret = {
+            'num_features': self.num_features,
+            'num_actions' : self.num_actions,
+            'epsilon' : self.epsilon,
+            'weights' : self.w.copy(),
+            'traces' : self.z.copy(),
+        }
+        return ret
+
+    @classmethod
+    def from_config(cls, config):
+        num_features = config['num_features']
+        num_actions = config['num_actions']
+        epsilon = config['epsilon']
+        weights = np.array(config['weights'])
+        traces = np.array(config['traces'])
+        obj = cls(num_features, num_actions, epsilon)
+
+        # Do some checks to avoid loading obviously wrong configurations
+        if (weights.shape != traces.shape):
+            raise Exception("Shape of `weights` and `traces` incompatible.")
+        obj.w = weights.copy()
+        obj.z = traces.copy()
+        return obj
+
     def act(self, x):
         """Select an action following the ε-greedy policy.
 
@@ -35,7 +61,7 @@ class DiscreteQ(LearningAlgorithm):
             action = np.argmax(np.dot(self.w, x))
         return action
 
-    def learn(self, x, a, r, xp, alpha, gm, lm):
+    def learn(self, x, a, r, xp, alpha, gm, gm_p, lm):
         """Update value function approximation from new experience.
 
         Parameters
@@ -46,13 +72,14 @@ class DiscreteQ(LearningAlgorithm):
         xp : Vector[float]
         alpha  : float
         gm  : float
+        gm_p : float
         lm  : float
         """
         v = np.dot(self.w[a], x)
         vp = np.max(np.dot(self.w, xp))
 
         # Compute TD-error
-        δ = r + gm*vp - v
+        δ = r + gm_p*vp - v
 
         # Update eligibility trace
         self.z *= gm*lm
