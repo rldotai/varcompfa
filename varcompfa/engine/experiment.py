@@ -64,11 +64,16 @@ class PolicyEvaluation:
             A list of callbacks, objects that may perform actions at certain
             phases of the experiment's execution. (See `varcompfa.callbacks`)
         """
-        # Start of experiment callbacks
-        run_begin_info = {
+        # Information that should be available to all callbacks
+        basic_info = {
             'environment': self.env,
             'policy': self.policy,
             'agents': self.agents,
+        }
+
+        # Start of experiment callbacks
+        run_begin_info = {
+            **basic_info,
             'num_episodes': num_episodes,
             'max_steps': max_steps,
         }
@@ -78,17 +83,16 @@ class PolicyEvaluation:
         # Run for `num_episodes`
         for episode_ix in range(num_episodes):
             # Start of episode callbacks
-            episode_begin_info = {}
+            episode_begin_info = {**basic_info}
             for cbk in callbacks:
                 cbk.on_episode_begin(episode_ix, episode_begin_info)
 
-            # Reset the environment
+            # Reset the environment, get initial observation
             obs = self.env.reset()
-
             # Run for at most `max_steps` iterations
             for step_ix in range(max_steps):
                 # Perform callbacks for beginning of step
-                step_begin_info = {}
+                step_begin_info = {**basic_info}
                 for cbk in callbacks:
                     cbk.on_step_begin(step_ix)
 
@@ -114,6 +118,7 @@ class PolicyEvaluation:
 
                 # Perform callbacks for end of step
                 step_end_info = {
+                    **basic_info,
                     'context': ctx,
                     'update_results': update_results,
                 }
@@ -129,11 +134,11 @@ class PolicyEvaluation:
                 pass
             # End of episode, either due to terminating or running out of steps
             # Perform end of episode callbacks
-            episode_end_info = {}
+            episode_end_info = {**basic_info}
             for cbk in callbacks:
                 cbk.on_episode_end(episode_ix)
 
         # Perform end of experiment callbacks
-        experiment_end_info = {}
+        experiment_end_info = {**basic_info}
         for cbk in callbacks:
             cbk.on_experiment_end()

@@ -18,6 +18,8 @@ logger.setLevel(logging.DEBUG)
 class ExampleCallback(vcf.callbacks.Callback):
     """An example callback that pretty-prints all information it has access to
     at each point when it gets called.
+
+    It will likely print a lot.
     """
     def on_experiment_begin(self, info=dict()):
         print("Started training")
@@ -53,10 +55,10 @@ if __name__ == "__main__":
     na = env.action_space.n
 
     q_params = {
-        'alpha' : Constant(0.01),
-        'gm'    : Constant(0.999, 0),
-        'gm_p'  : Constant(0.999, 0),
-        'lm'    : Constant(0.01, 0),
+        'alpha' : vcf.Constant(0.01),
+        'gm'    : vcf.Constant(0.999, 0),
+        'gm_p'  : vcf.Constant(0.999, 0),
+        'lm'    : vcf.Constant(0.01, 0),
     }
     q_phi = vcf.BinaryVector(ns)
     q_algo = vcf.DiscreteQ(len(q_phi), na, epsilon=0.05)
@@ -76,9 +78,9 @@ if __name__ == "__main__":
     phi2 = vcf.BiasUnit()
     td_params2 = {
         'alpha' : 0.01,
-        'gm'    : Constant(0.999, 0),
-        'gm_p'  : Constant(0.999, 0),
-        'lm'    : Constant(0.01, 0),
+        'gm'    : 0.9,
+        'gm_p'  : 0.9,
+        'lm'    : 0.9,
     }
     td_agent2 = vcf.Agent(vcf.TD(len(phi2)), phi2, td_params2)
 
