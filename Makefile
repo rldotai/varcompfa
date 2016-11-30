@@ -1,4 +1,5 @@
 .PHONY: all install test notebooks
+.PHONY: bump-patch-version bump-minor-version bump-major-version
 
 # Support for Conda Environments
 
@@ -20,7 +21,7 @@ install:
 
 test:
 	py.test
-	
+
 # Convert Jupyter Notebooks to HTML
 notebooks:
 	export PATH='$(CONDA_BIN_DIR):$(CONDA_HOME):$$PATH'
@@ -28,5 +29,20 @@ notebooks:
 	@echo $$PATH
 	source activate $(ENV_NAME)
 	python --version
-	
+
 	$(ENV_BIN_DIR)/jupyter nbconvert --execute --ExecutePreprocessor.kernel_name=python --to=html --FilesWriter.build_directory=./notebooks ./notebooks/*.ipynb
+
+# Update the patch version
+bump-patch-version:
+	export PATH='$(CONDA_BIN_DIR):$(CONDA_HOME):$$PATH'
+	bumpversion patch
+
+# Update the minor version
+bump-minor-version:
+	export PATH='$(CONDA_BIN_DIR):$(CONDA_HOME):$$PATH'
+	bumpversion minor
+
+# Update major version
+bump-major-version:
+	export PATH='$(CONDA_BIN_DIR):$(CONDA_HOME):$$PATH'
+	bumpversion patch
