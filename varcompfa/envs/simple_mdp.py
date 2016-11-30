@@ -28,7 +28,8 @@ class SimpleMDP(gym.Env):
         return self.state
 
     def _transition(self, s, a):
-        return s + 1 if s not in self._terminals else s
+        sp = s + 1 if s not in self._terminals else s
+        return np.array(sp)
 
     def _reward(self, s, a, sp):
         if s in self._terminals:

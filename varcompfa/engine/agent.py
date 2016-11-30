@@ -66,15 +66,28 @@ class Agent:
                         for key, val in self.params.items()}
         _ctx = {**_params, **context}
         # print(_ctx) # TODO: REMOVE
-        ret = self.algo.update(_ctx)
-        return ret
+        res = self.algo.update(_ctx)
+        _ctx['result'] = res
+        return _ctx
 
     def act(self, obs):
         """Select an action according to the current observation using the
         learning algorithm (`self.algo`).
+
+        Parameters
+        ----------
+        obs : numpy.ndarray
+            The observation that the agent uses to determine the action to take.
+
+        Returns
+        -------
+        action: numpy.ndarray
+            The action selected by the algorithm given the features `phi(x)`.
+            (It is an array because `json_tricks` does not presently handle
+            serializing non-array instances of numpy datatypes.
         """
         x = self.phi(obs)
-        return self.algo.act(x)
+        return np.array(self.algo.act(x))
 
     def get_value(self, obs):
         """Get the value assigned to the current observation by the learning

@@ -33,6 +33,38 @@ I am further persuaded of making everything serializable in some sense, so the e
 This may be excessive, however-- preserving the full state of everything may require too much space/computation, and may entail restrictive/excessive coding on the backend for everything we want to serialize.
 I think therefore it might be better to start with a minimal amount of information and only store more if we find it necessary.
 
+## Experiment Data
+
+There are some things that we can hope/expect to have access to, in general, for any experiment we wish to run.
+There are other things that we will only have access to at particular times.
+I am listing them below to help clarify what we expect to be able to compute or receive from the experiment-running code.
+
+- Generally available
+    - environment used for experiment
+    - control/policy
+    - learning agents
+- Experiment start
+    - current version
+    - date/time when experiment was ran
+    - type of experiment?
+- Episode start
+    + episode number
+- Episode end
+    + episode number
+- Start-of-step:
+    + step number
+- End-of-step
+    + step number
+    + context
+        * obs
+        * obs_p
+        * action
+        * reward
+        * done
+    + update_info -- a list
+        * agent's context
+        * update result
+
 # Agents
 
 Learning agents are a useful abstraction to keep multiple variations of a common algorithm distinct.

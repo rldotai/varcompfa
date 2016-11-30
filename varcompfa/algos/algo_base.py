@@ -76,14 +76,12 @@ class LearningAlgorithm(metaclass=LearningAlgorithmMeta):
 
         Returns
         -------
-        update_information: dict
-            A dict containing the keys 'args' and 'result', with 'args' being
-            the arguments passed to `self.learn()`, and 'result' containing the
-            value returned by `self.learn()`.
+        update_result:
+            The value returned by the algorithm's `learn()` method.
         """
         # Extract parameters to feed to `self.learn` from `params`
         args = [context[key] for key in self._learn_params]
-        return {'args': args, 'result': self.learn(*args)}
+        return self.learn(*args)
 
     def to_dict(self):
         """Get the algorithm's class string and its configuration, which

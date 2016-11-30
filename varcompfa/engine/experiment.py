@@ -29,7 +29,7 @@ def _make_experiment_dir(basedir=None, target=None):
 
 class PolicyEvaluation:
     """Policy evaluation experiment class."""
-    def __init__(self, env, policy, agents=list()):
+    def __init__(self, environment, policy, agents=list()):
         """Create an experiment
 
         Parameters
@@ -42,7 +42,7 @@ class PolicyEvaluation:
         agents: list
             A list of agents to update at each timestep
         """
-        self.env = env
+        self.env = environment
         self.policy = policy
         self.agents = agents
 
@@ -63,6 +63,26 @@ class PolicyEvaluation:
         callbacks: list
             A list of callbacks, objects that may perform actions at certain
             phases of the experiment's execution. (See `varcompfa.callbacks`)
+
+
+        Callback Details
+        ----------------
+        A single callback object can have different methods which get called at
+        different phases of the run's execution.
+
+
+        - `on_experiment_begin()`
+            + Called once per-run, at the start of the experiment.
+        - `on_experiment_end()`
+            + Called once per-run, at the end of the experiment.
+        - `on_episode_begin()`
+            + Called once-per episode, prior to the start of the episode.
+        - `on_experiment_end()`
+            + Called once-per episode, at the end of the episode.
+        - `on_step_begin()`
+            + Called before executing every step of every episode
+        - `on_step_end()`
+            + Called at the end of every step of every episode
         """
         # Information that should be available to all callbacks
         basic_info = {
@@ -94,7 +114,7 @@ class PolicyEvaluation:
                 # Perform callbacks for beginning of step
                 step_begin_info = {**basic_info}
                 for cbk in callbacks:
-                    cbk.on_step_begin(step_ix)
+                    cbk.on_step_begin(step_ix, step_begin_info)
 
                 action = self.policy.act(obs)
                 obs_p, reward, done, info = self.env.step(action)
@@ -136,9 +156,9 @@ class PolicyEvaluation:
             # Perform end of episode callbacks
             episode_end_info = {**basic_info}
             for cbk in callbacks:
-                cbk.on_episode_end(episode_ix)
+                cbk.on_episode_end(episode_ix, episode_end_info)
 
         # Perform end of experiment callbacks
         experiment_end_info = {**basic_info}
         for cbk in callbacks:
-            cbk.on_experiment_end()
+            cbk.on_experiment_end(experiment_end_info)

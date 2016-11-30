@@ -55,8 +55,6 @@ class UniformTiling(Feature):
 
     def __call__(self, obs):
         """Compute the coordinates of the tile for the supplied observation."""
-        if self.child:
-            obs = self.child(obs)
         # get the coordinates of the tile
         # essentially it is the same as the below code, but vectorized (for broadcasting)
         # [int(i//j) for i, j in zip(self.num_tiles*(obs-self._low), self.intervals)]
