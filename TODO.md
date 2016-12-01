@@ -53,3 +53,5 @@ Once it works we will have one single class to test, and so if we do end up defi
 - [ ] Profile the code
 - [ ] Add more test coverage to the overall code base
 - [ ] Uniform hashing tile coding
+- [ ] Progress bar
+- [ ] Live dashboard

@@ -53,9 +53,6 @@ class Agent:
         """Update the learning agent from the current context (e.g., the
         information available at the timestep).
         """
-        # Compute features from context
-        context['x'] = self.phi(context['obs'])
-        context['xp'] = self.phi(context['obs_p'])
         # Check if we clobber anything in `context` with `params`
         _intersect = set(self.params).intersection(context)
         if _intersect:
@@ -64,11 +61,16 @@ class Agent:
         # Compute parameters given the current context
         _params = {key: val(context) if callable(val) else val
                         for key, val in self.params.items()}
-        _ctx = {**_params, **context}
+        ctx = {
+            'x': self.phi(context['obs']),
+            'xp': self.phi(context['obs_p']),
+            **_params,
+            **context
+        }
         # print(_ctx) # TODO: REMOVE
-        res = self.algo.update(_ctx)
-        _ctx['result'] = res
-        return _ctx
+        res = self.algo.update(ctx)
+        ctx['result'] = res
+        return ctx
 
     def act(self, obs):
         """Select an action according to the current observation using the

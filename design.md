@@ -33,6 +33,8 @@ I am further persuaded of making everything serializable in some sense, so the e
 This may be excessive, however-- preserving the full state of everything may require too much space/computation, and may entail restrictive/excessive coding on the backend for everything we want to serialize.
 I think therefore it might be better to start with a minimal amount of information and only store more if we find it necessary.
 
+This should not pose a problem if all the necessary data can be re-computed
+
 ## Experiment Data
 
 There are some things that we can hope/expect to have access to, in general, for any experiment we wish to run.
