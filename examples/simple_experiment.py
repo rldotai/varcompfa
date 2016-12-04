@@ -28,8 +28,8 @@ from varcompfa.misc.analysis import *
 
 if __name__ == "__main__":
     # Specify experiment
-    num_episodes = 1000
-    max_steps = 3000
+    num_episodes = 5000
+    max_steps = 2000
 
     # Set up the experiment
     env = gym.make('SimpleMDP-v0')

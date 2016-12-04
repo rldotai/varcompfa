@@ -97,10 +97,11 @@ class Agent:
         """
         return self.algo.get_value(self.phi(obs))
 
-    def get_params(self, context):
+    def eval_params(self, context):
         """Evaluate the parameter functions for the supplied context."""
         return {key: func(context) for key, func in self.param_funcs.items()}
 
     def get_config(self):
         # TODO: Finish this, or eliminate it if unnecessary
-        pass
+        raise NotImplementedError()
+

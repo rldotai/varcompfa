@@ -2,6 +2,16 @@ A list of work that needs to be done on the `varcompfa` package.
 
 # High Priority
 
+- [ ] Finish adding a `get_config()` method to all classes
+    + Agents
+    + Features
+    + Environments(?)
+    + Experiments 
+- [ ] Check serialization via `json_tricks`
+- [ ] Figure out a way of making the agent class more efficient
+    + Currently it computes the feature vector too many times
+    + Caching the result somehow would definitely help (but `joblib` doesn't do this properly/efficiently)
+- [ ] State-dependent action-probabilities for control algorithms
 - [ ] Binary vector tiling class
 - [ ] A full example of the experiment pipeline
     + Define a learning agent, have it learn a policy, then freeze the policy
@@ -11,7 +21,7 @@ A list of work that needs to be done on the `varcompfa` package.
     + Make plots illustrating the results 
 - [ ] Plotting functions
     + Need some boilerplate code that can produce graphs for publication
-- [ ] Faster way of recording the results (`json_tricks` feels the strain) 
+- [ ] Faster way of recording the results (`json_tricks` feels the strain, `json` doesn't quite work, `pickle` is not ideal either) 
     + It seems faster when you use compression, however
     + However, even with compression we tend to see very large files...
 - [ ] More efficient way of recording experiments
@@ -25,11 +35,8 @@ A list of work that needs to be done on the `varcompfa` package.
 - [ ] Figure out a way to tag experiments/add more metadata to them so that their purpose is clear weeks/months afterwards.
     + Currently using git-hash + versioning + timestamp
     + Consider adding the ability to add comments/tags to experiments
-- [ ] Determine if it would be worthwhile to implement 'cascading' algorithms that can run online in an experiment class
-    + It is manifestly *desirable* past a certain point, but it would be require a different setup to record these sorts of experiments in a modular way (as we have with callbacks)
-    + Perhaps via some sort of `LoggingAgent`?
 - [ ] Kuhn-triangulation / online representation refinement 
-
+- [ ] Parallelization of the code
 
 ## Test Coverage
 
@@ -53,5 +60,17 @@ Once it works we will have one single class to test, and so if we do end up defi
 - [ ] Profile the code
 - [ ] Add more test coverage to the overall code base
 - [ ] Uniform hashing tile coding
-- [ ] Progress bar
+- [ ] Better progress bar
 - [ ] Live dashboard
+- [ ] Remote monitor
+- [ ] Implement tile coding and other discretization/feature functions in C.
+- [ ] Determine if it would be worthwhile to implement 'cascading' algorithms that can run online in an experiment class
+    + It is manifestly *desirable* past a certain point, but it would be require a different setup to record these sorts of experiments in a modular way (as we have with callbacks)
+    + Perhaps via some sort of `LoggingAgent`?
+
+
+## Web Dashboard
+
+- Implement the frontend using Javascript, either by hand or with one of the dashboard libraries (OpenMCT or similar)
+    + https://github.com/christabor/flask_jsondash
+- Have the data POST to the dashboard using `requests`

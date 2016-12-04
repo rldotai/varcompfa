@@ -5,7 +5,6 @@ from .feature_base import Feature
 
 class BiasUnit(Feature):
     """A feature vector of length one and value one, that acts as a bias."""
-    NAME = "Bias"
     def __init__(self):
         pass
 
@@ -22,6 +21,7 @@ class BiasUnit(Feature):
     def from_config(cls, config):
         return cls()
 
+
 class Union(Feature):
     """A feature vector created from appending two or more feature vectors together."""
     def __init__(self, *children):
@@ -30,7 +30,7 @@ class Union(Feature):
 
     def __call__(self, obs):
         """Get the features and concatenate them."""
-        return np.hstack((child(obs) for child in self.children))
+        return np.hstack([child(obs) for child in self.children])
 
     def __len__(self):
         return self._length
@@ -41,6 +41,7 @@ class Union(Feature):
 
     def from_config(cls, config):
         return cls(**config['children'])
+
 
 class Identity(Feature):
     """A feature that returns whatever input it is given."""
@@ -60,6 +61,7 @@ class Identity(Feature):
     @classmethod
     def from_config(cls, config):
         return cls()
+
 
 # class WrappedFunction(Feature):
 #     """A feature created by wrapping a function, with additional provided

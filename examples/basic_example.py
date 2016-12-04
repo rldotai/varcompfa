@@ -1,10 +1,10 @@
-import numpy as np 
+import numpy as np
 import gym
 
 # Analysis
 import matplotlib.pyplot as plt
 from matplotlib import cm
-import pandas as pd 
+import pandas as pd
 import toolz
 
 # Logging
@@ -14,7 +14,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 # The function itself
-import varcompfa as vcf 
+import varcompfa as vcf
 
 
 # Miscellaneous utility functions
@@ -49,7 +49,7 @@ def log_dict(dct, level=logging.INFO, logger=logging.getLogger()):
         logger.log(level, format_string.format(key, dct[key]))
 
 def print_dict(dct):
-    """Print dictionaries with nicely aligned columns. 
+    """Print dictionaries with nicely aligned columns.
     NB: depending on use-case, you might be better off using JSON instead.
     """
     longest = max([len(str(x)) for x in dct.keys()])
@@ -57,45 +57,29 @@ def print_dict(dct):
         format_string = '{0:%d}: {1}'%longest
         print(format_string.format(key, dct[key]))
 
-class Union:
-    """A feature vector created from appending two or more feature vectors together."""
-    def __init__(self, *children):
-        self.children = children
-        self._length = sum(len(child) for child in children)
-
-    def __call__(self, obs):
-        """Get the features and concatenate them."""
-        return np.hstack((child(obs) for child in self.children))
-
-    @property
-    def size(self):
-        return self._length
-
-    def __len__(self):
-        return self._length
 
 # Testing linear-Q learning
-if True and __name__ == "__main__":    
+if True and __name__ == "__main__":
     # Specify experiment
     num_episodes = 5000
     max_steps = 2000
 
     # Set up the experiment
     env = gym.make('MountainCar-v0')
-    
+
     # Tile coding for discretization
     tiling_1    = vcf.UniformTiling(env.observation_space, 8)
     tiling_2    = vcf.UniformTiling(env.observation_space, 5)
     tiling_3    = vcf.UniformTiling(env.observation_space, [20, 3])
     # Convert tile indices to binary vector
-    bvec_1      = vcf.BinaryVector(tiling_1.high, tiling_1) 
+    bvec_1      = vcf.BinaryVector(tiling_1.high, tiling_1)
     bvec_2      = vcf.BinaryVector(tiling_2.high, tiling_2)
     bvec_3      = vcf.BinaryVector(tiling_3.high, tiling_3)
     # Concatenate binary vectors
     phi         = vcf.Union(bvec_1, bvec_2, bvec_3)
 
     # Set up agent
-    nf = phi.size
+    nf = len(phi)
     na = env.action_space.n
     agent = vcf.DiscreteQ(nf, na, epsilon=0.05)
     alpha = 0.01
@@ -125,16 +109,16 @@ if True and __name__ == "__main__":
 
             # compute next state features
             xp = phi(obs)
-            
+
             # update learning algorithm
-            delta = agent.learn(x, action, reward, xp, alpha, gamma, lmbda)
+            delta = agent.learn(x, action, reward, xp, alpha, gamma, gamma, lmbda)
 
             # log information about the timestep
             errlst.append(delta)
             history.append(dict(
                 obs=obs.copy(),
-                action=action, 
-                reward=reward, 
+                action=action,
+                reward=reward,
                 done=done,
                 fvec=x.copy(),
                 delta=delta,
@@ -164,42 +148,42 @@ if True and __name__ == "__main__":
         stepcount.append(j)
 
     # plot the results of the run
-    # run length 
-    fig, ax = plt.subplots()
-    ax.plot(stepcount)
-    ax.set_title('run length')
-    ax.set_xlabel('episode')
-    ax.set_ylabel('steps')
-    plt.show()
+    # run length
+    # fig, ax = plt.subplots()
+    # ax.plot(stepcount)
+    # ax.set_title('run length')
+    # ax.set_xlabel('episode')
+    # ax.set_ylabel('steps')
+    # plt.show()
 
 
-    # errors over time
-    fig, ax = plt.subplots()
-    errors      = subsample(window_avg(errlst, 10), 300)
-    # rewards = subsample(window_avg(rwdlst, 10), 300)
-    ax.plot(errors)
-    # ax.plot(rewards)
-    plt.show()
+    # # errors over time
+    # fig, ax = plt.subplots()
+    # errors      = subsample(window_avg(errlst, 10), 300)
+    # # rewards = subsample(window_avg(rwdlst, 10), 300)
+    # ax.plot(errors)
+    # # ax.plot(rewards)
+    # plt.show()
 
 
-    # # heatmap of values
-    fig, ax = plt.subplots()
-    # get the ranges for the observation_space (assuming 2D)
-    space = env.observation_space
-    xlim, ylim = list(zip(space.low, space.high))
-    xx = np.linspace(*xlim, endpoint=False)
-    yy = np.linspace(*ylim, endpoint=False)
+    # # # heatmap of values
+    # fig, ax = plt.subplots()
+    # # get the ranges for the observation_space (assuming 2D)
+    # space = env.observation_space
+    # xlim, ylim = list(zip(space.low, space.high))
+    # xx = np.linspace(*xlim, endpoint=False)
+    # yy = np.linspace(*ylim, endpoint=False)
 
-    # grid the data points
-    shape = (len(xx), len(yy))
-    indices = np.ndindex(shape)
-    grid = np.array([(xx[i], yy[j]) for i, j in indices])
-    data = np.array([phi(i) for i in grid])
-    Z = np.max(np.dot(agent.w, data.T), axis=0)
-    Z = Z.reshape(*shape)
+    # # grid the data points
+    # shape = (len(xx), len(yy))
+    # indices = np.ndindex(shape)
+    # grid = np.array([(xx[i], yy[j]) for i, j in indices])
+    # data = np.array([phi(i) for i in grid])
+    # Z = np.max(np.dot(agent.w, data.T), axis=0)
+    # Z = Z.reshape(*shape)
 
-    # Heatmap with colorbar
-    cax = ax.imshow(Z, aspect='equal', interpolation='nearest', cmap=cm.coolwarm)
-    ax.set_title('Greedy state-values')
-    cbar = fig.colorbar(cax)
-    plt.show()
+    # # Heatmap with colorbar
+    # cax = ax.imshow(Z, aspect='equal', interpolation='nearest', cmap=cm.coolwarm)
+    # ax.set_title('Greedy state-values')
+    # cbar = fig.colorbar(cax)
+    # plt.show()

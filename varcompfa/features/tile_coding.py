@@ -13,7 +13,6 @@ class UniformTiling(Feature):
     Maps a point in an n-dimensional space to an integer representing the coordinates of a `tile`
     where that point would lie.
     """
-    NAME = "UniformTiling"
     def __init__(self, space, num_tiles, child=Identity()):
         """
         Parameters
@@ -54,7 +53,19 @@ class UniformTiling(Feature):
         pass
 
     def __call__(self, obs):
-        """Compute the coordinates of the tile for the supplied observation."""
+        """Compute the coordinates of the tile for the supplied observation.
+
+        Parameters
+        ----------
+        obs: numpy.ndarray
+            The observation to discretize via tile coding
+
+        Returns
+        -------
+        index : int
+            The index of the tile corresponding to the observation.
+        """
+        obs = self.child(obs)
         # get the coordinates of the tile
         # essentially it is the same as the below code, but vectorized (for broadcasting)
         # [int(i//j) for i, j in zip(self.num_tiles*(obs-self._low), self.intervals)]

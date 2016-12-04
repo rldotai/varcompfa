@@ -84,8 +84,8 @@ class PolicyEvaluation:
         - `on_step_end()`
             + Called at the end of every step of every episode
         """
-        # Information that should be available to all callbacks
-        basic_info = {
+        # Information that should be generally available
+        run_params = {
             'environment': self.env,
             'policy': self.policy,
             'agents': self.agents,
@@ -93,9 +93,12 @@ class PolicyEvaluation:
 
         # Start of experiment callbacks
         run_begin_info = {
-            **basic_info,
+            **run_params,
             'num_episodes': num_episodes,
             'max_steps': max_steps,
+            'version': vcf.utils.current_version(),
+            'git_hash': vcf.utils.current_git_hash(),
+            'start_time': time.time(),
         }
         for cbk in callbacks:
                 cbk.on_experiment_begin(run_begin_info)
@@ -103,7 +106,7 @@ class PolicyEvaluation:
         # Run for `num_episodes`
         for episode_ix in range(num_episodes):
             # Start of episode callbacks
-            episode_begin_info = {**basic_info}
+            episode_begin_info = {}
             for cbk in callbacks:
                 cbk.on_episode_begin(episode_ix, episode_begin_info)
 
@@ -112,7 +115,7 @@ class PolicyEvaluation:
             # Run for at most `max_steps` iterations
             for step_ix in range(max_steps):
                 # Perform callbacks for beginning of step
-                step_begin_info = {**basic_info}
+                step_begin_info = {}
                 for cbk in callbacks:
                     cbk.on_step_begin(step_ix, step_begin_info)
 
@@ -138,7 +141,6 @@ class PolicyEvaluation:
 
                 # Perform callbacks for end of step
                 step_end_info = {
-                    **basic_info,
                     'context': ctx,
                     'update_results': update_results,
                 }
@@ -154,11 +156,11 @@ class PolicyEvaluation:
                 pass
             # End of episode, either due to terminating or running out of steps
             # Perform end of episode callbacks
-            episode_end_info = {**basic_info}
+            episode_end_info = {}
             for cbk in callbacks:
                 cbk.on_episode_end(episode_ix, episode_end_info)
 
         # Perform end of experiment callbacks
-        experiment_end_info = {**basic_info}
+        experiment_end_info = {}
         for cbk in callbacks:
             cbk.on_experiment_end(experiment_end_info)
