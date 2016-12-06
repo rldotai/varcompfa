@@ -2,7 +2,7 @@
 The main `__init__.py` file, specifies what is imported and to what namespace
 in the `varcompfa` package.
 """
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 from . import algos
 from . import callbacks
