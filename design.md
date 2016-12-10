@@ -86,3 +86,8 @@ The policy can either be fixed in advance or can learn online.
     - This likely means it should be an agent of some sort.
 - should be able to compute probability of a particular action given an observation
     + This complicates things somewhat, but I can see this working via an appropriate `agent` implementation even when the `algo` inside the agent isn't quite set up to return action probabilities.
+
+# Data Analysis
+
+- Data should probably be analyzed using `numpy`, `pandas` and `scipy`, with plotting done using either `matplotlib` or one of its wrappers (e.g. `seaborn`)
+- 

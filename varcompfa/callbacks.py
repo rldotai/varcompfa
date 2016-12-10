@@ -41,6 +41,30 @@ class Callback:
         pass
 
 
+class LambdaCallback(Callback):
+    """A callback class used to quickly make new custom callbacks."""
+    def __init__(self,
+                 on_experiment_begin=None,
+                 on_experiment_end=None,
+                 on_episode_begin=None,
+                 on_episode_end=None,
+                 on_step_begin=None,
+                 on_step_end=None):
+        if on_experiment_begin is not None:
+            self.on_experiment_begin = on_experiment_begin
+        if on_experiment_end is not None:
+            self.on_experiment_end = on_experiment_end
+        if on_episode_begin is not None:
+            self.on_episode_begin = on_episode_begin
+        if on_episode_end is not None:
+            self.on_episode_end = on_episode_end
+        if on_step_begin is not None:
+            self.on_step_begin = on_step_begin
+        if on_step_end is not None:
+            self.on_step_end = on_step_end
+
+
+
 class _AnnoyinglyVerboseCallback(Callback):
     """An example callback that pretty-prints all information it has access to
     at each point when it gets called.
@@ -145,7 +169,7 @@ class History(Callback):
 
     def on_step_end(self, step_ix, info=dict()):
         self.episode['contexts'].append(info['context'])
-        self.episode['update_results'].append([i['result'] for i in info['update_results']])
+        self.episode['update_results'].append([i for i in info['update_results']])
 
     def pretty_print(self):
         # Avoid showing warning on array scalar serialization

@@ -70,10 +70,11 @@ class Agent:
             **_params,
             **context
         }
-        # print(_ctx) # TODO: REMOVE
         res = self.algo.update(ctx)
-        ctx['result'] = res
-        return ctx
+        # TODO: Either return all the results or remove?
+        # ctx['result'] = res
+        # return ctx
+        return res
 
     def act(self, obs: np.ndarray):
         """Select an action according to the current observation using the
