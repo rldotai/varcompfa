@@ -1,3 +1,9 @@
+"""
+Example of Monte-Carlo rollouts starting from different initial states.
+Here, we use a grid search method, although it would be possible to start from
+randomly sampled points as well.
+"""
+
 import itertools
 import json_tricks as jt
 import numpy as np
@@ -17,6 +23,7 @@ CONTROL_PATH = '../data/mountain_car_control_agent.json'
 # CONTROL_PATH = './mountain_car_control_agent.json'
 
 
+
 if __name__ == "__main__":
     import gym
     # Create the environment
@@ -28,16 +35,15 @@ if __name__ == "__main__":
 
     # Define a learning agent
     # Tile coding for discretization to binary vectors
-    tiling_1    = vcf.features.BinaryTiling(env.observation_space, 7)
+    tiling_1    = vcf.features.BinaryTiling(env.observation_space, 17)
     tiling_2    = vcf.features.BinaryTiling(env.observation_space, 19)
-    tiling_3    = vcf.features.BinaryTiling(env.observation_space, 31)
     bias        = vcf.features.BiasUnit()
     # Concatenate binary vectors
-    phi         = vcf.Union(bias, tiling_1, tiling_2, tiling_3)
+    phi         = vcf.Union(bias, tiling_1, tiling_2)
 
     # Parameters for the agent
     td_params = {
-        'alpha' : vcf.parameters.EpisodicPowerLaw(0.2, 0.3),
+        'alpha' : vcf.parameters.EpisodicPowerLaw(0.1, 0.5),
         'gm'    : vcf.Constant(0.999, 0),
         'gm_p'  : vcf.Constant(0.999, 0),
         'lm'    : vcf.Constant(0.1, 0),
@@ -57,7 +63,7 @@ if __name__ == "__main__":
     hist_cbk = vcf.callbacks.History()
     cbk_lst = [
         vcf.callbacks.Progress(),
-        hist_cbk
+        hist_cbk,
     ]
 
     # Initialize via grid-search
@@ -66,7 +72,7 @@ if __name__ == "__main__":
     init_states = itertools.cycle(zip(*grid))
 
     # Run the experiment
-    experiment.run(10000, 2000, callbacks=cbk_lst, initial_states=init_states)
+    experiment.run(20000, 2000, callbacks=cbk_lst, initial_states=init_states)
 
     # Record the results
     episodes = hist_cbk.history['episodes']
@@ -78,10 +84,6 @@ if __name__ == "__main__":
     df = pd.DataFrame(steps)
     print(df.head())
     print(df.tail())
-    print(len(steps))
-
-    df.delta.plot()
-    plt.show()
 
     # Plot values
     import graphing
