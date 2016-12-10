@@ -26,7 +26,7 @@ def parse_reqs(req_path='./requirements.txt'):
 
 setup(
     name='varcompfa',
-    version='0.1.3',
+    version='0.2.0',
     description='reinforcement learning variance algorithm comparisons',
     url='https://bitbucket.org/adaptiveprostheticsgroup/varcompfa',
     author='adaptiveprostheticsgroup',
