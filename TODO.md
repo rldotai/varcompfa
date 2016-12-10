@@ -2,12 +2,9 @@ A list of work that needs to be done on the `varcompfa` package.
 
 # High Priority
 
-- [ ] Finish adding a `get_config()` method to all classes
-    + Agents
-    + Features
-    + Environments(?)
-    + Experiments 
+- [ ] History callback that can record parameter values
 - [ ] Check serialization via `json_tricks`
+- [ ] Progress widget using Blessings
 - [ ] Figure out a way of making the agent class more efficient
     + Currently it computes the feature vector too many times
     + Caching the result somehow would definitely help (but `joblib` doesn't do this properly/efficiently)
@@ -27,16 +24,21 @@ A list of work that needs to be done on the `varcompfa` package.
 - [ ] More efficient way of recording experiments
 - [ ] Command line interface
 - [ ] Add more documentation once the code is more or less finalized
-- [x] Automatic versioning
 - [ ] HTML documentation (Sphix+Napoleon?)
 - [ ] Add to the Makefile to automate generating the docs, updating version,...
 - [ ] Set up scripts for running the experiments
     + This could be done as a Makefile, but may be better as a Python script
-- [ ] Figure out a way to tag experiments/add more metadata to them so that their purpose is clear weeks/months afterwards.
-    + Currently using git-hash + versioning + timestamp
-    + Consider adding the ability to add comments/tags to experiments
+- [ ] Add the ability to add comments/tags to experiments
 - [ ] Kuhn-triangulation / online representation refinement 
-- [ ] Parallelization of the code
+- [ ] Parallelization of the code (via Joblib? IPython Kernels? Celery?)
+- [ ] Finish adding a `get_config()` method to all classes or just use json_tricks?
+    + Agents
+    + Features
+    + Environments(?)
+    + Experiments 
+- [x] Automatic versioning
+- [x] Global logging setup (see `openai/gym` for an example)
+- [x] Figure out a way to tag experiments/add more metadata to them so that their purpose is clear weeks/months afterwards.
 
 ## Test Coverage
 
@@ -56,7 +58,10 @@ Once it works we will have one single class to test, and so if we do end up defi
 
 # Low Priority
 
+- [ ] Reorganize namespace to increase clarity
+    + 'features' --> 'ft'? Worthwhile?
 - [ ] Improve the code for feature generation so that the DAG structure is more coherent
+    + Remove 'child' attributes, compose as functions instead
 - [ ] Profile the code
 - [ ] Add more test coverage to the overall code base
 - [ ] Uniform hashing tile coding

@@ -2,11 +2,14 @@
 Code for running experiments in a reproducible way.
 """
 import datetime
+import logging
 import os
 import time
 import numpy as np
 
 import varcompfa as vcf
+
+logger = logging.getLogger(__name__)
 
 
 def _time_string(fmt=None):
@@ -103,10 +106,12 @@ class PolicyEvaluation:
         for cbk in callbacks:
                 cbk.on_experiment_begin(run_begin_info)
 
+        # Track total number of steps
+        total_steps = 0
         # Run for `num_episodes`
         for episode_ix in range(num_episodes):
             # Start of episode callbacks
-            episode_begin_info = {}
+            episode_begin_info = {'total_steps' : total_steps}
             for cbk in callbacks:
                 cbk.on_episode_begin(episode_ix, episode_begin_info)
 
@@ -124,6 +129,7 @@ class PolicyEvaluation:
 
                 # Get the basic context from the current time step
                 ctx = {
+                    'total_steps' : total_steps,
                     'obs': obs,
                     'obs_p': obs_p,
                     'a': action,
@@ -138,6 +144,7 @@ class PolicyEvaluation:
 
                 # Prepare for next iteration
                 obs = obs_p
+                total_steps += 1
 
                 # Perform callbacks for end of step
                 step_end_info = {
@@ -147,7 +154,7 @@ class PolicyEvaluation:
                 for cbk in callbacks:
                     cbk.on_step_end(step_ix, step_end_info)
 
-                # If terminal state reached, perform a final update?
+                # If terminal state reached, exit episode loop
                 if done:
                     break
 
@@ -156,11 +163,15 @@ class PolicyEvaluation:
                 pass
             # End of episode, either due to terminating or running out of steps
             # Perform end of episode callbacks
-            episode_end_info = {}
+            episode_end_info = {
+                'total_steps' : total_steps,
+            }
             for cbk in callbacks:
                 cbk.on_episode_end(episode_ix, episode_end_info)
 
         # Perform end of experiment callbacks
-        experiment_end_info = {}
+        experiment_end_info = {
+            'total_steps' : total_steps,
+        }
         for cbk in callbacks:
             cbk.on_experiment_end(experiment_end_info)

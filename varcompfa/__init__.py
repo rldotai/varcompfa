@@ -4,11 +4,21 @@ in the `varcompfa` package.
 """
 __version__ = '0.1.3'
 
+# Get the initial logger
+import logging
+logger = logging.getLogger(__name__)
+
+# Set up logging from configuration module
+from . import configuration
+configuration.logger_setup()
+
+
 from . import algos
 from . import callbacks
 from . import engine
 from . import envs
 from . import features
+from . import features as ft
 from . import misc
 from . import utils
 

@@ -49,7 +49,7 @@ class Agent:
         self.phi = phi
         self.params = params
 
-    def update(self, context):
+    def update(self, context: dict):
         """Update the learning agent from the current context (e.g., the
         information available at the timestep).
         """
@@ -72,7 +72,7 @@ class Agent:
         ctx['result'] = res
         return ctx
 
-    def act(self, obs):
+    def act(self, obs: np.ndarray):
         """Select an action according to the current observation using the
         learning algorithm (`self.algo`).
 
@@ -91,15 +91,15 @@ class Agent:
         x = self.phi(obs)
         return np.array(self.algo.act(x))
 
-    def get_value(self, obs):
+    def get_value(self, obs: np.ndarray):
         """Get the value assigned to the current observation by the learning
         algorithm under the agent's function approximation scheme.
         """
         return self.algo.get_value(self.phi(obs))
 
-    def eval_params(self, context):
+    def eval_params(self, context: dict):
         """Evaluate the parameter functions for the supplied context."""
-        return {key: func(context) for key, func in self.param_funcs.items()}
+        return {key: func(context) for key, func in self.params.items()}
 
     def get_config(self):
         # TODO: Finish this, or eliminate it if unnecessary
