@@ -179,6 +179,7 @@ class Progress(Callback):
     def on_experiment_begin(self, info=dict()):
         self.num_episodes = info['num_episodes']
         self.max_steps = info['max_steps']
+        self.cumulative_steps = 0
 
     def on_episode_begin(self, episode_ix, info=dict()):
         msg = "Episode %d of %d (total steps: %d)"%(
@@ -186,7 +187,15 @@ class Progress(Callback):
         print(msg, end="\r", file=self.stream, flush=True)
 
     def on_episode_end(self, episode_ix, info):
-        print()
+        total_steps = info['total_steps']
+        msg = "Episode %d of %d (total steps: %d)"%(
+            episode_ix, self.num_episodes, total_steps)
+        # Print messages
+        print(msg, file=self.stream, flush=True)
+        print("Episode steps: %d"%(total_steps - self.cumulative_steps))
+        # Ready for next episode
+        self.cumulative_steps = total_steps
+
 
     def on_experiment_end(self, info=dict()):
         print()

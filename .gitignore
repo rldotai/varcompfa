@@ -1,5 +1,7 @@
 # Sandbox directoy should be ignored
 sandbox/*
+# Data directory should probably be ignored
+data/*
 
 # Created by https://www.gitignore.io/api/c,c++,linux,osx,python,sublimetext,windows
 

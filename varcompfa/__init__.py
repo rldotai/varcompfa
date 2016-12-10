@@ -25,6 +25,7 @@ from . import utils
 # Frequently used items should appear in global namespace
 from .algos import DiscreteQ, TD, TabularQ
 from .engine import Agent, PolicyEvaluation
+from .engine import parameters
 from .engine.parameters import Constant
 from .features import BiasUnit, BinaryVector, UniformTiling, Union
 from .policies import DiscreteGreedy, DiscreteSoftmax, DiscreteRandomControl

@@ -32,7 +32,7 @@ def _make_experiment_dir(basedir=None, target=None):
 
 class PolicyEvaluation:
     """Policy evaluation experiment class."""
-    def __init__(self, environment, policy, agents=list()):
+    def __init__(self, environment, policy, learners=list()):
         """Create an experiment
 
         Parameters
@@ -42,14 +42,14 @@ class PolicyEvaluation:
         policy : object
             An object that has an `act` function, which produces a valid action
             for the environment given an observation.
-        agents: list
-            A list of agents to update at each timestep
+        learners: list
+            A list of learning agents to update at each timestep
         """
         self.env = environment
         self.policy = policy
-        self.agents = agents
+        self.learners = learners
 
-    def run(self, num_episodes, max_steps, callbacks=list()):
+    def run(self, num_episodes, max_steps, callbacks=list(), initial_states=None):
         """Run an experiment.
 
         Recording the results of the experiment can be done via `Callback`
@@ -66,7 +66,10 @@ class PolicyEvaluation:
         callbacks: list
             A list of callbacks, objects that may perform actions at certain
             phases of the experiment's execution. (See `varcompfa.callbacks`)
-
+        initial_states: iterable, optional
+            An iterable of initial states to start from, assuming the
+            environment supports simply modifying `state`.
+            Useful for systematic investigation of policies (e.g. grid search).
 
         Callback Details
         ----------------
@@ -91,7 +94,7 @@ class PolicyEvaluation:
         run_params = {
             'environment': self.env,
             'policy': self.policy,
-            'agents': self.agents,
+            'learners': self.learners,
         }
 
         # Start of experiment callbacks
@@ -104,7 +107,7 @@ class PolicyEvaluation:
             'start_time': time.time(),
         }
         for cbk in callbacks:
-                cbk.on_experiment_begin(run_begin_info)
+            cbk.on_experiment_begin(run_begin_info)
 
         # Track total number of steps
         total_steps = 0
@@ -117,6 +120,8 @@ class PolicyEvaluation:
 
             # Reset the environment, get initial observation
             obs = self.env.reset()
+            if initial_states is not None:
+                self.env.state = next(initial_states)
             # Run for at most `max_steps` iterations
             for step_ix in range(max_steps):
                 # Perform callbacks for beginning of step
@@ -139,7 +144,7 @@ class PolicyEvaluation:
 
                 # Perform learning for each of the agents
                 update_results = []
-                for agent in self.agents:
+                for agent in self.learners:
                     update_results.append(agent.update(ctx))
 
                 # Prepare for next iteration
@@ -165,6 +170,7 @@ class PolicyEvaluation:
             # Perform end of episode callbacks
             episode_end_info = {
                 'total_steps' : total_steps,
+                'context': ctx,
             }
             for cbk in callbacks:
                 cbk.on_episode_end(episode_ix, episode_end_info)

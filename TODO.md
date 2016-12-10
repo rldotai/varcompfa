@@ -3,8 +3,13 @@ A list of work that needs to be done on the `varcompfa` package.
 # High Priority
 
 - [ ] History callback that can record parameter values
+- [ ] Flat history callback
+- [ ] Targetted history callback (e.g., it computes things on its own, stores them under appropriate key/value in a dictionary)
+- [ ] History 'filtration' and serialization (HDF5? CSV?)
+- [ ] Parameter-setting callbacks
 - [ ] Check serialization via `json_tricks`
-- [ ] Progress widget using Blessings
+- [ ] Terminal progress widget using Blessed
+- [ ] Web-based dashboard/remote monitor (using `react-blessed` or something)
 - [ ] Figure out a way of making the agent class more efficient
     + Currently it computes the feature vector too many times
     + Caching the result somehow would definitely help (but `joblib` doesn't do this properly/efficiently)
@@ -58,6 +63,7 @@ Once it works we will have one single class to test, and so if we do end up defi
 
 # Low Priority
 
+- [ ] Not super stoked on `Experiment.learners` as list of learning agents... but `agents` doesn't really capture it either.
 - [ ] Reorganize namespace to increase clarity
     + 'features' --> 'ft'? Worthwhile?
 - [ ] Improve the code for feature generation so that the DAG structure is more coherent

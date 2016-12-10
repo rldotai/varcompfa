@@ -25,7 +25,9 @@ class Agent:
         A dictionary of parameters, of the form `param_name: <value>`, where
         `<value>` can be either a constant (e.g., a float) or a callable that
         accepts a context.
-
+    metadata: dict, optional
+        An optional dictionary for adding metadata to the agent, e.g. for
+        annotations on the experiment it was trained on.
 
     Note
     ----
@@ -44,10 +46,11 @@ class Agent:
     At this point, everything necessary for the learning algorithm to perform
     an update should be available.
     """
-    def __init__(self, algo, phi, params=dict()):
+    def __init__(self, algo, phi, params=dict(), metadata=dict()):
         self.algo = algo
         self.phi = phi
         self.params = params
+        self.metadata = metadata
 
     def update(self, context: dict):
         """Update the learning agent from the current context (e.g., the
@@ -99,7 +102,8 @@ class Agent:
 
     def eval_params(self, context: dict):
         """Evaluate the parameter functions for the supplied context."""
-        return {key: func(context) for key, func in self.params.items()}
+        return {key: val(context) if callable(val) else val
+                        for key, val in self.params.items()}
 
     def get_config(self):
         # TODO: Finish this, or eliminate it if unnecessary
