@@ -23,8 +23,8 @@ from . import misc
 from . import utils
 
 # Frequently used items should appear in global namespace
-from .algos import DiscreteQ, TD, TabularQ
-from .engine import Agent, PolicyEvaluation
+from .algos import DiscreteQ, TD
+from .engine import Agent, LiveExperiment, ReplayExperiment
 from .engine import parameters
 from .engine.parameters import Constant
 from .features import BiasUnit, BinaryVector, UniformTiling, Union

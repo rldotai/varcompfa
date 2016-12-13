@@ -87,7 +87,22 @@ The policy can either be fixed in advance or can learn online.
 - should be able to compute probability of a particular action given an observation
     + This complicates things somewhat, but I can see this working via an appropriate `agent` implementation even when the `algo` inside the agent isn't quite set up to return action probabilities.
 
+
+# Strange Things / Edge Cases
+
+## Episode Termination
+
+- Normally, the episodic case can be unified with the continuous case via making some mild assumptions: that γ is zero or the feature vector is the zero vector, and that the reward is zero.
+- In the OpenAI gym, we can't really get that same level of niceness when we wish to use state-dependent parameters.
+    - Environments don't typically have a terminal state or examples of the terminal state. 
+    - Furthermore, the next state following termination is usually just the initial state. 
+- So it's not really possible to implement a well-defined terminal state of our own in general (although I am considering it because it's not really possible to learn from data when some information (like the episode abruptly "terminating") is not available.
+- And since we decided to have the parameters truly be state-dependent, we need to perform an additional
+
 # Data Analysis
 
 - Data should probably be analyzed using `numpy`, `pandas` and `scipy`, with plotting done using either `matplotlib` or one of its wrappers (e.g. `seaborn`)
-- 
+- Serialization probably will be handled by pickle, as the alternative is to write a custom serialization routine or use an existing library that doesn't quite fit our needs
+    + Perhaps hdf5 might be better, because we can save metadata to it... 
+
+

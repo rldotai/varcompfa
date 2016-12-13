@@ -2,6 +2,7 @@ A list of work that needs to be done on the `varcompfa` package.
 
 # High Priority
 
+- [ ] Validity of shoe-horning in a terminal update for OpenAI gym
 - [ ] History callback that can record parameter values
 - [ ] Flat history callback
 - [ ] Targetted history callback (e.g., it computes things on its own, stores them under appropriate key/value in a dictionary)
@@ -44,6 +45,16 @@ A list of work that needs to be done on the `varcompfa` package.
 - [x] Automatic versioning
 - [x] Global logging setup (see `openai/gym` for an example)
 - [x] Figure out a way to tag experiments/add more metadata to them so that their purpose is clear weeks/months afterwards.
+
+# CLI 
+
+- Specify parameters either as a number or as a class + args 
+- Specify algorithms similarly 
+- For features, probably something more in-depth is required.
+
+# Experiment Replay
+
+- [ ] Add episodic callbacks back in.
 
 ## Test Coverage
 

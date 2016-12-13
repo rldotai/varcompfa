@@ -24,24 +24,21 @@ class LearningAlgorithmMeta(type, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
+    def get_value(self, *args, **kwargs):
+        """Compute the value for the supplied features."""
+        pass
+
+    @abc.abstractmethod
     def learn(*args, **kwargs):
         pass
 
     @abc.abstractmethod
-    def update(self, params):
-        """Update from new experience, using the supplied parameters which are
-        then fed to `learn` according to the method signature.
-
-
-        Parameters
-        ----------
-        params: dict
-            A dictionary containing the parameters to pass to `learn`.
-        """
+    def reset(self):
         pass
 
     @abc.abstractmethod
-    def reset(self):
+    def start_episode(self):
+        """Perform any actions (eg, clear traces) for starting a new episode."""
         pass
 
     @abc.abstractmethod

@@ -140,10 +140,21 @@ class TD(LearningAlgorithm):
         self.w = np.zeros(self.num_features)
         self.z = np.zeros(self.num_features)
 
+    def start_episode(self):
+        """Get ready to start a new episode."""
+        self.z *= 0
+
+    @property
+    def trace(self):
+        """Return a copy of the current eligibility trace values."""
+        return np.copy(self.z)
+
+    # TODO: REMOVE?
     def save_weights(self, fname):
         """Save the weights to a file."""
         np.save(fname, self.w)
 
+    # TODO: REMOVE?
     def load_weights(self, fname):
         """Load the weights from a file."""
         self.w = np.load(fname)

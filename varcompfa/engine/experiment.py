@@ -30,8 +30,10 @@ def _make_experiment_dir(basedir=None, target=None):
     return path
 
 
-class PolicyEvaluation:
-    """Policy evaluation experiment class."""
+class LiveExperiment:
+    """Live experiment class, for running environments with a policy and
+    (optionally) learning agents.
+    """
     def __init__(self, environment, policy, learners=list()):
         """Create an experiment
 
@@ -42,12 +44,12 @@ class PolicyEvaluation:
         policy : object
             An object that has an `act` function, which produces a valid action
             for the environment given an observation.
-        learners: list
-            A list of learning agents to update at each timestep
+        learners: sequence
+            A sequence of learning agents to update at each timestep.
         """
         self.env = environment
         self.policy = policy
-        self.learners = learners
+        self._learners = tuple(learners)
 
     def run(self, num_episodes, max_steps, callbacks=list(), initial_states=None):
         """Run an experiment.
@@ -66,16 +68,16 @@ class PolicyEvaluation:
         callbacks: list
             A list of callbacks, objects that may perform actions at certain
             phases of the experiment's execution. (See `varcompfa.callbacks`)
+            A single callback object can have different methods which get
+            called at different phases of the run's execution.
         initial_states: iterable, optional
             An iterable of initial states to start from, assuming the
             environment supports simply modifying `state`.
             Useful for systematic investigation of policies (e.g. grid search).
 
-        Callback Details
-        ----------------
-        A single callback object can have different methods which get called at
-        different phases of the run's execution.
 
+        Available Callbacks
+        -------------------
 
         - `on_experiment_begin()`
             + Called once per-run, at the start of the experiment.
@@ -104,7 +106,7 @@ class PolicyEvaluation:
             'max_steps': max_steps,
             'version': vcf.utils.current_version(),
             'git_hash': vcf.utils.current_git_hash(),
-            'start_time': time.time(),
+            'start_time': datetime.datetime.now(),
         }
         for cbk in callbacks:
             cbk.on_experiment_begin(run_begin_info)
@@ -113,6 +115,9 @@ class PolicyEvaluation:
         total_steps = 0
         # Run for `num_episodes`
         for episode_ix in range(num_episodes):
+            # Get learning agents ready for start of new episode
+            for agent in self.learners:
+                agent.start_episode()
             # Start of episode callbacks
             episode_begin_info = {'total_steps' : total_steps}
             for cbk in callbacks:
@@ -143,18 +148,14 @@ class PolicyEvaluation:
                 }
 
                 # Perform learning for each of the agents
-                update_results = []
+                update_contexts = []
                 for agent in self.learners:
-                    update_results.append(agent.update(ctx))
-
-                # Prepare for next iteration
-                obs = obs_p
-                total_steps += 1
+                    update_contexts.append(agent.update(ctx))
 
                 # Perform callbacks for end of step
                 step_end_info = {
                     'context': ctx,
-                    'update_results': update_results,
+                    'update_contexts': update_contexts,
                 }
                 for cbk in callbacks:
                     cbk.on_step_end(step_ix, step_end_info)
@@ -163,9 +164,49 @@ class PolicyEvaluation:
                 if done:
                     break
 
+                # Otherwise, prepare for next iteration
+                obs = obs_p
+                total_steps += 1
+
+
             else:
-                # Failed to terminate in fewer than `max_steps`.
-                pass
+                logger.info('Failed to terminate episode before time limit.')
+                logger.info('Updating based on fictitious final step.')
+                # We create a mock final step to ensure the experiment's
+                # episodic structure is captured and recorded.
+
+                # Perform callbacks for beginning of step
+                step_begin_info = {}
+                for cbk in callbacks:
+                    cbk.on_step_begin(step_ix, step_begin_info)
+
+                # Create part of the 'terminal' context
+                action = self.policy.act(obs)
+                obs_p, *_ = self.env.step(action)
+                ctx = {
+                    'total_steps' : total_steps,
+                    'obs': obs,
+                    'a': action,
+                    'obs_p': obs_p,
+                    'done': True,
+                    'r': 0,
+                }
+
+                # Perform learning for each of the agents
+                update_contexts = []
+                for agent in self.learners:
+                    term_ctx = {**ctx, **agent.terminal_context(ctx)}
+                    update_res = agent.update(term_ctx, check_conflict=False)
+                    update_contexts.append(update_res)
+
+                # Perform callbacks for end of step
+                step_end_info = {
+                    'context': ctx,
+                    'update_contexts': update_contexts,
+                }
+                for cbk in callbacks:
+                    cbk.on_step_end(step_ix, step_end_info)
+
             # End of episode, either due to terminating or running out of steps
             # Perform end of episode callbacks
             episode_end_info = {
@@ -178,6 +219,152 @@ class PolicyEvaluation:
         # Perform end of experiment callbacks
         experiment_end_info = {
             'total_steps' : total_steps,
+            'end_time': datetime.datetime.now(),
         }
         for cbk in callbacks:
             cbk.on_experiment_end(experiment_end_info)
+
+    @property
+    def learners(self):
+        """The agents that get updated during each step of the experiment.
+
+        Note
+        ----
+        Implementing this as a property is a concession towards making the
+        tuple of learners more difficult to alter, since doing so could affect
+        code that relies on their ordering.
+        """
+        return self._learners
+
+class ReplayExperiment:
+    """Experiment based on data replay, using a list of 'contexts' to train
+    learning agents.
+    """
+#     def __init__(self, contexts, learners=list()):
+#         """Create an experiment
+
+#         Parameters
+#         ----------
+#         contexts: list
+#             A list of contexts, which are dictionaries containing the
+#             information available at each timestep.
+#             Contexts have the following keys:
+#                 - obs   : observation for the current state.
+#                 - obs_p : observation for the subsequent state.
+#                 - a     : action selected at the timestep.
+#                 - r     : reward for the timestep .
+#                 - done  : whether the environment is in the terminal state.
+#         learners: list
+#             A list of learning agents to update at each timestep
+#         """
+#         self.contexts = list(contexts)
+#         self.learners = learners
+
+#     def run(self, callbacks=list()):
+#         """Run an experiment.
+
+#         Recording the results of the experiment can be done via `Callback`
+#         classes, which get called at certain times throughout the run.
+#         These classes pass `dict` objects containing information to the
+#         callbacks.
+
+#         Parameters
+#         ----------
+#         callbacks: list
+#             A list of callbacks, objects that may perform actions at certain
+#             phases of the experiment's execution. (See `varcompfa.callbacks`)
+#             A single callback object can have different methods which get
+#             called at different phases of the run's execution.
+
+
+#         Available Callbacks
+#         -------------------
+#         Some callbacks that are available in `LiveExperiment` are not available
+#         in `ReplayExperiment` due to the fact that episodes are not as well
+#         defined.
+
+#         - `on_experiment_begin()`
+#             + Called once per-run, at the start of the experiment.
+#         - `on_experiment_end()`
+#             + Called once per-run, at the end of the experiment.
+#         - `on_step_begin()`
+#             + Called before executing every step of every episode
+#         - `on_step_end()`
+#             + Called at the end of every step of every episode
+#         """
+#         # Information that should be generally available
+#         run_params = {
+#             'learners': self.learners,
+#         }
+
+#         # Start of experiment callbacks
+#         run_begin_info = {
+#             **run_params,
+#             'version': vcf.utils.current_version(),
+#             'git_hash': vcf.utils.current_git_hash(),
+#             'start_time': datetime.datetime.now(),
+#         }
+#         for cbk in callbacks:
+#             cbk.on_experiment_begin(run_begin_info)
+
+#         # # Track current episode number
+#         episode_ix = 0
+#         total_steps = 0
+#         for context in self.contexts:
+#             # Perform callbacks for beginning of step
+#             step_begin_info = {}
+#             for cbk in callbacks:
+#                 cbk.on_step_begin(step_ix, step_begin_info)
+
+#             action = self.policy.act(obs)
+#             obs_p, reward, done, info = self.env.step(action)
+
+#             # Get the basic context from the current time step
+#             ctx = {
+#                 'total_steps' : total_steps,
+#                 'obs': obs,
+#                 'obs_p': obs_p,
+#                 'a': action,
+#                 'r': reward,
+#                 'done': done,
+#             }
+
+#             # Perform learning for each of the agents
+#             update_results = []
+#             for agent in self.learners:
+#                 update_results.append(agent.update(ctx))
+
+#             # Prepare for next iteration
+#             obs = obs_p
+#             total_steps += 1
+
+#             # Perform callbacks for end of step
+#             step_end_info = {
+#                 'context': ctx,
+#                 'update_results': update_results,
+#             }
+#             for cbk in callbacks:
+#                 cbk.on_step_end(step_ix, step_end_info)
+
+#             # If terminal state reached, exit episode loop
+#             if done:
+#                 break
+
+#         else:
+#             # Failed to terminate in fewer than `max_steps`.
+#             pass
+#         # End of episode, either due to terminating or running out of steps
+#         # Perform end of episode callbacks
+#         episode_end_info = {
+#             'total_steps' : total_steps,
+#             'context': ctx,
+#         }
+#         total_steps += 1
+
+#     # Perform end of experiment callbacks
+#     experiment_end_info = {
+#         'total_steps' : total_steps,
+#         'end_time': datetime.datetime.now(),
+#     }
+#     for cbk in callbacks:
+#         cbk.on_experiment_end(experiment_end_info)

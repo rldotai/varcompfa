@@ -44,7 +44,7 @@ class TestPolicyEvaluation:
         env = gym.make('MountainCar-v0')
         pol = vcf.DiscreteRandomControl(env.action_space.n)
         agents = []
-        experiment = vcf.PolicyEvaluation(env, pol, agents)
+        experiment = vcf.LiveExperiment(env, pol, agents)
 
     def test_run(self):
         # Set up environment and policy
@@ -64,7 +64,7 @@ class TestPolicyEvaluation:
         agents = [agent_1]
 
         # Set up the experiment
-        experiment = vcf.PolicyEvaluation(env, pol, agents)
+        experiment = vcf.LiveExperiment(env, pol, agents)
 
         # Try running the experiment
         num_eps = 10
@@ -90,7 +90,7 @@ class TestPolicyEvaluation:
         agents = [agent_1]
 
         # Set up the experiment
-        experiment = vcf.PolicyEvaluation(env, pol, agents)
+        experiment = vcf.LiveExperiment(env, pol, agents)
 
         # Set up testing callbacks
         cbk = _CheckCallback()

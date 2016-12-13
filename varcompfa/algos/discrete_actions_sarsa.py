@@ -2,6 +2,7 @@
 SARSA using LFA with discrete actions.
 """
 import numpy as np
+from .algo_base import LearningAlgorithm
 
 
 class DiscreteSARSA(LearningAlgorithm):
@@ -20,6 +21,10 @@ class DiscreteSARSA(LearningAlgorithm):
         self.w = np.random.randn(self.num_actions, self.num_features)
         # Eligibility traces
         self.z  = np.zeros((self.num_actions, self.num_features))
+
+    def start_episode(self):
+        """Get ready to start a new episode."""
+        self.z *= 0
 
     def get_config(self):
         """Return the parameters needed to specify the algorithm's state."""

@@ -1,6 +1,5 @@
 """
-Run a policy-improving algorithm in an environment and preserve the resulting
-agent.
+Run a policy-improving algorithm in an environment.
 """
 import time
 import json_tricks as jt
@@ -14,7 +13,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-
 # An example using the MountainCar domain
 if __name__ == "__main__" and True:
     import gym
@@ -22,19 +20,19 @@ if __name__ == "__main__" and True:
     na = env.action_space.n
 
     # Tile coding for discretization to binary vectors
-    tiling_1    = vcf.features.BinaryTiling(env.observation_space, 5)
+    tiling_1    = vcf.features.BinaryTiling(env.observation_space, 11)
     tiling_2    = vcf.features.BinaryTiling(env.observation_space, 19)
     tiling_3    = vcf.features.BinaryTiling(env.observation_space, 31)
     # Concatenate binary vectors
     phi         = vcf.Union(tiling_1, tiling_2, tiling_3)
 
     # Define the control (discrete actions Q-learning)
-    dq = vcf.DiscreteQ(len(phi), na, epsilon=0.02)
+    dq = vcf.DiscreteQ(len(phi), na, epsilon=0.002)
     dq_params = {
-        'alpha' : 0.01,
+        'alpha' : vcf.parameters.EpisodicPowerLaw(0.2, 0.25),
         'gm'    : 0.9999,
         'gm_p'  : vcf.Constant(0.9999, 0),
-        'lm'    : vcf.Constant(0.1, 0),
+        'lm'    : vcf.Constant(0.5, 0),
     }
     control = vcf.Agent(dq, phi, dq_params)
 
@@ -47,12 +45,9 @@ if __name__ == "__main__" and True:
     # Set up callbacks
     hist_cbk = vcf.callbacks.History()
     cbk_lst = [
-        hist_cbk,
         vcf.callbacks.Progress(),
+        hist_cbk,
     ]
     # Run the experiment
-    experiment.run(100, 2000, callbacks=cbk_lst)
+    experiment.run(150, 2000, callbacks=cbk_lst)
 
-    # Convert to dataframe
-    df = pd.DataFrame(hist_cbk.contexts)
-    print(df.head())

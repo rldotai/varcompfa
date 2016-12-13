@@ -22,6 +22,10 @@ class DiscreteQ(LearningAlgorithm):
         # Eligibility traces
         self.z  = np.zeros((self.num_actions, self.num_features))
 
+    def start_episode(self):
+        """Get ready to start a new episode."""
+        self.z *= 0
+
     def get_config(self):
         ret = {
             'num_features': self.num_features,
@@ -47,6 +51,11 @@ class DiscreteQ(LearningAlgorithm):
         obj.w = weights.copy()
         obj.z = traces.copy()
         return obj
+
+    @property
+    def trace(self):
+        """Return a copy of the current eligibility trace values."""
+        return np.copy(self.z)
 
     def act(self, x):
         """Select an action following the ε-greedy policy.

@@ -52,30 +52,6 @@ class Agent:
         self.params = params
         self.metadata = metadata
 
-    def update(self, context: dict):
-        """Update the learning agent from the current context (e.g., the
-        information available at the timestep).
-        """
-        # Check if we clobber anything in `context` with `params`
-        _intersect = set(self.params).intersection(context)
-        if _intersect:
-            _logger.warn("agent.update(): parameter name conflict: %s"%_intersect)
-
-        # Compute parameters given the current context
-        _params = {key: val(context) if callable(val) else val
-                        for key, val in self.params.items()}
-        ctx = {
-            'x': self.phi(context['obs']),
-            'xp': self.phi(context['obs_p']),
-            **_params,
-            **context
-        }
-        res = self.algo.update(ctx)
-        # TODO: Either return all the results or remove?
-        # ctx['result'] = res
-        # return ctx
-        return res
-
     def act(self, obs: np.ndarray):
         """Select an action according to the current observation using the
         learning algorithm (`self.algo`).
@@ -95,16 +71,85 @@ class Agent:
         x = self.phi(obs)
         return np.array(self.algo.act(x))
 
+    def eval_params(self, context: dict):
+        """Evaluate the parameter functions for the supplied context."""
+        return {key: val(context) if callable(val) else val
+                        for key, val in self.params.items()}
+
+    def update(self, context: dict, check_conflict=True):
+        """Update the learning agent from the current context (e.g., the
+        information available at the timestep).
+
+        Parameters
+        ----------
+        context: dict
+            A dictionary containing information about the current timestep.
+            The agent will then compute the feature representation and
+            context-dependent parameters to be used when updating the agent.
+        check_conflict: bool (default True)
+            If true, check if parameters passed via `context` have a name
+            conflict with those computed as part of the update.
+
+        Notes
+        -----
+        The parameters passed by `context` take precedence over the parameters
+        computed as part of this function (including the feature vectors).
+        By default, when this occurs a warning will be printed, but sometimes
+        it is necessary/convenient to override the computed parameter values.
+        """
+        # Check if we clobber anything in `context` with `params`
+        if check_conflict:
+            _intersect = set(self.params).intersection(context)
+            if _intersect:
+                _logger.warn("agent.update(): parameter name conflict: %s"%_intersect)
+
+        # Compute parameters given the current context
+        _params = self.eval_params(context)
+
+        # Create the combined context
+        ctx = {
+            'x': self.phi(context['obs']),
+            'xp': self.phi(context['obs_p']),
+            **_params,
+            **context
+        }
+        res = self.algo.update(ctx)
+        ctx['update_result'] = res
+        return ctx
+
+    def terminal_context(self, defaults=dict()):
+        """Return a suitable context for terminal states, overriding the
+        context provided by `defaults`.
+        This entails setting `done` to `True`, and returning a zero-vector
+        for the features of the current state and its successor.
+        """
+        ctx = {
+            **defaults,
+            'xp' : np.zeros(len(self.phi)),
+            'done': True,
+            'r' : 0,
+        }
+        _params = self.eval_params(ctx)
+        ctx = {**ctx, **_params}
+        return ctx
+
+    def get_td_error(self, context):
+        """Compute the TD-error at a given step."""
+        params  = self.eval_params(context)
+        vx      = self.get_value(context['obs'])
+        vx_p    = self.get_value(context['obs_p'])
+        delta   = context['r'] + params['gm_p']*vx_p - vx
+        return delta
+
     def get_value(self, obs: np.ndarray):
         """Get the value assigned to the current observation by the learning
         algorithm under the agent's function approximation scheme.
         """
         return self.algo.get_value(self.phi(obs))
 
-    def eval_params(self, context: dict):
-        """Evaluate the parameter functions for the supplied context."""
-        return {key: val(context) if callable(val) else val
-                        for key, val in self.params.items()}
+    def start_episode(self):
+        """Get ready to start a new episode."""
+        self.algo.start_episode()
 
     def get_config(self):
         # TODO: Finish this, or eliminate it if unnecessary

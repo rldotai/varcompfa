@@ -1,6 +1,11 @@
 """Utilities for working with data, e.g., CSV files, JSON files, and so on."""
 import json_tricks
 
+def dump_json(obj, destpath, *args, **kwargs):
+    json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=False
+    ret = json_tricks.dump(obj, destpath, *args, **kwargs)
+    json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=True
+    return ret
 
 def dumps_json(obj, *args, **kwargs):
     """Dump `obj` to a JSON string using `json_tricks`.
@@ -12,6 +17,16 @@ def dumps_json(obj, *args, **kwargs):
     ret = json_tricks.dumps(obj, *args, **kwargs)
     json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=True
     return ret
+
+def load_json(filepath_or_buffer, *args, **kwargs):
+    """Load an object from a JSON file."""
+    if isinstance(filepath_or_buffer, str):
+        filepath_or_buffer = open(filepath_or_buffer, 'r')
+    return json_tricks.load(filepath_or_buffer, *args, **kwargs)
+
+def loads_json(s, *args, **kwargs):
+    """Load an object from a JSON string."""
+    return json_tricks.loads(s, *args, **kwargs)
 
 def to_csv(obj, output=None, metadata=dict()):
     """Convert an object to a CSV file.

@@ -86,10 +86,21 @@ class TOTD(LearningAlgorithm):
         self.w_old  = np.zeros(self.n)
         self.z      = np.zeros(self.n)
 
+    def start_episode(self):
+        """Get ready to start a new episode."""
+        self.z *= 0
+
+    @property
+    def trace(self):
+        """Return a copy of the current eligibility trace values."""
+        return np.copy(self.z)
+
+    # TODO: REMOVE?
     def save_weights(self, fname):
         """Save the weights to a file."""
         np.save(fname, self.w)
 
+    # TODO: REMOVE?
     def load_weights(self, fname):
         """Load the weights from a file."""
         self.w = np.load(fname)

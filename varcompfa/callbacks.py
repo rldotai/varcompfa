@@ -3,6 +3,7 @@ Callbacks to execute at various points in the course of running an experiment.
 
 Based on Keras' callbacks.
 """
+import datetime
 import logging
 import time
 import json_tricks
@@ -122,54 +123,157 @@ class CheckpointScheduled(Callback):
     pass
 
 
+class AgentHistory(Callback):
+    """
+    Record a history of an experiment for a particular agent, using the context
+    provided by `update` to get the information the agent used at each step.
+
+
+    Properties
+    ----------
+    history: dict
+        The information recorded from the experiment (contexts and metadata).
+    contexts: list[dict]
+        A list of the contexts returned from the learning agent's update.
+        Includes the 'usual' context as well as all the computed quantities the
+        agent needed to execute its update.
+    metadata: dict
+        A dictionary containing metadata about the experiment.
+
+
+    Details
+    -------
+    The history has the form:
+
+    - metadata
+        - start_time
+        - end_time
+        - num_episodes
+        - max_steps
+        - version
+        - git_hash
+    - contexts
+        - total_steps
+        - obs
+        - obs_p
+        - a (action)
+        - r (reward)
+        - done
+        - x (features for `obs`)
+        - xp (features for `obs_p`)
+        - update_result (the value returned by `agent.update()`
+        - **parameters computed as part of `agent.update()`
+
+    Notes
+    -----
+    Currently relies on the learning agents ordering being fixed in order to
+    select the right context from those returned by `update_contexts`)
+    Alternative implementations are possible, as is modifying the experiment
+    class, but those options will only be invoked if I find some pressing
+    reason to add/remove/reorder the learning agents over the course of a run.
+    """
+    def __init__(self, agent, exclude=set()):
+        """
+        Initialize the callback.
+
+        Parameters
+        ----------
+        agent: object
+            The agent to record a history for.
+        exclude : Set[str], optional
+            The set of keys to ignore from `update_context`.
+            Useful for when some items, such as the feature vector, may be
+            large or otherwise not worth keeping track of.
+        """
+        self.agent = agent
+        self._exclude = set(exclude)
+        self._hist = {}
+        self._hist['metadata'] = dict()
+        self._hist['contexts'] = list()
+
+    def on_experiment_begin(self, info=dict()):
+        # Get the agent's index in the list of learners
+        self._agent_ix = info['learners'].index(self.agent)
+
+        # Record some metadata
+        self._hist['metadata'] = {
+            'version'       : info['version'],
+            'git_hash'      : info['git_hash'],
+            'start_time'    : info['start_time'],
+            'num_episodes'  : info['num_episodes'],
+            'max_steps'     : info['max_steps']
+        }
+
+    def on_experiment_end(self, info=dict()):
+        self._hist['metadata']['end_time'] = info['end_time']
+
+    def on_step_end(self, step_ix, info=dict()):
+        # self._hist['contexts'].append(info['context'])
+        ctx = info['update_contexts'][self._agent_ix]
+        ctx = {k: v for k, v in ctx.items() if k not in self._exclude}
+
+        self._hist['contexts'].append(ctx)
+        print(ctx.keys())
+
+    @property
+    def history(self):
+        return self._hist
+
+    @property
+    def contexts(self):
+        """A list of contexts from the experiment."""
+        return self._hist['contexts']
+
+    @property
+    def metadata(self):
+        """Metadata from the experiment."""
+        return self._hist['metadata']
+
 class History(Callback):
     """
-
     Records a history of the experiment, of the form:
 
-    - start_time
-    - end_time
-    - num_episodes
-    - max_steps
-    - version
-    - git_hash
-    - episodes
-        - steps (a list of contexts-- obs, action, next obs, reward, done)
-        - update_results (a list of update results returned by the learning algos)
+    - metadata
+        - start_time
+        - end_time
+        - num_episodes
+        - max_steps
+        - version
+        - git_hash
+    - contexts
+        - Entries: (total_steps, obs, obs_p, action, reward, done)
     """
     def __init__(self):
         # Create data structure that will be filled by running the experiment
         self._hist = {}
+        self._hist['metadata'] = dict()
+        self._hist['contexts'] = list()
+
 
     def on_experiment_begin(self, info=dict()):
-        # TODO: Compute some of these in the PolicyEval class?
-        self._hist['version'] = info['version']
-        self._hist['git_hash'] = info['git_hash']
-        self._hist['start_time'] = info['start_time']
-        self._hist['num_episodes'] = info['num_episodes']
-        self._hist['max_steps'] = info['max_steps']
-        # Set up list of episodes
-        self._hist['episodes'] = list()
-
-    def on_experiment_end(self, info=dict()):
-        # TODO: Compute in the PolicyEval class?
-        self._hist['end_time'] = time.time()
-
-    def on_episode_begin(self, episode_ix, info=dict()):
-        self.episode = {
-            'contexts': list(),
-            'update_results': list(),
+        self._hist['metadata'] = {
+            'version'       : info['version'],
+            'git_hash'      : info['git_hash'],
+            'start_time'    : info['start_time'],
+            'num_episodes'  : info['num_episodes'],
+            'max_steps'     : info['max_steps']
         }
 
+    def on_experiment_end(self, info=dict()):
+        self._hist['metadata']['end_time'] = info['end_time']
+
+    def on_episode_begin(self, episode_ix, info=dict()):
+        pass
+
     def on_episode_end(self, episode_ix, info=dict()):
-        self._hist['episodes'].append(self.episode)
+        # TODO: Mark episodes where time ran out somehow?
+        pass
 
     def on_step_begin(self, step_ix, info=dict()):
         pass
 
     def on_step_end(self, step_ix, info=dict()):
-        self.episode['contexts'].append(info['context'])
-        self.episode['update_results'].append([i for i in info['update_results']])
+        self._hist['contexts'].append(info['context'])
 
     def pretty_print(self):
         # Avoid showing warning on array scalar serialization
@@ -181,15 +285,86 @@ class History(Callback):
     def history(self):
         return self._hist
 
-    def flat_contexts(self):
-        """Return a flattened list of all steps in an episode."""
-        episodes = self.history['episodes']
-        return [i for ep in episodes for i in ep['contexts']]
+    @property
+    def contexts(self):
+        """A list of contexts from the experiment."""
+        return self._hist['contexts']
 
-    def flat_updates(self):
-        """Return a flattened list of all update results."""
-        episodes = self.history['episodes']
-        return [i for ep in episodes for i in ep['update_results']]
+    @property
+    def metadata(self):
+        """Metadata from the experiment."""
+        return self._hist['metadata']
+
+# TODO: Update or Remove
+# class OldHistory(Callback):
+#     """
+
+#     Records a history of the experiment, of the form:
+
+#     - start_time
+#     - end_time
+#     - num_episodes
+#     - max_steps
+#     - version
+#     - git_hash
+#     - episodes
+#         - steps (a list of contexts-- obs, action, next obs, reward, done)
+#         - update_results (a list of update results returned by the learning algos)
+#     """
+#     def __init__(self):
+#         # Create data structure that will be filled by running the experiment
+#         self._hist = {}
+
+#     def on_experiment_begin(self, info=dict()):
+#         # TODO: Compute some of these in the PolicyEval class?
+#         self._hist['version'] = info['version']
+#         self._hist['git_hash'] = info['git_hash']
+#         self._hist['start_time'] = info['start_time']
+#         self._hist['num_episodes'] = info['num_episodes']
+#         self._hist['max_steps'] = info['max_steps']
+#         self._hist['environment_id'] = info['environment'].spec.id
+#         # Set up list of episodes
+#         self._hist['episodes'] = list()
+
+#     def on_experiment_end(self, info=dict()):
+#         # TODO: Compute in the PolicyEval class?
+#         self._hist['end_time'] = info['end_time']
+
+#     def on_episode_begin(self, episode_ix, info=dict()):
+#         self.episode = {
+#             'contexts': list(),
+#             'update_results': list(),
+#         }
+
+#     def on_episode_end(self, episode_ix, info=dict()):
+#         self._hist['episodes'].append(self.episode)
+
+#     def on_step_begin(self, step_ix, info=dict()):
+#         pass
+
+#     def on_step_end(self, step_ix, info=dict()):
+#         self.episode['contexts'].append(info['context'])
+#         self.episode['update_results'].append([i for i in info['update_results']])
+
+#     def pretty_print(self):
+#         # Avoid showing warning on array scalar serialization
+#         json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=False
+#         print(json_tricks.dumps(self._hist, indent=2))
+#         json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=True
+
+#     @property
+#     def history(self):
+#         return self._hist
+
+#     def flat_contexts(self):
+#         """Return a flattened list of all steps in an episode."""
+#         episodes = self.history['episodes']
+#         return [i for ep in episodes for i in ep['contexts']]
+
+#     def flat_updates(self):
+#         """Return a flattened list of all update results."""
+#         episodes = self.history['episodes']
+#         return [i for ep in episodes for i in ep['update_results']]
 
 
 class Progress(Callback):

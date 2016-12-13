@@ -26,6 +26,10 @@ class TabularQ(LearningAlgorithm):
         # }
         return ret
 
+    def start_episode(self):
+        """Get ready to start a new episode."""
+        self.z *= 0
+
     def act(self, s):
         """Select an action following the ε-greedy policy."""
         # Explore with probability epsilon, otherwise go with most valued action
@@ -73,6 +77,11 @@ class TabularQ(LearningAlgorithm):
 
     def greedy_action(self, s):
         return np.argmax(self.qv[s])
+
+    @property
+    def trace(self):
+        """Return a copy of the current eligibility trace values."""
+        return np.copy(self.z)
 
     def save_weights(self, fname):
         """Save the weights to a file."""
