@@ -148,13 +148,3 @@ class TD(LearningAlgorithm):
     def trace(self):
         """Return a copy of the current eligibility trace values."""
         return np.copy(self.z)
-
-    # TODO: REMOVE?
-    def save_weights(self, fname):
-        """Save the weights to a file."""
-        np.save(fname, self.w)
-
-    # TODO: REMOVE?
-    def load_weights(self, fname):
-        """Load the weights from a file."""
-        self.w = np.load(fname)
