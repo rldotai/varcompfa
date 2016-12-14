@@ -154,6 +154,7 @@ class AgentHistory(Callback):
         - git_hash
     - contexts
         - total_steps
+        - t (current timestep in episode)
         - obs
         - obs_p
         - a (action)
@@ -207,13 +208,15 @@ class AgentHistory(Callback):
     def on_experiment_end(self, info=dict()):
         self._hist['metadata']['end_time'] = info['end_time']
 
+    def on_episode_begin(self, episode_ix, info=dict()):
+        self._t = 0
+
     def on_step_end(self, step_ix, info=dict()):
         # self._hist['contexts'].append(info['context'])
-        ctx = info['update_contexts'][self._agent_ix]
+        ctx = {**info['update_contexts'][self._agent_ix], 't': self._t}
         ctx = {k: v for k, v in ctx.items() if k not in self._exclude}
-
         self._hist['contexts'].append(ctx)
-        print(ctx.keys())
+        self._t += 1
 
     @property
     def history(self):
@@ -241,7 +244,13 @@ class History(Callback):
         - version
         - git_hash
     - contexts
-        - Entries: (total_steps, obs, obs_p, action, reward, done)
+        - total_steps
+        - t (current timestep in episode)
+        - obs
+        - obs_p
+        - a (action)
+        - r (reward)
+        - done
     """
     def __init__(self):
         # Create data structure that will be filled by running the experiment
@@ -263,7 +272,7 @@ class History(Callback):
         self._hist['metadata']['end_time'] = info['end_time']
 
     def on_episode_begin(self, episode_ix, info=dict()):
-        pass
+        self._t = 0
 
     def on_episode_end(self, episode_ix, info=dict()):
         # TODO: Mark episodes where time ran out somehow?
@@ -273,7 +282,9 @@ class History(Callback):
         pass
 
     def on_step_end(self, step_ix, info=dict()):
-        self._hist['contexts'].append(info['context'])
+        ctx = {**info['context'], 't': self._t}
+        self._t += 1
+        self._hist['contexts'].append(ctx)
 
     def pretty_print(self):
         # Avoid showing warning on array scalar serialization

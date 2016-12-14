@@ -14,6 +14,7 @@ configuration.logger_setup()
 
 
 from . import algos
+from . import analysis
 from . import callbacks
 from . import engine
 from . import envs

@@ -1,38 +1,34 @@
 """
-Utility functions, e.g. plotting and serialization.
+Utility functions.
 
 Likely contains code that ought to be located elsewhere, but that is probably
 best done once the codebase is more mature, if ever.
 """
-import numpy as np 
-import matplotlib.pyplot as plt 
-import matplotlib.cm as cm
-
-from varcompfa.misc import window_avg
+import numpy as np
 
 
 ##############################################################################
 # Data handling
 ##############################################################################
-def serialize_features(feat):
-    """Serializing the features and their implicit dependency graph."""
-    def expand_children(ff):
-        _params = ff.params
-        if 'children' in _params:
-            _params['children'] = [expand_children(i) for i in _params['children'] if i]
-        return _params
-    return expand_children(feat)
+# def serialize_features(feat):
+#     """Serializing the features and their implicit dependency graph."""
+#     def expand_children(ff):
+#         _params = ff.params
+#         if 'children' in _params:
+#             _params['children'] = [expand_children(i) for i in _params['children'] if i]
+#         return _params
+#     return expand_children(feat)
 
 
-##############################################################################
-# Plotting
-##############################################################################
-def plot_phase(trajectory, smoothing=5):
-    """Plotting the phase space of a trajectory."""
-    trajectory = np.apply_along_axis(window_avg, 0, trajectory, n=smoothing)
-    _x, _y = trajectory.T
-    plt.plot(_x, _y)
-    plt.show()
+# def serialize_features(feat):
+#     """Serializing the features and their implicit dependency graph."""
+#     def expand_children(ff):
+#         _params = ff.params
+#         if 'children' in _params:
+#             _params['children'] = [expand_children(i) for i in _params['children'] if i]
+#         return _params
+#     return expand_children(feat)
+
 
 
 ##############################################################################

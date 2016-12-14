@@ -51,6 +51,7 @@ A list of work that needs to be done on the `varcompfa` package.
 - Specify parameters either as a number or as a class + args 
 - Specify algorithms similarly 
 - For features, probably something more in-depth is required.
+- Specify controller either as absolute path or search for it
 
 # Experiment Replay
 
@@ -76,7 +77,7 @@ Once it works we will have one single class to test, and so if we do end up defi
 
 - [ ] Not super stoked on `Experiment.learners` as list of learning agents... but `agents` doesn't really capture it either.
 - [ ] Reorganize namespace to increase clarity
-    + 'features' --> 'ft'? Worthwhile?
+    + See TensorFlow as an example of how to prune namespace w/ `inspect`
 - [ ] Improve the code for feature generation so that the DAG structure is more coherent
     + Remove 'child' attributes, compose as functions instead
 - [ ] Profile the code
