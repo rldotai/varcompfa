@@ -35,6 +35,25 @@ def calculate_return(rewards, gamma):
     ret.reverse()
     return np.array(ret)
 
+def calculate_squared_return(rewards, gammas, returns):
+    """Calculate squared return from a list of rewards, a list of gammas,
+    and a list of returns.
+
+    Notes
+    -----
+    The discount parameter `gamma` should be the discount for the *next* state,
+    if you are using general value functions.
+    """
+    ret = []
+    g_sq = 0
+    g_next = 0
+    for r, gm, g in reversed(list(zip(rewards, gammas, returns))):
+        g_sq *= gm**2
+        g_sq += r**2 + 2*gm*r*g_next
+        ret.append(g_sq)
+        g_next = g
+    return ret
+
 def context_return(ctxlst):
     """Calculate return from a list of contexts."""
     ret = []
