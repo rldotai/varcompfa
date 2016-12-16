@@ -133,7 +133,7 @@ class TD(LearningAlgorithm):
         delta = r + gm_p*np.dot(self.w, xp) - np.dot(self.w, x)
         self.z = x + gm*lm*self.z
         self.w += alpha*delta*self.z
-        return delta
+        return {'delta': delta}
 
     def reset(self):
         """Reset weights, traces, and other parameters."""

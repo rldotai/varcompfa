@@ -86,4 +86,4 @@ class LSTD(LearningAlgorithm):
         self.z = (gm * lm * self.z + x)
         self.A += np.outer(self.z, (x - gm_p*xp))
         self.b += self.z * reward
-
+        return {}

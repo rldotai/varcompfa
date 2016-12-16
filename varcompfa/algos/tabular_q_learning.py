@@ -67,7 +67,7 @@ class TabularQ(LearningAlgorithm):
         self.qv += alpha * δ * self.z
 
         # Return the TD-error, for lack of something more informative
-        return δ
+        return {'delta': δ}
 
     def get_value(self, s, a=None):
         if a is None:

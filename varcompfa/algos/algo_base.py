@@ -24,12 +24,12 @@ class LearningAlgorithmMeta(type, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def get_value(self, *args, **kwargs):
+    def get_value(self, *args, **kwargs) -> float:
         """Compute the value for the supplied features."""
         pass
 
     @abc.abstractmethod
-    def learn(*args, **kwargs):
+    def learn(*args, **kwargs) -> dict:
         pass
 
     @abc.abstractmethod
@@ -42,7 +42,7 @@ class LearningAlgorithmMeta(type, metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def get_config(self):
+    def get_config(self) -> dict:
         """Get the configuration for the algorithm, i.e., all information that
         would be needed to instantiate it, as a `dict`.
         """

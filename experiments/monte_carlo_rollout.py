@@ -122,13 +122,13 @@ if __name__ == "__main__":
 
     # Compute gammas from context
     contexts = hist_cbk.contexts
-    contexts = [{**ctx, 'gm': gamma(ctx)} for ctx in contexts]
+    contexts = [{**ctx, 'gm_p': gamma(ctx)} for ctx in contexts]
 
     # Convert to dataframe
     df = pd.DataFrame(contexts)
 
-    # Compute returns
-    df['G'] = vcf.analysis.calculate_return(df.r, df.gm)
+    # Compute returns with a slight bit of truncation
+    df['G'] = np.max(-1000, vcf.analysis.calculate_return(df.r, df.gm_p))
 
     # Convert observations (numpy arrays) to hashable type tuples
     df['obs'] = df['obs'].apply(tuple)
@@ -152,11 +152,15 @@ if __name__ == "__main__":
     val_pts = np.array([(x, y, z) for (x, y), z in values.reset_index().values])
     xx, yy, z_vals = val_pts.T
 
-    # Interpolate to a grid of data
+    # Interpolate values to a grid of data
     g_vals = scipy.interpolate.griddata((xx, yy),
         np.array(z_vals),
         (gx, gy),
         method='cubic')
+
+    # Compute number of visits
+    hg, xedges, yedges = np.histogram2d(xp, yp, bins=[20, 20], range=(xlim, ylim))
+
 
     # Get 3D coordinates for values
     var_pts = np.array([(x, y, z) for (x, y), z in variances.reset_index().values])
@@ -184,6 +188,5 @@ if __name__ == "__main__":
         aspect='auto',
         interpolation='none')
     # cbar1 = fig.colorbar(cax1)
-
 
     plt.show()

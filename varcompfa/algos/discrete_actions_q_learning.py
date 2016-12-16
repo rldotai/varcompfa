@@ -98,7 +98,7 @@ class DiscreteQ(LearningAlgorithm):
         self.w += alpha * δ * self.z
 
         # Return the TD-error, for lack of something more informative
-        return δ
+        return {'delta': δ}
 
     def get_value(self, x, a=None):
         """Get the value for a given state and action, or if action is left unspecified, just the
