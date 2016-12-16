@@ -3,6 +3,52 @@ import itertools
 import toolz
 
 
+def grid_space(space, n=50):
+    """Return a sequence of linear interval arrays for a given `space` (of the
+    kind provided by OpenAI gym.
+    """
+    assert(isinstance(space, gym.core.Space))
+    return [np.linspace(lo, hi, num=n) for lo, hi in zip(space.low, space.high)]
+
+def map2d(xdata, ydata, func):
+    """Given two sequences `xdata` and `ydata`, and a function `func`, return a
+    2D-array `grid` whose i-jth entry is `func((xdata[i], ydata[j]))`.
+
+    NOTE:
+    -----
+    We pass the value to `func` as a single argument.
+    """
+    xdata = np.squeeze(xdata)
+    ydata = np.squeeze(ydata)
+    assert(xdata.ndim == ydata.ndim == 1)
+    nx = len(xdata)
+    ny = len(ydata)
+    indices = np.ndindex((nx, ny))
+    # Appy function to data and reshape array
+    grid = np.reshape([func((xdata[i], ydata[j])) for i, j in indices], (nx, ny))
+    return grid
+
+# Define a way of computing mappings over the array
+def array_map(arr, func, shape=None):
+    """Apply a function to each entry of `arr`, or optionally just over the
+    indices provided by `shape`.
+    """
+    if shape is None:
+        shape = np.shape(arr)
+    ret = np.empty(shape)
+    for ix in np.ndindex(shape):
+        ret[ix] = func(arr[ix])
+    return ret
+
+def index_map(func, shape):
+    """Maps a function over the indices provided in `shape` returning an array
+    of that same shape.
+    """
+    ret = np.empty(shape)
+    for ix in np.ndindex(shape):
+        ret[ix] = func(ix)
+    return ret
+
 ##############################################################################
 # Helper functions for manipulating data into more workable forms
 ##############################################################################

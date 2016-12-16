@@ -47,39 +47,6 @@ parser.add_argument('--gamma', default=1.0,
 parser.add_argument('--every-visit', dest='every_visit', action='store_true',
     help='Use every visit Monte Carlo (default False).')
 
-# def map2d(xdata, ydata, func):
-#     """Given two sequences `xdata` and `ydata`, and a function `func`, return a
-#     2D-array `grid` whose i-jth entry is `func((xdata[i], ydata[j]))`.
-
-#     NOTE:
-#     -----
-#     We pass the value to `func` as a single argument.
-#     """
-#     xdata = np.squeeze(xdata)
-#     ydata = np.squeeze(ydata)
-#     assert(xdata.ndim == ydata.ndim == 1)
-#     nx = len(xdata)
-#     ny = len(ydata)
-#     indices = np.ndindex((nx, ny))
-#     # Appy function to data and reshape array
-#     grid = np.reshape([func((xdata[i], ydata[j])) for i, j in indices], (nx, ny))
-#     return grid
-
-# def grid_space(space, n=50):
-#     """Return a sequence of linear interval arrays for a given `space` (of the
-#     kind provided by OpenAI gym.
-#     """
-#     assert(isinstance(space, gym.core.Space))
-#     return [np.linspace(lo, hi, num=n) for lo, hi in zip(space.low, space.high)]
-
-# def my_heatmap(data, **kwargs):
-#     """Custom heatmap featuring a colorbar"""
-#     fig, ax = plt.subplots()
-#     cax = ax.imshow(data, aspect='equal', interpolation='nearest', cmap=cm.coolwarm)
-#     cbar = fig.colorbar(cax)
-#     return fig, ax, cax, cbar
-
-
 
 if __name__ == "__main__":
     logger.info('hi')
@@ -127,8 +94,10 @@ if __name__ == "__main__":
     # Convert to dataframe
     df = pd.DataFrame(contexts)
 
-    # Compute returns with a slight bit of truncation
-    df['G'] = np.max(-1000, vcf.analysis.calculate_return(df.r, df.gm_p))
+    # Compute returns
+    df['G'] = vcf.analysis.calculate_return(df.r, df.gm_p)
+    # df['G'] = df['G'].clip_lower(-500)
+
 
     # Convert observations (numpy arrays) to hashable type tuples
     df['obs'] = df['obs'].apply(tuple)
@@ -150,10 +119,10 @@ if __name__ == "__main__":
 
     # Get 3D coordinates for values
     val_pts = np.array([(x, y, z) for (x, y), z in values.reset_index().values])
-    xx, yy, z_vals = val_pts.T
+    xp, yp, z_vals = val_pts.T
 
     # Interpolate values to a grid of data
-    g_vals = scipy.interpolate.griddata((xx, yy),
+    g_vals = scipy.interpolate.griddata((xp, yp),
         np.array(z_vals),
         (gx, gy),
         method='cubic')
@@ -166,7 +135,7 @@ if __name__ == "__main__":
     var_pts = np.array([(x, y, z) for (x, y), z in variances.reset_index().values])
     xx, yy, z_vars = var_pts.T
 
-    g_vars = scipy.interpolate.griddata((xx, yy),
+    g_vars = scipy.interpolate.griddata((xp, yp),
         np.array(z_vars),
         (gx, gy),
         method='cubic')

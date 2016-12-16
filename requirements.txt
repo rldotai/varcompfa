@@ -1,6 +1,7 @@
 gym[all]>=0.4.9
+json_tricks>=3.6.0
 networkx>=1.11
 numpy>=1.10.4
 pandas>=0.18.0
 scipy>=0.17.0
-json_tricks>=3.6.0
+seaborn>=0.7.1

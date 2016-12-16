@@ -104,7 +104,8 @@ class VarianceTD(LearningAlgorithm):
 
     def start_episode(self):
         """Get ready to start a new episode."""
-        self.z *= 0
+        self.z      *= 0
+        self.z_bar  *= 0
 
     @property
     def trace(self):
@@ -204,7 +205,8 @@ class VTD(LearningAlgorithm):
 
     def start_episode(self):
         """Get ready to start a new episode."""
-        self.z *= 0
+        self.z      *= 0
+        self.z_bar  *= 0
 
     @property
     def trace(self):

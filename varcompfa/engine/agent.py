@@ -21,10 +21,14 @@ class Agent:
         containing the information needed to perform updates.
     phi : callable
         A function that maps observations to features used by the learning algo.
-    params: dict
+    params: dict, optional
         A dictionary of parameters, of the form `param_name: <value>`, where
         `<value>` can be either a constant (e.g., a float) or a callable that
         accepts a context.
+    reward_func: callable, optional
+        An reward function accepts a context and returns a `float`.
+        Modifying the reward function can be useful in some cases, e.g. for
+        reward shaping or for predicting other quantities than the return.
     metadata: dict, optional
         An optional dictionary for adding metadata to the agent, e.g. for
         annotations on the experiment it was trained on.
@@ -46,11 +50,14 @@ class Agent:
     At this point, everything necessary for the learning algorithm to perform
     an update should be available.
     """
-    def __init__(self, algo, phi, params=dict(), metadata=dict()):
+    def __init__(self, algo, phi, params=dict(), reward_func=None, metadata=dict()):
         self.algo = algo
         self.phi = phi
         self.params = params
         self.metadata = metadata
+        # Override default reward function if an alternative is provided
+        if reward_func is not None:
+            self.reward_func = reward_func
 
     def act(self, obs: np.ndarray):
         """Select an action according to the current observation using the
@@ -70,6 +77,22 @@ class Agent:
         """
         x = self.phi(obs)
         return np.array(self.algo.act(x))
+
+    def reward_func(self, context: dict) -> float:
+        """The reward function, which by default does nothing unless overriden
+        during initialization.
+
+        Parameters
+        ----------
+        context: dict
+            A basic context containing information about a single timestep
+
+        Returns
+        -------
+        reward: float
+            The reward derived from the given context.
+        """
+        return context['r']
 
     def eval_params(self, context: dict):
         """Evaluate the parameter functions for the supplied context."""
@@ -103,18 +126,23 @@ class Agent:
             if _intersect:
                 _logger.warn("agent.update(): parameter name conflict: %s"%_intersect)
 
+        # Compute the reward for the given context
+        ctx = {
+            **context,
+            'r': self.reward_func(context),
+        }
+
         # Compute parameters given the current context
-        _params = self.eval_params(context)
+        _params = self.eval_params(ctx)
 
         # Create the combined context
         ctx = {
-            'x': self.phi(context['obs']),
-            'xp': self.phi(context['obs_p']),
+            'x': self.phi(ctx['obs']),
+            'xp': self.phi(ctx['obs_p']),
             **_params,
-            **context
+            **ctx
         }
-        res = self.algo.update(ctx)
-        ctx['update_result'] = res
+        ctx['update_result'] = self.algo.update(ctx)
         return ctx
 
     def terminal_context(self, defaults=dict()):

@@ -97,7 +97,8 @@ The policy can either be fixed in advance or can learn online.
     - Environments don't typically have a terminal state or examples of the terminal state. 
     - Furthermore, the next state following termination is usually just the initial state. 
 - So it's not really possible to implement a well-defined terminal state of our own in general (although I am considering it because it's not really possible to learn from data when some information (like the episode abruptly "terminating") is not available.
-- And since we decided to have the parameters truly be state-dependent, we need to perform an additional
+- As for stop-gap measures, I've implemented a 'terminal step' in the experiment design class that ensures that when running out of time the context reflects that.
+    - I've also added a `start_episode` method to most algorithms, that should zero out traces in case state-dependent parameters are not used. It gets called at the start of each episode in `LiveExperiment`.
 
 # Data Analysis
 
