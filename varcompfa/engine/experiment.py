@@ -162,6 +162,7 @@ class LiveExperiment:
 
                 # If terminal state reached, exit episode loop
                 if done:
+                    total_steps += 1
                     break
 
                 # Otherwise, prepare for next iteration
