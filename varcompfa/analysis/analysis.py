@@ -45,13 +45,14 @@ def calculate_squared_return(rewards, gammas, returns):
     if you are using general value functions.
     """
     ret = []
-    g_sq = 0
-    g_next = 0
-    for r, gm, g in reversed(list(zip(rewards, gammas, returns))):
-        g_sq *= gm**2
-        g_sq += r**2 + 2*gm*r*g_next
-        ret.append(g_sq)
-        g_next = g
+    G_sq = 0
+    G_next = 0
+    for rwd, gm, G in reversed(list(zip(rewards, gammas, returns))):
+        G_sq *= gm**2
+        G_sq += rwd**2 + 2*gm*rwd*G_next
+        ret.append(G_sq)
+        G_next = G
+    ret.reverse()
     return ret
 
 def context_return(ctxlst):
