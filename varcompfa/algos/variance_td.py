@@ -15,18 +15,29 @@ from .algo_base import LearningAlgorithm
 class VarianceTD(LearningAlgorithm):
     """TD(λ) with modifications for learning the variance of the return.
 
-    Implemented based on:
-        A Greedy Approach to Adapting the Trace Parameter
-        White & White; 2016; arxiv:1607.00446v2
-
     Attributes
     ----------
     num_features : int
         The number of features (and therefore the length of the weight vector).
-    z : Vector[float]
-        The eligibility trace vector.
     w : Vector[float]
-        The weight vector.
+        The weight vector for the value function.
+    z : Vector[float]
+        The eligibility trace vector for the value function estimate.
+    w_bar: Vector[float]
+        The weight vector for the variance estimate's value functio.
+    z_bar: Vector[float]
+        The eligibility trace vector for the variance estimate.
+
+
+    Notes
+    -----
+    Implemented based on:
+        A Greedy Approach to Adapting the Trace Parameter
+        White & White; 2016; arxiv:1607.00446v2
+
+    In contrast to the VTD(λ) algorithm as defined in the paper, this algorithm
+    does not attempt to adapt lambda, instead it just learns the variance of
+    the λ-return.
     """
     def __init__(self, num_features):
         """Initialize the learning algorithm.
@@ -47,7 +58,13 @@ class VarianceTD(LearningAlgorithm):
         return np.dot(self.w, x)
 
     def get_variance(self, x):
-        """Get approximate variance of return for feature vector `x`."""
+        """Get approximate variance of return for feature vector `x`.
+
+        Notes
+        -----
+        The estimated variance has a floor of zero, as the true variance is
+        always positive.
+        """
         return np.clip(np.dot(self.w_bar, x) - self.get_value(x)**2, 0, None)
 
     def get_second_moment(self, x):

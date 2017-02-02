@@ -1,23 +1,26 @@
 """
 A simple Markov Decision Process environment.
 """
-import numpy as np 
+import numpy as np
 import gym
 from gym import spaces
-
+from gym.utils import seeding
 
 
 class ChainMDP(gym.Env):
     """
     An MDP that that acts like a corridor.
     """
-    #TODO: Settle on a specification for this.
-
     def __init__(self):
         self.action_space = spaces.Discrete(2)
         self.observation_space = spaces.Discrete(6)
         self.reward_range = (-1.0, 1.0)
         self._terminals = tuple([self.observation_space.n - 1])
+        self._seed()
+
+    def _seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
 
     @property
     def state(self):
@@ -31,7 +34,7 @@ class ChainMDP(gym.Env):
     def _transition(self, s, a):
         if s in self._terminals:
             return s
-        elif a == 0: 
+        elif a == 0:
             return np.max(s-1, 0)
         elif a == 1:
             return s+1
@@ -58,6 +61,7 @@ class ChainMDP(gym.Env):
         self._state = obs_p
         return (obs_p, reward, done, info)
 
+    # TODO: Override
     def _configure(self, *args, **kwargs):
         super()._configure(*args, **kwargs)
 
@@ -66,6 +70,3 @@ class ChainMDP(gym.Env):
 
     def _render(self, *args, **kwargs):
         super()._render(*args, **kwargs)
-
-    def _seed(self, *args, **kwargs):
-        super()._seed(*args, **kwargs)

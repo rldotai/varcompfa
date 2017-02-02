@@ -7,16 +7,16 @@ from gym import spaces
 from gym.utils import seeding
 
 
-
-class SimpleMDP(gym.Env):
+class PaperChainMDP(gym.Env):
     """
-    An extremely simple MDP.
+    An MDP that that acts like a corridor.
     """
     def __init__(self):
-        self.action_space = spaces.Discrete(2)
-        self.observation_space = spaces.Discrete(3)
-        self.reward_range = (-1.0, 1.0)
+        self.action_space = spaces.Discrete(1)
+        self.observation_space = spaces.Discrete(5)
+        self.reward_range = (-100.0, 100.0)
         self._terminals = tuple([self.observation_space.n - 1])
+        self._state = 0
         self._seed()
 
     def _seed(self, seed=None):
@@ -33,27 +33,32 @@ class SimpleMDP(gym.Env):
         return self.state
 
     def _transition(self, s, a):
-        sp = s + 1 if s not in self._terminals else s
-        return np.array(sp)
+        if s in self._terminals:
+            return s
+        elif a == 0:
+            return s+1
+        else:
+            raise Exception("Bad action passed {}".format(a))
 
     def _reward(self, s, a, sp):
         if s in self._terminals:
             return 0
         else:
-            return 1 if a == 0 else -1
+            return self.np_random.normal(1.0, 1.0)
 
     def _step(self, action):
         assert(self.action_space.contains(action))
         obs     = self.state
         obs_p   = self._transition(obs, action)
         reward  = self._reward(obs, action, obs_p)
-        done    = obs_p in self._terminals
+        done    = (obs_p in self._terminals)
         info    = {}
 
         # Modify state and return the step tuple
         self._state = obs_p
         return (obs_p, reward, done, info)
 
+    # TODO: Override
     def _configure(self, *args, **kwargs):
         super()._configure(*args, **kwargs)
 
@@ -62,6 +67,3 @@ class SimpleMDP(gym.Env):
 
     def _render(self, *args, **kwargs):
         super()._render(*args, **kwargs)
-
-    def _seed(self, *args, **kwargs):
-        super()._seed(*args, **kwargs)

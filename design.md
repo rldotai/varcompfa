@@ -1,5 +1,22 @@
 Some notes on the architecture of the code
 
+# Summary
+
+This codebase was developed for my thesis project, which explores different ways of estimating variance in reinforcement learning.
+
+As such, there are a variety of algorithms to try on many different tasks, and there are complicating factors such as choosing the state representation (features) and evaluating general value functions, which means that things like the discount parameter may be different depending on the state.
+
+Getting heterogenous algorithms to all work together regardless of environment, representation, or learning parameters is a difficult task, especially if you want the results to be reproducible.
+
+To do this, we get pretty abstract.
+We wrap the algorithms in "agents", which convert the raw state information into features and evaluate the state-dependent parameters as needed.
+
+The information necessary for each agent is passed around as "contexts", which contain the information necessary for the state-dependent parameters to produce the correct values, which in turn is used in the context passed to the algorithms when updating.
+
+The `Experiment` classes feed the raw context `(s, a, r, sp)` to the agents, which then get the needed information for the actual learning algorithms.
+It has lead to a reasonably complicated code base, but it means that defining and running experiments is done reproducibly via simple configuration scripts.
+
+There's probably a better architecture that I could've chosen, or perhaps a better programming model, but at this point I think I'll save rewriting everything for my next thesis.
 
 # Experiment
 
@@ -33,7 +50,7 @@ I am further persuaded of making everything serializable in some sense, so the e
 This may be excessive, however-- preserving the full state of everything may require too much space/computation, and may entail restrictive/excessive coding on the backend for everything we want to serialize.
 I think therefore it might be better to start with a minimal amount of information and only store more if we find it necessary.
 
-This should not pose a problem if all the necessary data can be re-computed
+This should not pose a problem if all the necessary data can be re-computed.
 
 ## Experiment Data
 
