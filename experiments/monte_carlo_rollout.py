@@ -49,7 +49,6 @@ parser.add_argument('--every-visit', dest='every_visit', action='store_true',
 
 
 if __name__ == "__main__":
-    logger.info('hi')
     args = parser.parse_args()
     print(args)
 

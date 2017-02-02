@@ -126,6 +126,7 @@ class VarianceTD(LearningAlgorithm):
         """Initialize from a configuration dictionary."""
         pass
 
+
 class VTD(LearningAlgorithm):
     """VTD(λ) as described in:
         A Greedy Approach to Adapting the Trace Parameter
