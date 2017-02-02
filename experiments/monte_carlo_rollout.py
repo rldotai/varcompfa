@@ -50,7 +50,6 @@ parser.add_argument('--every-visit', dest='every_visit', action='store_true',
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    print(args)
 
     # Create the environment
     env = gym.make(args.env)
