@@ -8,7 +8,7 @@ import itertools
 ##############################################################################
 # Data handling
 ##############################################################################
-def calculate_return(rewards, gamma):
+def calculate_return(rewards, gammas):
     """Calculate return from a list of rewards and a list of gammas.
 
     Notes
@@ -19,19 +19,56 @@ def calculate_return(rewards, gamma):
     factor of zero, but the state preceding it has a normal discount factor,
     as does the state following.
 
-    So as we compute G_{t} = R_{t+1} + γ_{t+1}*G_{t+1}
+    So we compute G_{t} = R_{t+1} + γ_{t+1}*G_{t+1}
     """
     ret = []
     g = 0
     # Allow for gamma to be specified as a sequence or a constant
-    if not hasattr(gamma, '__iter__'):
-        gamma = itertools.repeat(gamma)
-    # Work backwards through the
-    for r, gm in reversed(list(zip(rewards, gamma))):
+    if not hasattr(gammas, '__iter__'):
+        gammas = itertools.repeat(gammas)
+    # Work backwards through the lists
+    for r, gm in reversed(list(zip(rewards, gammas))):
         g *= gm
         g += r
         ret.append(g)
     # inverse of reverse
+    ret.reverse()
+    return np.array(ret)
+
+# TODO: Test this
+def calculate_lambda_return(rewards, gammas, lambdas, values):
+    """Calculate the lambda returns at each timestep.
+
+    Notes
+    -----
+    The discount parameter `gamma` should be the discount for the *next* state,
+    if you are using general value functions.
+    This is because (in the episodic setting) the terminal state has a discount
+    factor of zero, but the state preceding it has a normal discount factor,
+    as does the state following.
+
+    The recursive equation can be specified via:
+
+        G_{t}^ = R_{t+1} + γ_{t+1}*((1-λ_{t+1})*v_{t+1} + λ_{t+1}*G_{t+1}))
+    """
+
+    ret = []
+    g = 0
+    # Allow specifying params as a sequence or a constant
+    if not hasattr(gammas, '__iter__'):
+        gammas = itertools.repeat(gammas)
+    if not hasattr(lambdas, '__iter__'):
+        lambdas = itertools.repeat(lambdas)
+    if not hasattr(values, '__iter__'):
+        values = itertools.repeat(values)
+
+    # Work backwards through the lists
+    for r, gm, lm, val in reversed(list(zip(rewards, gammas, lambdas, values))):
+        g *= gm*lm
+        g += r + gm*(1-lm)*val
+        ret.append(g)
+
+    # Return the lambda returns in the proper order
     ret.reverse()
     return np.array(ret)
 
