@@ -401,6 +401,37 @@ class Progress(Callback):
         msg = "Episode %d of %d (total steps: %d)"%(
             episode_ix, self.num_episodes, total_steps)
         # Print messages
+        print(msg, file=self.stream, flush=True, end="\r")
+        # Ready for next episode
+        self.cumulative_steps = total_steps
+
+    def on_experiment_end(self, info=dict()):
+        print("\n", end="", file=self.stream, flush=True)
+
+
+class VerboseProgress(Callback):
+    """More detailed progress display callback."""
+    import sys
+    def __init__(self, stream=None):
+        if stream is None:
+            stream = self.sys.stdout
+        self.stream = stream
+
+    def on_experiment_begin(self, info=dict()):
+        self.num_episodes = info['num_episodes']
+        self.max_steps = info['max_steps']
+        self.cumulative_steps = 0
+
+    def on_episode_begin(self, episode_ix, info=dict()):
+        msg = "Episode %d of %d (total steps: %d)"%(
+            episode_ix, self.num_episodes, info['total_steps'])
+        print(msg, end="\r", file=self.stream, flush=True)
+
+    def on_episode_end(self, episode_ix, info):
+        total_steps = info['total_steps']
+        msg = "Episode %d of %d (total steps: %d)"%(
+            episode_ix, self.num_episodes, total_steps)
+        # Print messages
         print(msg, file=self.stream, flush=True)
         print("Episode steps: %d"%(total_steps - self.cumulative_steps))
         # Ready for next episode
