@@ -173,6 +173,8 @@ class Agent:
         """Get the value assigned to the current observation by the learning
         algorithm under the agent's function approximation scheme.
         """
+        if isinstance(obs, dict):
+            obs = obs['obs']
         return self.algo.get_value(self.phi(obs))
 
     def start_episode(self):

@@ -173,7 +173,7 @@ class AgentHistory(Callback):
     class, but those options will only be invoked if I find some pressing
     reason to add/remove/reorder the learning agents over the course of a run.
     """
-    def __init__(self, agent, exclude=set()):
+    def __init__(self, agent, exclude=set(), compute=dict()):
         """
         Initialize the callback.
 
@@ -185,9 +185,13 @@ class AgentHistory(Callback):
             The set of keys to ignore from `update_context`.
             Useful for when some items, such as the feature vector, may be
             large or otherwise not worth keeping track of.
+        compute : Dict, optional
+            A dictionary mapping keys to functions which accept a context
+            and return a value to track.
         """
         self.agent = agent
         self._exclude = set(exclude)
+        self._compute = compute
         self._hist = {}
         self._hist['metadata'] = dict()
         self._hist['contexts'] = list()
@@ -216,6 +220,11 @@ class AgentHistory(Callback):
 
         # Preserve the current step's context, ignoring excluded keys
         ctx = {k: v for k, v in agent_ctx.items() if k not in self._exclude}
+
+        # Compute any additional values that should be tracked
+        for k, func in self._compute.items():
+            ctx[k] = func(agent_ctx)
+
         ctx['t'] =  self._t
         self._hist['contexts'].append(ctx)
         self._t += 1
