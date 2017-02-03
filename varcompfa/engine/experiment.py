@@ -51,7 +51,7 @@ class LiveExperiment:
         self.policy = policy
         self._learners = tuple(learners)
 
-    def run(self, num_episodes, max_steps, callbacks=list(), initial_states=None):
+    def run(self, num_episodes, max_steps=100000, callbacks=list(), initial_states=None):
         """Run an experiment.
 
         Recording the results of the experiment can be done via `Callback`
@@ -63,7 +63,7 @@ class LiveExperiment:
         ----------
         num_episodes: int
             The number of episodes to run the experiment for.
-        max_steps: int
+        max_steps: int, default=100000
             The maximum number of steps allowed in an episode.
         callbacks: list
             A list of callbacks, objects that may perform actions at certain

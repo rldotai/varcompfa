@@ -1,8 +1,10 @@
 """Code for state-dependent parameter functions."""
+#TODO: Add __str__ and __repr__ methods
 
 # Logging
 import logging
 logger = logging.getLogger(__name__)
+
 
 class Constant:
     """A constant parameter, which has the option to return a different value
@@ -18,6 +20,10 @@ class Constant:
         if context['done']:
             return self.terminal_value
         return self.value
+
+    def __str__(self):
+        return 'Constant(%s, %s)'%(self.value, self.terminal_value)
+
 
 class EpisodicExponential:
     """A parameter that decays exponentially with the number of episodes.
@@ -48,6 +54,7 @@ class EpisodicExponential:
             if self.terminal_value:
                 return self.terminal_value
         return self._value
+
 
 class EpisodicPowerLaw:
     """A parameter that decays according to a power law with respect to the

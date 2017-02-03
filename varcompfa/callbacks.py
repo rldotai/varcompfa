@@ -212,9 +212,11 @@ class AgentHistory(Callback):
         self._t = 0
 
     def on_step_end(self, step_ix, info=dict()):
-        # self._hist['contexts'].append(info['context'])
-        ctx = {**info['update_contexts'][self._agent_ix], 't': self._t}
-        ctx = {k: v for k, v in ctx.items() if k not in self._exclude}
+        agent_ctx = info['update_contexts'][self._agent_ix]
+
+        # Preserve the current step's context, ignoring excluded keys
+        ctx = {k: v for k, v in agent_ctx.items() if k not in self._exclude}
+        ctx['t'] =  self._t
         self._hist['contexts'].append(ctx)
         self._t += 1
 
@@ -231,6 +233,7 @@ class AgentHistory(Callback):
     def metadata(self):
         """Metadata from the experiment."""
         return self._hist['metadata']
+
 
 class History(Callback):
     """

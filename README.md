@@ -30,8 +30,6 @@ Ultimately, each experiment should be specified as a `.py` file in `experiments`
 Things that aren't suitable for prime-time should be worked on in the `sandbox` directory, and then moved to other locations once they're ready.
 The sandbox is protected from accidental commits via the `.gitignore` in the root directory.
 
-Large files (e.g., data generated from runs and plots) may eventually merit separate directories of their own.
-
 ## Fancy Coding
 
 There are a few places where the code is not as straightforward as I'd like-- for example, using abstract base classes that feature functions inherit from.
