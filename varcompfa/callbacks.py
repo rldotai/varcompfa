@@ -154,6 +154,7 @@ class AgentHistory(Callback):
         - git_hash
     - contexts
         - total_steps
+        - episode
         - t (current timestep in episode)
         - obs
         - obs_p
@@ -199,6 +200,7 @@ class AgentHistory(Callback):
     def on_experiment_begin(self, info=dict()):
         # Get the agent's index in the list of learners
         self._agent_ix = info['learners'].index(self.agent)
+        self._episode = None
 
         # Record some metadata
         self._hist['metadata'] = {
@@ -214,6 +216,10 @@ class AgentHistory(Callback):
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
+        if self._episode is None:
+            self._episode = 0
+        else:
+            self._episode += 1
 
     def on_step_end(self, step_ix, info=dict()):
         agent_ctx = info['update_contexts'][self._agent_ix]
@@ -226,6 +232,7 @@ class AgentHistory(Callback):
             ctx[k] = func(agent_ctx)
 
         ctx['t'] =  self._t
+        ctx['episode'] = self._episode
         self._hist['contexts'].append(ctx)
         self._t += 1
 

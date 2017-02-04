@@ -148,3 +148,8 @@ class TD(LearningAlgorithm):
     def trace(self):
         """Return a copy of the current eligibility trace values."""
         return np.copy(self.z)
+
+    @property
+    def weights(self):
+        return self.w.copy()
+
