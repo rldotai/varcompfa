@@ -1,3 +1,7 @@
 # Notebooks prefaced by an underscore should not be add
 _*.ipynb
+_*.py
 _*.html
+
+# Subdirectories
+*/

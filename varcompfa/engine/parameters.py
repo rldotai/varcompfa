@@ -24,6 +24,12 @@ class Constant:
     def __str__(self):
         return 'Constant(%s, %s)'%(self.value, self.terminal_value)
 
+# TODO: Write this
+# TODO: Parameter algebra?
+# A parameter that comes as a composition of other parameters
+class Composed:
+    pass
+
 
 class EpisodicExponential:
     """A parameter that decays exponentially with the number of episodes.
