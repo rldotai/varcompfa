@@ -7,7 +7,6 @@ from gym import spaces
 from gym.utils import seeding
 
 
-
 class SimpleMDP(gym.Env):
     """
     An extremely simple MDP.
@@ -54,6 +53,7 @@ class SimpleMDP(gym.Env):
         self._state = obs_p
         return (obs_p, reward, done, info)
 
+    # TODO: Override
     def _configure(self, *args, **kwargs):
         super()._configure(*args, **kwargs)
 
@@ -62,6 +62,3 @@ class SimpleMDP(gym.Env):
 
     def _render(self, *args, **kwargs):
         super()._render(*args, **kwargs)
-
-    def _seed(self, *args, **kwargs):
-        super()._seed(*args, **kwargs)

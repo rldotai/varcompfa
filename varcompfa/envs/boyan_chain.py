@@ -1,10 +1,8 @@
 """
-A simple Markov Decision Process environment.
+Implementation of Boyan's chain problem, a Markov process (i.e., an MDP with
+only one action.)
 
-A five-state chain which always transitions closer to the terminal state with a
-reward generated via `N(1, 1)`.
-This makes the values and variance easy to calculate (although it's not
-properly ergodic, nor is it aperiodic).
+Taken from https://papers.nips.cc/paper/3092-ilstd-eligibility-traces-and-convergence-analysis.pdf
 """
 import numpy as np
 import gym
@@ -12,16 +10,16 @@ from gym import spaces
 from gym.utils import seeding
 
 
-class PaperChainMDP(gym.Env):
+class BoyanChainMDP(gym.Env):
     """
     An MDP that that acts like a corridor.
     """
     def __init__(self):
         self.action_space = spaces.Discrete(1)
-        self.observation_space = spaces.Discrete(5)
+        self.observation_space = spaces.Discrete(13)
         self.reward_range = (-100.0, 100.0)
-        self._terminals = tuple([self.observation_space.n - 1])
-        self._state = 0
+        self._terminals = tuple([0])
+        self._state = 13 # TODO: Initial state distribution?
         self._seed()
 
     def _seed(self, seed=None):
@@ -39,17 +37,30 @@ class PaperChainMDP(gym.Env):
 
     def _transition(self, s, a):
         if s in self._terminals:
-            return s
+            ret = s
         elif a == 0:
-            return s+1
+            if 2 < self._state:
+                if (self.np_random.uniform() < 0.5):
+                    ret = (s - 1)
+                else:
+                    ret = (s- 2)
+            else:
+                ret = (s - 1)
         else:
             raise Exception("Bad action passed {}".format(a))
+        return np.array(ret)
 
     def _reward(self, s, a, sp):
         if s in self._terminals:
             return 0
+        elif 2 < s:
+            return -3
+        elif s == 2 and sp == 1:
+            return -2
+        elif s == 1 and sp == 0:
+            return 0
         else:
-            return self.np_random.normal(1.0, 1.0)
+            raise Exception("Unspecified reward for transition: (%d, %d, %d)"%(s, a, sp))
 
     def _step(self, action):
         assert(self.action_space.contains(action))
