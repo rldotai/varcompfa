@@ -12,14 +12,17 @@ from gym.utils import seeding
 
 class BoyanChainMDP(gym.Env):
     """
-    An MDP that that acts like a corridor.
+    An environment implementing the Markov chain associatd with Boyan.
+
+    To get a consistent
     """
+    initial_state = 13
     def __init__(self):
         self.action_space = spaces.Discrete(1)
-        self.observation_space = spaces.Discrete(13)
+        self.observation_space = spaces.Discrete(14)
         self.reward_range = (-100.0, 100.0)
         self._terminals = tuple([0])
-        self._state = 13 # TODO: Initial state distribution?
+        self._state = self.initial_state
         self._seed()
 
     def _seed(self, seed=None):
@@ -28,11 +31,11 @@ class BoyanChainMDP(gym.Env):
 
     @property
     def state(self):
-        """Ensure that state is always of type `numpy.ndarray`."""
-        return np.array(self._state)
+        """Ensure that state is represented as an integer."""
+        return np.int(self._state)
 
     def _reset(self):
-        self._state = 0
+        self._state = self.initial_state
         return self.state
 
     def _transition(self, s, a):
@@ -48,7 +51,7 @@ class BoyanChainMDP(gym.Env):
                 ret = (s - 1)
         else:
             raise Exception("Bad action passed {}".format(a))
-        return np.array(ret)
+        return ret
 
     def _reward(self, s, a, sp):
         if s in self._terminals:

@@ -22,15 +22,16 @@ class Feature(metaclass=abc.ABCMeta):
         """String representation of the feature's specification."""
         pass
 
-    @abc.abstractmethod
+    # TODO: Replace w/ json_tricks
+    # @abc.abstractmethod
     def get_config(self):
         """Get the configuration necessary to full specify a feature."""
-        pass
+        raise NotImplementedError()
 
-    @abc.abstractclassmethod
+    # @abc.abstractclassmethod
     def from_config(cls, config):
         """Instantiate the feature from a configuration object."""
-        pass
+        raise NotImplementedError()
 
     @staticmethod
     def from_dict(dct):
@@ -39,17 +40,6 @@ class Feature(metaclass=abc.ABCMeta):
         config = dct['config']
         cls = load_class(class_name)
         return cls.from_config(config)
-
-    def to_dict(self):
-        """Convert a feature to a dictionary which fully specifies it, which
-        should provide all the information needed to preserve/instantiate it.
-
-        This has to act recursively, since some features may be composed of
-        other child features.
-        """
-        # TODO
-
-
 
 
 def load_feature(class_name, config):
