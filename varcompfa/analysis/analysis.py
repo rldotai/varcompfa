@@ -72,15 +72,23 @@ def calculate_lambda_return(rewards, gammas, lambdas, values):
     ret.reverse()
     return np.array(ret)
 
-def calculate_squared_return(rewards, gammas, returns):
+def calculate_squared_return(rewards, gammas, returns=None):
     """Calculate squared return from a list of rewards, a list of gammas,
     and a list of returns.
+    If `returns` is not provided, it is computed from `rewards` and `gammas`.
 
     Notes
     -----
     The discount parameter `gamma` should be the discount for the *next* state,
-    if you are using general value functions.
+    if you are using general value functions, similarly for the returns.
+
+    The recursive equation can be written in pseudo-LaTeX as
+
+        (G_{t})^{2} = R_{t+1}^{2} + 2 γ_{t+1} R_{t+1} G_{t+1} + γ_{t+1}^2 (G_{t+1})^2
     """
+    if returns is None:
+        returns = calculate_return(rewards, gammas)
+
     ret = []
     G_sq = 0
     G_next = 0
