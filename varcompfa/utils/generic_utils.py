@@ -3,6 +3,7 @@ Generic utilities
 """
 import importlib
 import inspect
+import os
 import pydoc
 
 
@@ -15,6 +16,12 @@ def find_module(obj):
         return inspect.getmodule(obj).__name__
     else:
         return inspect.getmodule(obj.__class__).__name__
+
+def get_current_filename():
+    """Uses inspect to get the caller's filename."""
+    stack = inspect.stack()
+    frame = stack[1]
+    return os.path.abspath(frame.filename)
 
 def get_class_string(obj):
     """Get the class string for an object
