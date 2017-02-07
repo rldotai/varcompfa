@@ -14,7 +14,11 @@ class BoyanChainMDP(gym.Env):
     """
     An environment implementing the Markov chain associatd with Boyan.
 
-    To get a consistent
+
+    Notes
+    -----
+    The canonical features for the MDP are specified in `varcompfa.features` as
+    `BoyanFeatures` (see a description of the problem for details).
     """
     initial_state = 13
     def __init__(self):
