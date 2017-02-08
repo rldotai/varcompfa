@@ -30,7 +30,27 @@ class Constant:
 class Composed:
     pass
 
+class Map:
+    """A parameter that maps observations to parameter values using a
+    dictionary or other object that has a `.get` method.
+    """
+    def __init__(self, mapping, default=None):
+        self.mapping = mapping
+        self.default = default
 
+    def __call__(self, context):
+        ret = self.mapping.get(context['obs'], self.default)
+        if ret is not None:
+            return ret
+        else:
+            raise Exception("No value specified for obs: %s"%(context['obs']))
+
+    def __str__(self):
+        return "Map(%s, default=%s)"%(self.mapping, self.default)
+
+###############################################################################
+# Stepsize Parameters
+###############################################################################
 class EpisodicExponential:
     """A parameter that decays exponentially with the number of episodes.
 

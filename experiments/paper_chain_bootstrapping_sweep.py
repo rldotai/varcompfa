@@ -300,7 +300,7 @@ if __name__ == "__main__":
                 dct[key] = np.vstack(val).T.tolist()
 
         # Metadata for the experiment.
-        dct['metadata'] = {
+        res['metadata'] = {
             'num_runs': num_runs,
             'num_episodes': num_episodes,
             'environment': env.spec.id,
@@ -315,5 +315,5 @@ if __name__ == "__main__":
         json.dump(res, open(result_path, 'w'))
 
         fig_path = os.path.join(outdir, filename+'.png')
-        # fig.savefig(fig_path)
+        fig.savefig(fig_path)
         plt.close()

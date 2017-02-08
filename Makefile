@@ -29,7 +29,15 @@ notebooks:
 	@echo $$PATH
 	source activate $(ENV_NAME)
 	python --version
+	$(ENV_BIN_DIR)/jupyter nbconvert --to=html --FilesWriter.build_directory=./notebooks ./notebooks/*.ipynb
 
+# Execute notebooks and convert to HTML
+run-notebooks:
+	export PATH='$(CONDA_BIN_DIR):$(CONDA_HOME):$$PATH'
+	export CONDA_PREFIX='$(ENV_DIR)'
+	@echo $$PATH
+	source activate $(ENV_NAME)
+	python --version
 	$(ENV_BIN_DIR)/jupyter nbconvert --execute --ExecutePreprocessor.kernel_name=python --to=html --FilesWriter.build_directory=./notebooks ./notebooks/*.ipynb
 
 # Update the patch version
