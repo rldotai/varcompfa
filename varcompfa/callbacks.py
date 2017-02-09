@@ -251,6 +251,8 @@ class AgentHistory(Callback):
         return self._hist['metadata']
 
 
+# TODO: Improve this so it can track agents
+# TODO: Improve this so it can compute arbitrary values using context
 class History(Callback):
     """
     Records a history of the experiment, of the form:
