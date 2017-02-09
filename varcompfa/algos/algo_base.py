@@ -41,14 +41,16 @@ class LearningAlgorithmMeta(type, metaclass=abc.ABCMeta):
         """Perform any actions (eg, clear traces) for starting a new episode."""
         pass
 
-    @abc.abstractmethod
+    # TODO: Just use json_tricks?
+    # @abc.abstractmethod
     def get_config(self) -> dict:
         """Get the configuration for the algorithm, i.e., all information that
         would be needed to instantiate it, as a `dict`.
         """
         pass
 
-    @abc.abstractclassmethod
+    # TODO: Just use json_tricks?
+    # @abc.abstractclassmethod
     def from_config(cls, config):
         """Load the algorithm from a configuration stored in a dict."""
         pass

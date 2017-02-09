@@ -133,7 +133,7 @@ class VarianceTD(LearningAlgorithm):
         self.z_bar  *= 0
 
     @property
-    def trace(self):
+    def traces(self):
         """Return a copy of the current eligibility trace values."""
         return np.copy(self.z)
 
@@ -269,7 +269,7 @@ class OldVarianceTD(LearningAlgorithm):
         self.z_bar  *= 0
 
     @property
-    def trace(self):
+    def traces(self):
         """Return a copy of the current eligibility trace values."""
         return np.copy(self.z)
 
@@ -287,7 +287,7 @@ class OldVarianceTD(LearningAlgorithm):
         """Initialize from a configuration dictionary."""
         pass
 
-
+# TODO: Finish implementing this
 class VTD(LearningAlgorithm):
     """VTD(λ) as described in:
         A Greedy Approach to Adapting the Trace Parameter
@@ -371,7 +371,7 @@ class VTD(LearningAlgorithm):
         self.z_bar  *= 0
 
     @property
-    def trace(self):
+    def traces(self):
         """Return a copy of the current eligibility trace values."""
         return np.copy(self.z)
 

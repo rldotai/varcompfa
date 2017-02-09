@@ -117,8 +117,11 @@ control = vcf.policies.ConstantPolicy(0)
 
 # Define experiment and where to save results
 pkgdir = os.path.dirname(os.path.dirname(vcf.__file__))
-NUM_RUNS = 30
+# NUM_RUNS = 30
+# NUM_EPISODES = 30000
+NUM_RUNS = 1
 NUM_EPISODES = 30000
+SAVE_RESULTS = False
 OUTDIR = os.path.join(pkgdir, 'results', 'boyan_sweep')
 NAME_FMT = "lambda={lmbda:1.2f}_kappa={kappa:1.2f}_lambda_bar={lmbda_bar:1.2f}"
 
@@ -269,26 +272,36 @@ for params in parameter_search(base, vary):
             res['second_moment'][key].append(val)
 
     # ############################################################
-    # TODO: Make this neater, use a DataFrame
-    # Print the averaged mean, direct and second moment results
+    # Some results for quick comparison
     # ############################################################
-    val_mean = np.mean(res['td']['mean'], axis=0)
-    dir_mean = np.mean(res['direct']['mean'], axis=0)
-    sec_mean = np.mean(res['second_moment']['mean'], axis=0)
+    columns = ['mean_return', 'var_return',
+               'mean_kp_return', 'var_kp_return',
+               'avg_values', 'avg_direct', 'avg_second',
+               'final_values', 'final_direct', 'final_second']
+    summary_df = pd.DataFrame(index=np.arange(num_states), columns=columns)
 
-    # Print some information
-    print()
-    print("Average Values:")
-    print(val_mean)
-    print(dir_mean)
-    print(sec_mean)
+    # Average values over entire run + values from near end of episodes
+    summary_df['avg_values'] = np.mean(res['td']['mean'], axis=0)
+    summary_df['avg_direct'] = np.mean(res['direct']['mean'], axis=0)
+    summary_df['avg_second'] = np.mean(res['second_moment']['mean'], axis=0)
+    summary_df['final_values'] = np.mean(res['td']['mean'][-10:], axis=0)
+    summary_df['final_direct'] = np.mean(res['direct']['mean'][-10:], axis=0)
+    summary_df['final_second'] = np.mean(res['second_moment']['mean'][-10:], axis=0)
 
-    print("Final Values:")
-    print(np.array([value_agent.get_value(s) for s in states]))
-    print(np.array([direct_agent.get_value(s) for s in states]))
-    print(np.array([second_agent.get_value(s) - value_agent.get_value(s)**2 for s in states]))
-    print()
+    # Compare with the empirical results
+    grouped_obs = run_df.groupby('obs')
+    summary_df['mean_return'] = grouped_obs['G'].mean()
+    summary_df['var_return'] = grouped_obs['G'].var()
+    summary_df['mean_kp_return'] = grouped_obs['G_kp'].mean()
+    summary_df['var_kp_return'] = grouped_obs['G_kp'].var()
 
+    # Fill NaN values (typically terminal states from empirical results)
+    summary_df.fillna(0, inplace=True)
+
+    # Print the results to terminal
+    print("λ={lmbda}, κ={kappa}, λ_bar={lmbda_bar}".format(**params))
+    print("*"*70)
+    print(summary_df)
 
     # Convert to Craig's format
     for name, dct in res.items():
@@ -328,9 +341,10 @@ for params in parameter_search(base, vary):
     axes[2].set_ylim(-50, 250)
 
     # Save the figure
-    os.makedirs(os.path.join(OUTDIR, 'plots'), exist_ok=True)
-    plot_path = os.path.join(OUTDIR, 'plots', basename + '.png')
-    fig.savefig(plot_path)
+    if SAVE_RESULTS:
+        os.makedirs(os.path.join(OUTDIR, 'plots'), exist_ok=True)
+        plot_path = os.path.join(OUTDIR, 'plots', basename + '.png')
+        fig.savefig(plot_path)
 
     # Zooming in on variance
     #############################################################
@@ -363,9 +377,10 @@ for params in parameter_search(base, vary):
     axes[2].set_ylim(0, 10)
 
     # Save the figure
-    os.makedirs(os.path.join(OUTDIR, 'plots'), exist_ok=True)
-    plot_path = os.path.join(OUTDIR, 'plots', basename + '-zoom' + '.png')
-    fig.savefig(plot_path)
+    if SAVE_RESULTS:
+        os.makedirs(os.path.join(OUTDIR, 'plots'), exist_ok=True)
+        plot_path = os.path.join(OUTDIR, 'plots', basename + '-zoom' + '.png')
+        fig.savefig(plot_path)
 
     # Avoid displaying graphs
     plt.close('all')
@@ -380,11 +395,12 @@ for params in parameter_search(base, vary):
     }
 
     # Save result
-    os.makedirs(OUTDIR, exist_ok=True)
-    result_path = os.path.join(OUTDIR, 'results', basename + '.json')
-    print("Saving results to:", result_path)
-    os.makedirs(os.path.join(OUTDIR, 'results'), exist_ok=True)
-    json.dump(res, open(result_path, 'w'))
+    if SAVE_RESULTS:
+        os.makedirs(OUTDIR, exist_ok=True)
+        result_path = os.path.join(OUTDIR, 'results', basename + '.json')
+        print("Saving results to:", result_path)
+        os.makedirs(os.path.join(OUTDIR, 'results'), exist_ok=True)
+        json.dump(res, open(result_path, 'w'))
 
     # Delete objects to conserve memory
     del run_df, res, dct

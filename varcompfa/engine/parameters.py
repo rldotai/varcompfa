@@ -34,12 +34,13 @@ class Map:
     """A parameter that maps observations to parameter values using a
     dictionary or other object that has a `.get` method.
     """
-    def __init__(self, mapping, default=None):
+    def __init__(self, mapping, key='obs', default=None):
         self.mapping = mapping
         self.default = default
+        self.key     = key
 
     def __call__(self, context):
-        ret = self.mapping.get(context['obs'], self.default)
+        ret = self.mapping.get(context[self.key], self.default)
         if ret is not None:
             return ret
         else:

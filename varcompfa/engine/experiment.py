@@ -51,7 +51,8 @@ class LiveExperiment:
         self.policy = policy
         self._learners = tuple(learners)
 
-    def run(self, num_episodes, max_steps=100000, callbacks=list(), initial_states=None):
+    def run(self, num_episodes, max_steps=100000, callbacks=list(),
+            initial_states=None, warn_step_limit=True):
         """Run an experiment.
 
         Recording the results of the experiment can be done via `Callback`
@@ -74,6 +75,8 @@ class LiveExperiment:
             An iterable of initial states to start from, assuming the
             environment supports simply modifying `state`.
             Useful for systematic investigation of policies (e.g. grid search).
+        warn_step_limit: boolean, default True
+            If `True`, log a warning when the simulation exceeds the step limit.
 
 
         Available Callbacks
@@ -170,11 +173,14 @@ class LiveExperiment:
                 total_steps += 1
 
 
+            # We create a mock final step to ensure the experiment's
+            # episodic structure is captured and recorded.
             else:
-                logger.info('Failed to terminate episode before time limit.')
-                logger.info('Updating based on fictitious final step.')
-                # We create a mock final step to ensure the experiment's
-                # episodic structure is captured and recorded.
+                # Log a warning about non-termination unless told otherwise
+                if warn_step_limit:
+                    logger.warn('Failed to terminate episode before time limit.')
+                    logger.warn('Updating based on fictitious final step.')
+
 
                 # Perform callbacks for beginning of step
                 step_begin_info = {}
