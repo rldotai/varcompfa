@@ -78,6 +78,13 @@ def parameter_search(base, vary=dict()):
     for case in itertools.product(*values):
         yield {**base, **dict(zip(names, case))}
 
+# pkgdir = os.path.dirname(os.path.dirname(vcf.__file__))
+# NUM_RUNS = 30
+# NUM_EPISODES = 30000
+# OUTDIR = os.path.join(pkgdir, 'results', 'boyan_sweep')
+# NAME_FMT = "lambda={lmbda:1.2f}_kappa={kappa:1.2f}_lambda_bar={lmbda_bar:1.2f}"
+
+
 
 # The actual experiment
 if __name__ == "__main__":

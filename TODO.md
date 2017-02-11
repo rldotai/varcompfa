@@ -2,6 +2,7 @@ A list of work that needs to be done on the `varcompfa` package.
 
 # High Priority
 
+- [ ] Random seeding for fixed policies, agents, etc.
 - [ ] Validity of shoe-horning in a terminal update for OpenAI gym
 - [ ] History callback that can record parameter values
 - [ ] Flat history callback

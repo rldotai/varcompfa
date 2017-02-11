@@ -22,6 +22,7 @@ formatter = verbose_formatter
 handler = logging.StreamHandler(sys.stderr)
 handler.setFormatter(formatter)
 
+# Common directories
 EXPERIMENT_DIR  = os.path.dirname(os.path.realpath(__file__))
 PROJECT_DIR     = os.path.dirname(EXPERIMENT_DIR)
 CONTROLLER_DIR  = os.path.join(PROJECT_DIR, 'controllers')
