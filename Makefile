@@ -7,7 +7,7 @@ CONDA_HOME = $(HOME)/.anaconda3
 CONDA_BIN_DIR = $(CONDA_HOME)/bin
 CONDA = $(CONDA_BIN_DIR)/conda
 
-ENV_NAME = "varcompfa"
+ENV_NAME = varcompfa
 ENV_DIR = $(CONDA_HOME)/envs/$(ENV_NAME)
 ENV_BIN_DIR = $(ENV_DIR)/bin
 ENV_LIB_DIR = $(ENV_DIR)/lib
@@ -26,10 +26,10 @@ test:
 notebooks:
 	export PATH='$(CONDA_BIN_DIR):$(CONDA_HOME):$$PATH'
 	export CONDA_PREFIX='$(ENV_DIR)'
-	@echo $$PATH
-	source activate $(ENV_NAME)
-	python --version
-	$(ENV_BIN_DIR)/jupyter nbconvert --to=html --FilesWriter.build_directory=./notebooks ./notebooks/*.ipynb
+	# @echo $$PATH
+	# source activate $(ENV_NAME)
+	$(ENV_PYTHON) "./scripts/convert_notebooks.py" "./notebooks/*.ipynb" \
+		--exclude "_*.ipynb" --outdir "./notebooks/html"
 
 # Execute notebooks and convert to HTML
 run-notebooks:
