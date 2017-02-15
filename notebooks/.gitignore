@@ -4,4 +4,4 @@ _*.py
 _*.html
 
 # Subdirectories
-*/
+# ./*
