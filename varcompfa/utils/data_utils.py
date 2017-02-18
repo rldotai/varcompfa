@@ -131,3 +131,11 @@ def string_to_array(s, sep=' ', shape=None, **kwargs):
         return arr.reshape(shape)
     else:
         return arr
+
+def make_hashable(df):
+    """Make a DataFrame's columns hashable in order to support groupby or other
+    indexing operations.
+    """
+    # dtypes
+    # If it's a column of dicts, try to expand into new columns
+    # and drop the old ones

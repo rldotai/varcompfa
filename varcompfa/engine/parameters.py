@@ -145,6 +145,7 @@ class EpisodicParameter:
                 return self.terminal_value
         return self._value
 
+
 class StepwiseParameter:
     """A parameter set according to an arbitrary single-argument function,
     with the argument in question being the total number of steps.
@@ -154,9 +155,8 @@ class StepwiseParameter:
         self.terminal_value = terminal_value
 
     def __call__(self, context):
-        if context['done'] and self.terminal_value:
-            return self.terminal_value
         return self.func(context['total_steps'])
+
 
 class StepwiseExponential:
     """A parameter that decays exponentially with the total number of steps.
@@ -168,11 +168,13 @@ class StepwiseExponential:
     def __init__(self, initial_val: float, decay_rate: float, terminal_value=None):
         self.initial_value = initial_value
         self.decay_rate = decay_rate
+        self.terminal_value = terminal_value
 
     def __call__(self, context):
         if context['done'] and self.terminal_value:
             return self.terminal_value
         return self.initial_value * self.exp(-decay_rate*context['total_steps'])
+
 
 class StepwisePowerLaw:
     """A parameter that decays according to a power law with respect to the
@@ -185,6 +187,7 @@ class StepwisePowerLaw:
         assert(exponent > 0)
         self.base = base
         self.exponent = exponent
+        self.terminal_value = terminal_value
 
     def __call__(self, context):
         if context['done'] and self.terminal_value:
