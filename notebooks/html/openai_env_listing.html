@@ -1,0 +1,2507 @@
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Environments-Available">Environments Available<a class="anchor-link" href="#Environments-Available">&#182;</a></h1><p>Here's a quick way to check what environments are available and can be made.</p>
+<p>Also, it looks like some of these import TensorFlow? 
+What's that about?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span> 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">TAB</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span>
+<span class="n">envlst</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">envs</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<span class="n">errlst</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">envlst</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">make</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">TAB</span><span class="p">,</span> <span class="s1">&#39;obs:&#39;</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">TAB</span><span class="p">,</span> <span class="s1">&#39;act:&#39;</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="c1">#         print(i.id)</span>
+<span class="c1">#         print(TAB, &#39;\x1b[31m Cannot instantiate environment \x1b[0m&#39;, flush=True)</span>
+        <span class="n">errlst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot make:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">60</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">errlst</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Acrobot-v1
+	 obs: Box(6,)
+	 act: Discrete(3)
+AirRaid-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+AirRaid-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+AirRaid-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+AirRaid-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+AirRaid-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+AirRaid-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+AirRaid-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+AirRaid-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+AirRaidDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+AirRaidDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+AirRaidNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+AirRaidNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+Alien-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Alien-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Alien-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Alien-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Alien-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Alien-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Alien-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Alien-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+AlienDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+AlienDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+AlienNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+AlienNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Amidar-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(10)
+Amidar-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(10)
+Amidar-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(10)
+Amidar-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(10)
+Amidar-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(10)
+Amidar-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(10)
+Amidar-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+Amidar-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+AmidarDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+AmidarDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+AmidarNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+AmidarNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+Assault-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(7)
+Assault-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(7)
+Assault-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(7)
+Assault-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(7)
+Assault-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(7)
+Assault-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(7)
+Assault-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(7)
+Assault-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(7)
+AssaultDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(7)
+AssaultDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(7)
+AssaultNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(7)
+AssaultNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(7)
+Asterix-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+Asterix-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+Asterix-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+Asterix-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+Asterix-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+Asterix-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+Asterix-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+Asterix-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+AsterixDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+AsterixDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+AsterixNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+AsterixNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+Asteroids-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(14)
+Asteroids-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(14)
+Asteroids-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(14)
+Asteroids-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(14)
+Asteroids-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(14)
+Asteroids-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(14)
+Asteroids-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+Asteroids-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+AsteroidsDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+AsteroidsDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+AsteroidsNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+AsteroidsNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+Atlantis-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(4)
+Atlantis-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(4)
+Atlantis-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(4)
+Atlantis-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(4)
+Atlantis-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(4)
+Atlantis-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(4)
+Atlantis-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(4)
+Atlantis-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(4)
+AtlantisDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(4)
+AtlantisDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(4)
+AtlantisNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(4)
+AtlantisNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(4)
+BankHeist-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+BankHeist-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+BankHeist-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+BankHeist-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+BankHeist-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+BankHeist-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+BankHeist-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+BankHeist-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+BankHeistDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+BankHeistDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+BankHeistNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+BankHeistNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+BattleZone-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+BattleZone-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+BattleZone-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+BattleZone-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+BattleZone-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+BattleZone-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+BattleZone-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BattleZone-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BattleZoneDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BattleZoneDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BattleZoneNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BattleZoneNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BeamRider-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+BeamRider-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+BeamRider-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+BeamRider-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+BeamRider-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+BeamRider-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+BeamRider-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+BeamRider-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+BeamRiderDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+BeamRiderDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+BeamRiderNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+BeamRiderNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+Berzerk-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Berzerk-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Berzerk-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Berzerk-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Berzerk-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Berzerk-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Berzerk-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Berzerk-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BerzerkDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BerzerkDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BerzerkNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BerzerkNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Blackjack-v0
+	 obs: Tuple(Discrete(32), Discrete(11), Discrete(2))
+	 act: Discrete(2)
+Bowling-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Bowling-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Bowling-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Bowling-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Bowling-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Bowling-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Bowling-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+Bowling-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+BowlingDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+BowlingDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+BowlingNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+BowlingNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+Boxing-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Boxing-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Boxing-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Boxing-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Boxing-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Boxing-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Boxing-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Boxing-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BoxingDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BoxingDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BoxingNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+BoxingNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Breakout-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Breakout-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Breakout-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Breakout-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Breakout-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Breakout-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Breakout-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+Breakout-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+BreakoutDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+BreakoutDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+BreakoutNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+BreakoutNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Using TensorFlow backend.
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CNNClassifierTraining-v0
+	 obs: Box(2,)
+	 act: Tuple(Box(1,), Box(1,), Box(1,), Box(1,), Box(1,), Box(1,), Box(5, 2), Box(2, 2))
+Carnival-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Carnival-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Carnival-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Carnival-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Carnival-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Carnival-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Carnival-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+Carnival-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+CarnivalDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+CarnivalDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+CarnivalNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+CarnivalNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+CartPole-v0
+	 obs: Box(4,)
+	 act: Discrete(2)
+CartPole-v1
+	 obs: Box(4,)
+	 act: Discrete(2)
+Centipede-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Centipede-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Centipede-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Centipede-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Centipede-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Centipede-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Centipede-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+Centipede-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+CentipedeDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+CentipedeDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+CentipedeNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+CentipedeNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+ChopperCommand-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+ChopperCommand-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+ChopperCommand-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+ChopperCommand-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+ChopperCommand-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+ChopperCommand-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+ChopperCommand-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ChopperCommand-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ChopperCommandDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ChopperCommandDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ChopperCommandNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ChopperCommandNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Copy-v0
+	 obs: Discrete(6)
+	 act: Tuple(Discrete(2), Discrete(2), Discrete(5))
+CrazyClimber-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+CrazyClimber-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+CrazyClimber-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+CrazyClimber-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+CrazyClimber-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+CrazyClimber-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+CrazyClimber-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+CrazyClimber-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+CrazyClimberDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+CrazyClimberDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+CrazyClimberNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+CrazyClimberNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+DemonAttack-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+DemonAttack-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+DemonAttack-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+DemonAttack-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+DemonAttack-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+DemonAttack-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+DemonAttack-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+DemonAttack-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+DemonAttackDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+DemonAttackDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+DemonAttackNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+DemonAttackNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+DoubleDunk-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+DoubleDunk-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+DoubleDunk-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+DoubleDunk-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+DoubleDunk-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+DoubleDunk-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+DoubleDunk-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+DoubleDunk-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+DoubleDunkDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+DoubleDunkDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+DoubleDunkNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+DoubleDunkNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+DuplicatedInput-v0
+	 obs: Discrete(6)
+	 act: Tuple(Discrete(2), Discrete(2), Discrete(5))
+ElevatorAction-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+ElevatorAction-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+ElevatorAction-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+ElevatorAction-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+ElevatorAction-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+ElevatorAction-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+ElevatorAction-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ElevatorAction-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ElevatorActionDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ElevatorActionDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ElevatorActionNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ElevatorActionNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Enduro-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+Enduro-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+Enduro-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+Enduro-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+Enduro-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+Enduro-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+Enduro-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+Enduro-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+EnduroDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+EnduroDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+EnduroNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+EnduroNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+FishingDerby-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+FishingDerby-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+FishingDerby-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+FishingDerby-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+FishingDerby-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+FishingDerby-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+FishingDerby-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+FishingDerby-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+FishingDerbyDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+FishingDerbyDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+FishingDerbyNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+FishingDerbyNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Freeway-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(3)
+Freeway-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(3)
+Freeway-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(3)
+Freeway-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(3)
+Freeway-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(3)
+Freeway-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(3)
+Freeway-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(3)
+Freeway-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(3)
+FreewayDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(3)
+FreewayDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(3)
+FreewayNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(3)
+FreewayNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(3)
+Frostbite-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Frostbite-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Frostbite-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Frostbite-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Frostbite-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Frostbite-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Frostbite-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Frostbite-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+FrostbiteDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+FrostbiteDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+FrostbiteNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+FrostbiteNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+FrozenLake-v0
+	 obs: Discrete(16)
+	 act: Discrete(4)
+FrozenLake8x8-v0
+	 obs: Discrete(64)
+	 act: Discrete(4)
+Go19x19-v0
+	 obs: Box(3, 19, 19)
+	 act: Discrete(363)
+Go9x9-v0
+	 obs: Box(3, 9, 9)
+	 act: Discrete(83)
+Gopher-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(8)
+Gopher-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(8)
+Gopher-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(8)
+Gopher-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(8)
+Gopher-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(8)
+Gopher-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(8)
+Gopher-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+Gopher-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+GopherDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+GopherDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+GopherNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+GopherNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+Gravitar-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Gravitar-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Gravitar-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Gravitar-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Gravitar-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Gravitar-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Gravitar-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Gravitar-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+GravitarDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+GravitarDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+GravitarNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+GravitarNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+GuessingGame-v0
+	 obs: Discrete(4)
+	 act: Box(1,)
+Hex9x9-v0
+	 obs: Box(3, 9, 9)
+	 act: Discrete(82)
+HotterColder-v0
+	 obs: Discrete(4)
+	 act: Box(1,)
+IceHockey-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+IceHockey-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+IceHockey-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+IceHockey-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+IceHockey-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+IceHockey-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+IceHockey-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+IceHockey-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+IceHockeyDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+IceHockeyDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+IceHockeyNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+IceHockeyNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Jamesbond-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Jamesbond-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Jamesbond-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Jamesbond-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Jamesbond-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Jamesbond-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Jamesbond-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Jamesbond-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+JamesbondDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+JamesbondDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+JamesbondNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+JamesbondNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+JourneyEscape-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(16)
+JourneyEscape-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(16)
+JourneyEscape-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(16)
+JourneyEscape-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(16)
+JourneyEscape-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(16)
+JourneyEscape-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(16)
+JourneyEscape-v0
+	 obs: Box(230, 160, 3)
+	 act: Discrete(16)
+JourneyEscape-v3
+	 obs: Box(230, 160, 3)
+	 act: Discrete(16)
+JourneyEscapeDeterministic-v0
+	 obs: Box(230, 160, 3)
+	 act: Discrete(16)
+JourneyEscapeDeterministic-v3
+	 obs: Box(230, 160, 3)
+	 act: Discrete(16)
+JourneyEscapeNoFrameskip-v0
+	 obs: Box(230, 160, 3)
+	 act: Discrete(16)
+JourneyEscapeNoFrameskip-v3
+	 obs: Box(230, 160, 3)
+	 act: Discrete(16)
+Kangaroo-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Kangaroo-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Kangaroo-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Kangaroo-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Kangaroo-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Kangaroo-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Kangaroo-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Kangaroo-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+KangarooDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+KangarooDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+KangarooNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+KangarooNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Krull-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Krull-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Krull-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Krull-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Krull-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Krull-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Krull-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Krull-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+KrullDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+KrullDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+KrullNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+KrullNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+KungFuMaster-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(14)
+KungFuMaster-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(14)
+KungFuMaster-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(14)
+KungFuMaster-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(14)
+KungFuMaster-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(14)
+KungFuMaster-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(14)
+KungFuMaster-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+KungFuMaster-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+KungFuMasterDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+KungFuMasterDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+KungFuMasterNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+KungFuMasterNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(14)
+MontezumaRevenge-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+MontezumaRevenge-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+MontezumaRevenge-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+MontezumaRevenge-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+MontezumaRevenge-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+MontezumaRevenge-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+MontezumaRevenge-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+MontezumaRevenge-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+MontezumaRevengeDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+MontezumaRevengeDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+MontezumaRevengeNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+MontezumaRevengeNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+MountainCar-v0
+	 obs: Box(2,)
+	 act: Discrete(3)
+MountainCarContinuous-v0
+	 obs: Box(2,)
+	 act: Box(1,)
+MsPacman-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+MsPacman-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+MsPacman-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+MsPacman-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+MsPacman-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+MsPacman-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+MsPacman-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+MsPacman-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+MsPacmanDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+MsPacmanDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+MsPacmanNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+MsPacmanNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(9)
+NChain-v0
+	 obs: Discrete(5)
+	 act: Discrete(2)
+NameThisGame-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+NameThisGame-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+NameThisGame-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+NameThisGame-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+NameThisGame-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+NameThisGame-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+NameThisGame-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+NameThisGame-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+NameThisGameDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+NameThisGameDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+NameThisGameNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+NameThisGameNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+OffSwitchCartpole-v0
+	 obs: Tuple(Discrete(2), Box(4,))
+	 act: Discrete(2)
+OffSwitchCartpoleProb-v0
+	 obs: Tuple(Discrete(2), Box(4,))
+	 act: Discrete(2)
+OneRoundDeterministicReward-v0
+	 obs: Discrete(1)
+	 act: Discrete(2)
+OneRoundNondeterministicReward-v0
+	 obs: Discrete(1)
+	 act: Discrete(2)
+Pendulum-v0
+	 obs: Box(3,)
+	 act: Box(1,)
+Phoenix-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(8)
+Phoenix-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(8)
+Phoenix-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(8)
+Phoenix-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(8)
+Phoenix-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(8)
+Phoenix-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(8)
+Phoenix-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(8)
+Phoenix-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(8)
+PhoenixDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(8)
+PhoenixDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(8)
+PhoenixNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(8)
+PhoenixNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(8)
+Pitfall-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Pitfall-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Pitfall-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Pitfall-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Pitfall-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Pitfall-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Pitfall-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Pitfall-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+PitfallDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+PitfallDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+PitfallNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+PitfallNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Pong-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pong-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pong-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pong-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pong-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pong-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pong-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+Pong-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+PongDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+PongDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+PongNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+PongNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+Pooyan-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pooyan-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pooyan-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pooyan-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pooyan-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pooyan-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Pooyan-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+Pooyan-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+PooyanDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+PooyanDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+PooyanNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+PooyanNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(6)
+PredictActionsCartpole-v0
+	 obs: Box(4,)
+	 act: Tuple(Discrete(2), Discrete(2), Discrete(2), Discrete(2), Discrete(2), Discrete(2))
+PredictObsCartpole-v0
+	 obs: Box(4,)
+	 act: Tuple(Discrete(2), Box(4,), Box(4,), Box(4,), Box(4,), Box(4,))
+PrivateEye-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+PrivateEye-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+PrivateEye-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+PrivateEye-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+PrivateEye-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+PrivateEye-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+PrivateEye-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+PrivateEye-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+PrivateEyeDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+PrivateEyeDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+PrivateEyeNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+PrivateEyeNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Qbert-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Qbert-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Qbert-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Qbert-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Qbert-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+Qbert-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+Qbert-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+Qbert-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+QbertDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+QbertDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+QbertNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+QbertNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+RepeatCopy-v0
+	 obs: Discrete(6)
+	 act: Tuple(Discrete(2), Discrete(2), Discrete(5))
+Reverse-v0
+	 obs: Discrete(3)
+	 act: Tuple(Discrete(2), Discrete(2), Discrete(2))
+ReversedAddition-v0
+	 obs: Discrete(4)
+	 act: Tuple(Discrete(4), Discrete(2), Discrete(3))
+ReversedAddition3-v0
+	 obs: Discrete(4)
+	 act: Tuple(Discrete(4), Discrete(2), Discrete(3))
+Riverraid-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Riverraid-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Riverraid-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Riverraid-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Riverraid-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Riverraid-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Riverraid-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Riverraid-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RiverraidDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RiverraidDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RiverraidNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RiverraidNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RoadRunner-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+RoadRunner-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+RoadRunner-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+RoadRunner-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+RoadRunner-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+RoadRunner-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+RoadRunner-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RoadRunner-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RoadRunnerDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RoadRunnerDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RoadRunnerNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RoadRunnerNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Robotank-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Robotank-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Robotank-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Robotank-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Robotank-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Robotank-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Robotank-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Robotank-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RobotankDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RobotankDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RobotankNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+RobotankNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Roulette-v0
+	 obs: Discrete(1)
+	 act: Discrete(38)
+Seaquest-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Seaquest-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Seaquest-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Seaquest-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Seaquest-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Seaquest-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Seaquest-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Seaquest-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+SeaquestDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+SeaquestDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+SeaquestNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+SeaquestNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+SemisuperPendulumDecay-v0
+	 obs: Box(3,)
+	 act: Box(1,)
+SemisuperPendulumNoise-v0
+	 obs: Box(3,)
+	 act: Box(1,)
+SemisuperPendulumRandom-v0
+	 obs: Box(3,)
+	 act: Box(1,)
+Skiing-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(3)
+Skiing-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(3)
+Skiing-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(3)
+Skiing-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(3)
+Skiing-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(3)
+Skiing-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(3)
+Skiing-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(3)
+Skiing-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(3)
+SkiingDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(3)
+SkiingDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(3)
+SkiingNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(3)
+SkiingNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(3)
+Solaris-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Solaris-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Solaris-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Solaris-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Solaris-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Solaris-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Solaris-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Solaris-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+SolarisDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+SolarisDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+SolarisNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+SolarisNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+SpaceInvaders-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+SpaceInvaders-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+SpaceInvaders-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+SpaceInvaders-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+SpaceInvaders-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+SpaceInvaders-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+SpaceInvaders-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+SpaceInvaders-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+SpaceInvadersDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+SpaceInvadersDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+SpaceInvadersNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+SpaceInvadersNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+StarGunner-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+StarGunner-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+StarGunner-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+StarGunner-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+StarGunner-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+StarGunner-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+StarGunner-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+StarGunner-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+StarGunnerDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+StarGunnerDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+StarGunnerNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+StarGunnerNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Taxi-v2
+	 obs: Discrete(500)
+	 act: Discrete(6)
+Tennis-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Tennis-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Tennis-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Tennis-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Tennis-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Tennis-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Tennis-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+Tennis-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+TennisDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+TennisDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+TennisNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+TennisNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(18)
+TimePilot-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(10)
+TimePilot-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(10)
+TimePilot-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(10)
+TimePilot-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(10)
+TimePilot-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(10)
+TimePilot-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(10)
+TimePilot-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(10)
+TimePilot-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(10)
+TimePilotDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(10)
+TimePilotDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(10)
+TimePilotNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(10)
+TimePilotNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(10)
+Tutankham-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(8)
+Tutankham-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(8)
+Tutankham-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(8)
+Tutankham-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(8)
+Tutankham-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(8)
+Tutankham-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(8)
+Tutankham-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+Tutankham-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+TutankhamDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+TutankhamDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+TutankhamNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+TutankhamNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(8)
+TwoRoundDeterministicReward-v0
+	 obs: Discrete(3)
+	 act: Discrete(2)
+TwoRoundNondeterministicReward-v0
+	 obs: Discrete(3)
+	 act: Discrete(2)
+UpNDown-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+UpNDown-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+UpNDown-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+UpNDown-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+UpNDown-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(6)
+UpNDown-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(6)
+UpNDown-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+UpNDown-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+UpNDownDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+UpNDownDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+UpNDownNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+UpNDownNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(6)
+Venture-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Venture-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Venture-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Venture-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Venture-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Venture-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Venture-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Venture-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+VentureDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+VentureDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+VentureNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+VentureNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+VideoPinball-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+VideoPinball-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+VideoPinball-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+VideoPinball-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+VideoPinball-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(9)
+VideoPinball-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(9)
+VideoPinball-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(9)
+VideoPinball-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(9)
+VideoPinballDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(9)
+VideoPinballDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(9)
+VideoPinballNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(9)
+VideoPinballNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(9)
+WizardOfWor-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(10)
+WizardOfWor-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(10)
+WizardOfWor-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(10)
+WizardOfWor-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(10)
+WizardOfWor-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(10)
+WizardOfWor-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(10)
+WizardOfWor-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+WizardOfWor-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+WizardOfWorDeterministic-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+WizardOfWorDeterministic-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+WizardOfWorNoFrameskip-v0
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+WizardOfWorNoFrameskip-v3
+	 obs: Box(250, 160, 3)
+	 act: Discrete(10)
+YarsRevenge-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+YarsRevenge-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+YarsRevenge-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+YarsRevenge-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+YarsRevenge-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+YarsRevenge-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+YarsRevenge-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+YarsRevenge-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+YarsRevengeDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+YarsRevengeDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+YarsRevengeNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+YarsRevengeNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Zaxxon-ram-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Zaxxon-ram-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Zaxxon-ramDeterministic-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Zaxxon-ramDeterministic-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Zaxxon-ramNoFrameskip-v0
+	 obs: Box(128,)
+	 act: Discrete(18)
+Zaxxon-ramNoFrameskip-v3
+	 obs: Box(128,)
+	 act: Discrete(18)
+Zaxxon-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+Zaxxon-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ZaxxonDeterministic-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ZaxxonDeterministic-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ZaxxonNoFrameskip-v0
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+ZaxxonNoFrameskip-v3
+	 obs: Box(210, 160, 3)
+	 act: Discrete(18)
+************************************************************
+Cannot make:
+************************************************************
+Ant-v1
+BipedalWalker-v2
+BipedalWalkerHardcore-v2
+CarRacing-v0
+ConvergenceControl-v0
+HalfCheetah-v1
+Hopper-v1
+Humanoid-v1
+HumanoidStandup-v1
+InvertedDoublePendulum-v1
+InvertedPendulum-v1
+LunarLander-v2
+LunarLanderContinuous-v2
+Reacher-v1
+Swimmer-v1
+Walker2d-v1
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Where-Are-The-Environments-That-Can't-Be-Instantiated?">Where Are The Environments That Can't Be Instantiated?<a class="anchor-link" href="#Where-Are-The-Environments-That-Can't-Be-Instantiated?">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">errlst</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">TAB</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">_entry_point</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Ant-v1
+	 gym.envs.mujoco:AntEnv
+BipedalWalker-v2
+	 gym.envs.box2d:BipedalWalker
+BipedalWalkerHardcore-v2
+	 gym.envs.box2d:BipedalWalkerHardcore
+CarRacing-v0
+	 gym.envs.box2d:CarRacing
+ConvergenceControl-v0
+	 gym.envs.parameter_tuning:ConvergenceControl
+HalfCheetah-v1
+	 gym.envs.mujoco:HalfCheetahEnv
+Hopper-v1
+	 gym.envs.mujoco:HopperEnv
+Humanoid-v1
+	 gym.envs.mujoco:HumanoidEnv
+HumanoidStandup-v1
+	 gym.envs.mujoco:HumanoidStandupEnv
+InvertedDoublePendulum-v1
+	 gym.envs.mujoco:InvertedDoublePendulumEnv
+InvertedPendulum-v1
+	 gym.envs.mujoco:InvertedPendulumEnv
+LunarLander-v2
+	 gym.envs.box2d:LunarLander
+LunarLanderContinuous-v2
+	 gym.envs.box2d:LunarLanderContinuous
+Reacher-v1
+	 gym.envs.mujoco:ReacherEnv
+Swimmer-v1
+	 gym.envs.mujoco:SwimmerEnv
+Walker2d-v1
+	 gym.envs.mujoco:Walker2dEnv
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="What-Was-The-Exception-Raised?">What Was The Exception Raised?<a class="anchor-link" href="#What-Was-The-Exception-Raised?">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">errlst</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">make</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Ant-v1
+To use MuJoCo, you need to either populate ~/.mujoco/mjkey.txt and ~/.mujco/mjpro131, or set the MUJOCO_PY_MJKEY_PATH and MUJOCO_PY_MJPRO_PATH environment variables appropriately. Follow the instructions on https://github.com/openai/mujoco-py for where to obtain these.
+********************************************************************************
+BipedalWalker-v2
+module &#39;_Box2D&#39; has no attribute &#39;RAND_LIMIT_swigconstant&#39;
+********************************************************************************
+BipedalWalkerHardcore-v2
+module &#39;_Box2D&#39; has no attribute &#39;RAND_LIMIT_swigconstant&#39;
+********************************************************************************
+CarRacing-v0
+module &#39;_Box2D&#39; has no attribute &#39;RAND_LIMIT_swigconstant&#39;
+********************************************************************************
+ConvergenceControl-v0
+module &#39;tensorflow.python&#39; has no attribute &#39;control_flow_ops&#39;
+********************************************************************************
+HalfCheetah-v1
+To use MuJoCo, you need to either populate ~/.mujoco/mjkey.txt and ~/.mujco/mjpro131, or set the MUJOCO_PY_MJKEY_PATH and MUJOCO_PY_MJPRO_PATH environment variables appropriately. Follow the instructions on https://github.com/openai/mujoco-py for where to obtain these.
+********************************************************************************
+Hopper-v1
+To use MuJoCo, you need to either populate ~/.mujoco/mjkey.txt and ~/.mujco/mjpro131, or set the MUJOCO_PY_MJKEY_PATH and MUJOCO_PY_MJPRO_PATH environment variables appropriately. Follow the instructions on https://github.com/openai/mujoco-py for where to obtain these.
+********************************************************************************
+Humanoid-v1
+To use MuJoCo, you need to either populate ~/.mujoco/mjkey.txt and ~/.mujco/mjpro131, or set the MUJOCO_PY_MJKEY_PATH and MUJOCO_PY_MJPRO_PATH environment variables appropriately. Follow the instructions on https://github.com/openai/mujoco-py for where to obtain these.
+********************************************************************************
+HumanoidStandup-v1
+To use MuJoCo, you need to either populate ~/.mujoco/mjkey.txt and ~/.mujco/mjpro131, or set the MUJOCO_PY_MJKEY_PATH and MUJOCO_PY_MJPRO_PATH environment variables appropriately. Follow the instructions on https://github.com/openai/mujoco-py for where to obtain these.
+********************************************************************************
+InvertedDoublePendulum-v1
+To use MuJoCo, you need to either populate ~/.mujoco/mjkey.txt and ~/.mujco/mjpro131, or set the MUJOCO_PY_MJKEY_PATH and MUJOCO_PY_MJPRO_PATH environment variables appropriately. Follow the instructions on https://github.com/openai/mujoco-py for where to obtain these.
+********************************************************************************
+InvertedPendulum-v1
+To use MuJoCo, you need to either populate ~/.mujoco/mjkey.txt and ~/.mujco/mjpro131, or set the MUJOCO_PY_MJKEY_PATH and MUJOCO_PY_MJPRO_PATH environment variables appropriately. Follow the instructions on https://github.com/openai/mujoco-py for where to obtain these.
+********************************************************************************
+LunarLander-v2
+module &#39;_Box2D&#39; has no attribute &#39;RAND_LIMIT_swigconstant&#39;
+********************************************************************************
+LunarLanderContinuous-v2
+module &#39;_Box2D&#39; has no attribute &#39;RAND_LIMIT_swigconstant&#39;
+********************************************************************************
+Reacher-v1
+To use MuJoCo, you need to either populate ~/.mujoco/mjkey.txt and ~/.mujco/mjpro131, or set the MUJOCO_PY_MJKEY_PATH and MUJOCO_PY_MJPRO_PATH environment variables appropriately. Follow the instructions on https://github.com/openai/mujoco-py for where to obtain these.
+********************************************************************************
+Swimmer-v1
+To use MuJoCo, you need to either populate ~/.mujoco/mjkey.txt and ~/.mujco/mjpro131, or set the MUJOCO_PY_MJKEY_PATH and MUJOCO_PY_MJPRO_PATH environment variables appropriately. Follow the instructions on https://github.com/openai/mujoco-py for where to obtain these.
+********************************************************************************
+Walker2d-v1
+To use MuJoCo, you need to either populate ~/.mujoco/mjkey.txt and ~/.mujco/mjpro131, or set the MUJOCO_PY_MJKEY_PATH and MUJOCO_PY_MJPRO_PATH environment variables appropriately. Follow the instructions on https://github.com/openai/mujoco-py for where to obtain these.
+********************************************************************************
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>

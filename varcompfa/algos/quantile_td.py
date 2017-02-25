@@ -96,6 +96,7 @@ class QuantileTD(LearningAlgorithm):
 
     def reset(self):
         """Reset weights, traces, and other parameters."""
+        self.h = np.zeros(self.num_features)
         self.w = np.zeros(self.num_features)
         self.z = np.zeros(self.num_features)
 
