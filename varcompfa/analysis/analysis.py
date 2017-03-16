@@ -100,6 +100,26 @@ def calculate_squared_return(rewards, gammas, returns=None):
     ret.reverse()
     return ret
 
+def calculate_td_errors(rewards, gammas, values):
+    """Calculate the TD errors given lists of rewards, gammas, and values.
+
+    Notes
+    -----
+    - values[t] should be the value for state S_t
+    - gammas[t] should be the discount for state S_{t+1}
+    """
+
+    ret = []
+    values = iter(values)
+    v = next(values)
+    for (r, gm, vp) in zip(rewards, gammas, values):
+        delta = r + gm*vp - v
+        ret.append(delta)
+        # Set up for next iteration
+        v = vp
+    return ret
+
+
 def context_return(ctxlst):
     """Calculate return from a list of contexts."""
     ret = []
@@ -114,6 +134,8 @@ def context_return(ctxlst):
         ret.append(g)
     ret.reverse()
     return ret
+
+
 
 
 def squared_error(a, b):

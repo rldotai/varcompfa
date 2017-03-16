@@ -1,4 +1,5 @@
 from gym.envs.registration import register
+from .binary_tree import BinaryTreeMDP
 from .boyan_chain import BoyanChainMDP
 from .paper_chain import PaperChainMDP
 from .paper_complex import PaperComplexMDP
@@ -26,4 +27,10 @@ register(
     id='PaperComplexMDP-v0',
     entry_point='varcompfa.envs:PaperComplexMDP',
     nondeterministic=False,
+)
+
+register(
+    id='BinaryTreeMDP-v0',
+    entry_point='varcompfa.envs:BinaryTreeMDP',
+    nondeterministic=True,
 )
