@@ -1,6 +1,7 @@
 """Utilities for working with data, e.g., CSV files, JSON files, and so on."""
 import io
 import os
+import pickle
 import zlib
 import pandas as pd
 import json_tricks as jt
