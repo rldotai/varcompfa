@@ -152,6 +152,7 @@ class AgentHistory(Callback):
         - max_steps
         - version
         - git_hash
+        - total_time
     - contexts
         - total_steps
         - episode
@@ -213,6 +214,8 @@ class AgentHistory(Callback):
 
     def on_experiment_end(self, info=dict()):
         self._hist['metadata']['end_time'] = info['end_time']
+        self._hist['metadata']['total_time'] = \
+            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
@@ -279,8 +282,8 @@ class History(Callback):
         self._hist['metadata'] = dict()
         self._hist['contexts'] = list()
 
-
     def on_experiment_begin(self, info=dict()):
+        self._episode = None
         self._hist['metadata'] = {
             'version'       : info['version'],
             'git_hash'      : info['git_hash'],
@@ -291,9 +294,15 @@ class History(Callback):
 
     def on_experiment_end(self, info=dict()):
         self._hist['metadata']['end_time'] = info['end_time']
+        self._hist['metadata']['total_time'] = \
+            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
+        if self._episode is None:
+            self._episode = 0
+        else:
+            self._episode += 1
 
     def on_episode_end(self, episode_ix, info=dict()):
         # TODO: Mark episodes where time ran out somehow?
@@ -303,7 +312,7 @@ class History(Callback):
         pass
 
     def on_step_end(self, step_ix, info=dict()):
-        ctx = {**info['context'], 't': self._t}
+        ctx = {**info['context'], 't': self._t, 'episode': self._episode}
         self._t += 1
         self._hist['contexts'].append(ctx)
 
@@ -410,18 +419,26 @@ class Progress(Callback):
     def on_experiment_begin(self, info=dict()):
         self.num_episodes = info['num_episodes']
         self.max_steps = info['max_steps']
-
-    def on_episode_begin(self, episode_ix, info=dict()):
-        msg = "Episode %d of %d (total steps: %d)"%(
-            episode_ix, self.num_episodes, info['total_steps'])
-        print(msg, end="\r", file=self.stream, flush=True)
+        self.cumulative_steps = 0
+        self.prev_total_steps = 0
 
     def on_episode_end(self, episode_ix, info):
         total_steps = info['total_steps']
-        msg = "Episode %d of %d (total steps: %d)"%(
-            episode_ix+1, self.num_episodes, total_steps)
+        self.episode_steps = total_steps - self.prev_total_steps
+        self.prev_total_steps = total_steps
+        msg = "Episode %d of %d (total steps: %d, last:%d)"%(
+            episode_ix+1, self.num_episodes, total_steps, self.episode_steps)
         # Print messages
         print(msg, file=self.stream, flush=True, end="\r")
+
+    # def on_step_end(self, step_ix, info=dict()):
+    #     self.cumulative_steps += 1
+    #     msg = "Episode %d of %d, step: %d (cumulative steps: %d)"%(
+    #         self.episode_ix, self.num_episodes, step_ix,
+    #         self.cumulative_steps)
+    #     # Print messages
+    #     print(msg, file=self.stream, flush=True, end="\r")
+
 
     def on_experiment_end(self, info=dict()):
         print("\n", end="", file=self.stream, flush=True)

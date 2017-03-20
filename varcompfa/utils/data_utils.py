@@ -7,6 +7,71 @@ import json_tricks as jt
 import msgpack
 
 
+def save_agent(agent, path, overwrite=False):
+    """Save an agent."""
+    # Handle path being a path or file-like object
+    # If it's a path, check if it's got an extension already else append `pkl`
+    if not isinstance(agent, vcf.Agent):
+        raise Exception("This function is for saving agents...")
+
+    # Accomodate not specifying an extension
+    base, ext = os.path.splitext(path)
+    if ext == '':
+        path = base + '.pkl'
+
+    if os.path.exists(path) and not overwrite:
+        raise Exception("File exists at: %s" % (path,))
+    dump_pickle(agent, path)
+
+def load_agent(path):
+    """Load an agent."""
+    # Handle path being a path or file-like object
+    # If it's a path, check if it's got an extension already,
+    # otherise try after appending `pkl`
+    base, ext = os.path.splitext(path)
+    if ext == '':
+        path = base + '.pkl'
+    agent = load_pickle(path)
+    if not isinstance(agent, vcf.Agent):
+        raise Exception("This function is for loading agents...")
+    return agent
+
+def dump_pickle(obj, path_or_buf=None):
+    if path_or_buf is None:
+        return pickle.dumps(obj)
+    elif isinstance(path_or_buf, str):
+        with open(path_or_buf, 'wb') as fh:
+            pickle.dump(obj, fh)
+    else:
+        pickle.dump(obj, path_or_buf, protocol=4)
+
+def load_pickle(path_or_buf):
+    """Load a pickled object."""
+    def loader(path_or_buf):
+        """Load either from a buffer or a file path."""
+        if isinstance(path_or_buf, str):
+            try:
+                exists = os.path.exists(path_or_buf)
+            except (TypeError, ValueError):
+                exists = False
+
+            # If it's a filepath, open and read it, else treat as bytes
+            if exists:
+                return open(path_or_buf, 'rb').read()
+            else:
+                return bytes(path_or_buf, 'ascii')
+
+        # If it's a bytes object, just return it
+        if isinstance(path_or_buf, bytes):
+            return path_or_buf
+
+        # Buffer-like
+        if hasattr(path_or_buf, 'read') and callable(path_or_buf.read):
+            return path_or_buf.read()
+        raise ValueError("Could not load `path_or_buf`")
+    elem = pickle.loads(loader(path_or_buf))
+    return elem
+
 def dump_msgpack(obj, path_or_buf=None, **kwargs):
     """Dump an object to msgpack, using zlib for compression."""
     # Dump the object using its built-in method or msgpack's default
