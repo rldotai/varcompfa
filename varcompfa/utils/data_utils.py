@@ -5,13 +5,14 @@ import zlib
 import pandas as pd
 import json_tricks as jt
 import msgpack
+import varcompfa
 
 
 def save_agent(agent, path, overwrite=False):
     """Save an agent."""
     # Handle path being a path or file-like object
     # If it's a path, check if it's got an extension already else append `pkl`
-    if not isinstance(agent, vcf.Agent):
+    if not isinstance(agent, varcompfa.Agent):
         raise Exception("This function is for saving agents...")
 
     # Accomodate not specifying an extension
@@ -32,7 +33,7 @@ def load_agent(path):
     if ext == '':
         path = base + '.pkl'
     agent = load_pickle(path)
-    if not isinstance(agent, vcf.Agent):
+    if not isinstance(agent, varcompfa.Agent):
         raise Exception("This function is for loading agents...")
     return agent
 
