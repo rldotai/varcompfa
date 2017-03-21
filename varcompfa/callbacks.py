@@ -153,6 +153,8 @@ class AgentHistory(Callback):
         - version
         - git_hash
         - total_time
+        - environment
+        - control policy
     - contexts
         - total_steps
         - episode
@@ -169,6 +171,14 @@ class AgentHistory(Callback):
 
     Notes
     -----
+    Serialization makes things difficult, but some things that are worth
+    recording (such as environment and control policy) are hard to serialize.
+    At this point I intend to use `pickle` to do this, which solves the problem
+    of serialization but introduces potentially weird issues that I have yet to
+    investigate.
+    For example, does unpickling of an object fail catastrophically if the
+    implementation of that object's class changes significantly?
+
     Currently relies on the learning agents ordering being fixed in order to
     select the right context from those returned by `update_contexts`)
     Alternative implementations are possible, as is modifying the experiment
@@ -209,7 +219,9 @@ class AgentHistory(Callback):
             'git_hash'      : info['git_hash'],
             'start_time'    : info['start_time'],
             'num_episodes'  : info['num_episodes'],
-            'max_steps'     : info['max_steps']
+            'max_steps'     : info['max_steps'],
+            'environment'   : info['environment'],
+            'policy'        : info['policy'],
         }
 
     def on_experiment_end(self, info=dict()):
@@ -267,14 +279,27 @@ class History(Callback):
         - max_steps
         - version
         - git_hash
+        - environment
+        - policy
     - contexts
         - total_steps
         - t (current timestep in episode)
+        - episode
         - obs
         - obs_p
         - a (action)
         - r (reward)
         - done
+
+    Notes
+    -----
+    Serialization makes things difficult, but some things that are worth
+    recording (such as environment and control policy) are hard to serialize.
+    At this point I intend to use `pickle` to do this, which solves the problem
+    of serialization but introduces potentially weird issues that I have yet to
+    investigate.
+    For example, does unpickling of an object fail catastrophically if the
+    implementation of that object's class changes significantly?
     """
     def __init__(self):
         # Create data structure that will be filled by running the experiment
@@ -289,7 +314,9 @@ class History(Callback):
             'git_hash'      : info['git_hash'],
             'start_time'    : info['start_time'],
             'num_episodes'  : info['num_episodes'],
-            'max_steps'     : info['max_steps']
+            'max_steps'     : info['max_steps'],
+            'environment'   : info['environment'],
+            'policy'        : info['policy'],
         }
 
     def on_experiment_end(self, info=dict()):
@@ -335,77 +362,6 @@ class History(Callback):
     def metadata(self):
         """Metadata from the experiment."""
         return self._hist['metadata']
-
-# TODO: Update or Remove
-# class OldHistory(Callback):
-#     """
-
-#     Records a history of the experiment, of the form:
-
-#     - start_time
-#     - end_time
-#     - num_episodes
-#     - max_steps
-#     - version
-#     - git_hash
-#     - episodes
-#         - steps (a list of contexts-- obs, action, next obs, reward, done)
-#         - update_results (a list of update results returned by the learning algos)
-#     """
-#     def __init__(self):
-#         # Create data structure that will be filled by running the experiment
-#         self._hist = {}
-
-#     def on_experiment_begin(self, info=dict()):
-#         # TODO: Compute some of these in the PolicyEval class?
-#         self._hist['version'] = info['version']
-#         self._hist['git_hash'] = info['git_hash']
-#         self._hist['start_time'] = info['start_time']
-#         self._hist['num_episodes'] = info['num_episodes']
-#         self._hist['max_steps'] = info['max_steps']
-#         self._hist['environment_id'] = info['environment'].spec.id
-#         # Set up list of episodes
-#         self._hist['episodes'] = list()
-
-#     def on_experiment_end(self, info=dict()):
-#         # TODO: Compute in the PolicyEval class?
-#         self._hist['end_time'] = info['end_time']
-
-#     def on_episode_begin(self, episode_ix, info=dict()):
-#         self.episode = {
-#             'contexts': list(),
-#             'update_results': list(),
-#         }
-
-#     def on_episode_end(self, episode_ix, info=dict()):
-#         self._hist['episodes'].append(self.episode)
-
-#     def on_step_begin(self, step_ix, info=dict()):
-#         pass
-
-#     def on_step_end(self, step_ix, info=dict()):
-#         self.episode['contexts'].append(info['context'])
-#         self.episode['update_results'].append([i for i in info['update_results']])
-
-#     def pretty_print(self):
-#         # Avoid showing warning on array scalar serialization
-#         json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=False
-#         print(json_tricks.dumps(self._hist, indent=2))
-#         json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=True
-
-#     @property
-#     def history(self):
-#         return self._hist
-
-#     def flat_contexts(self):
-#         """Return a flattened list of all steps in an episode."""
-#         episodes = self.history['episodes']
-#         return [i for ep in episodes for i in ep['contexts']]
-
-#     def flat_updates(self):
-#         """Return a flattened list of all update results."""
-#         episodes = self.history['episodes']
-#         return [i for ep in episodes for i in ep['update_results']]
 
 
 class Progress(Callback):

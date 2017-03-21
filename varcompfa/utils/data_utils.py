@@ -39,21 +39,37 @@ def load_agent(path):
     return agent
 
 def dump_pickle(obj, path_or_buf=None):
+    elem = pickle.dumps(obj, protocol=4)
+    data = zlib.compress(elem)
     if path_or_buf is None:
-        return pickle.dumps(obj)
+        return data
     elif isinstance(path_or_buf, str):
+        # Accomodate not specifying an extension
+        base, ext = os.path.splitext(path_or_buf)
+        if ext == '':
+            path_or_buf = base + '.pkl'
         with open(path_or_buf, 'wb') as fh:
-            pickle.dump(obj, fh)
+            fh.write(data)
     else:
-        pickle.dump(obj, path_or_buf, protocol=4)
+        path_or_buf.write(data)
 
 def load_pickle(path_or_buf):
     """Load a pickled object."""
     def loader(path_or_buf):
         """Load either from a buffer or a file path."""
         if isinstance(path_or_buf, str):
+            base, ext = os.path.splitext(path_or_buf)
+            if ext == '':
+                alt_path = base + '.pkl'
             try:
-                exists = os.path.exists(path_or_buf)
+                # Accomodate not specifying an extension
+                if os.path.exists(path_or_buf):
+                    exists = True
+                elif os.path.exists(alt_path):
+                    exists = True
+                    path_or_buf = alt_path
+                else:
+                    exists = False
             except (TypeError, ValueError):
                 exists = False
 
@@ -71,8 +87,8 @@ def load_pickle(path_or_buf):
         if hasattr(path_or_buf, 'read') and callable(path_or_buf.read):
             return path_or_buf.read()
         raise ValueError("Could not load `path_or_buf`")
-    elem = pickle.loads(loader(path_or_buf))
-    return elem
+    elem = zlib.decompress(loader(path_or_buf))
+    return pickle.loads(elem)
 
 def dump_msgpack(obj, path_or_buf=None, **kwargs):
     """Dump an object to msgpack, using zlib for compression."""
