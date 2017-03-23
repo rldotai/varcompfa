@@ -247,21 +247,20 @@ class LiveExperiment:
 
 class ReplayExperiment:
     """Replay experiment class, for replaying and learning from trajectories."""
-    def __init__(self, history, learners=list()):
+    def __init__(self, contexts, metadata, learners=list()):
         """Create an experiment
 
         Parameters
         ----------
-        history: dict
-            A dictionary with two keys:
-                - "contexts": a list of contexts describing each timestep
-                - "metadata" metadata about the experiment (some of which may
-                get overriden)
+        contexts: list
+            A list of contexts describing each timestep
+        metadata: dict
+            metadata about the experiment (some of which may get overriden)
         learners: sequence of learning agents
             A sequence of learning agents to update at each timestep.
         """
-        self.contexts = history['contexts']
-        self._metadata = history['metadata']
+        self.contexts = contexts
+        self._metadata = metadata
         self._learners = tuple(learners)
 
     def run(self, callbacks=list(), max_episodes=None, max_steps=None):
@@ -300,22 +299,24 @@ class ReplayExperiment:
         - `on_step_end()`
             + Called at the end of every step of every episode
         """
+        # Start of experiment callbacks
+        run_begin_info = {
+            **self._metadata,
+            'num_episodes': max_episodes,
+            'num_steps': max_steps,
+            'version': vcf.utils.current_version(),
+            'git_hash': vcf.utils.current_git_hash(),
+            'start_time': datetime.datetime.now(),
+            'learners': self.learners,
+        }
+        for cbk in callbacks:
+            cbk.on_experiment_begin(run_begin_info)
+
+        # Handle leaving max episodes/steps unspecified
         if max_episodes is None:
             max_episodes = sys.maxsize
         if max_steps is None:
             max_steps = sys.maxsize
-
-        # Start of experiment callbacks
-        run_begin_info = {
-            **self._metadata,
-            'max_episodes': max_episodes,
-            'max_steps': max_steps,
-            'version': vcf.utils.current_version(),
-            'git_hash': vcf.utils.current_git_hash(),
-            'start_time': datetime.datetime.now(),
-        }
-        for cbk in callbacks:
-            cbk.on_experiment_begin(run_begin_info)
 
         # Track total number of steps
         total_steps = 0
@@ -323,7 +324,6 @@ class ReplayExperiment:
         step_ix = 0
         episode_start = True
 
-        contexts = iter(self.contexts)
         for ctx in iter(self.contexts):
             # Run for `max_episodes` or `max_steps`
             if not (current_episode < max_episodes and total_steps < max_steps):
@@ -331,6 +331,7 @@ class ReplayExperiment:
 
             # Handle start of episode
             if episode_start:
+                episode_start = False
                 # Get learning agents ready for start of new episode
                 for agent in self.learners:
                     agent.start_episode()
@@ -344,9 +345,6 @@ class ReplayExperiment:
             step_begin_info = {}
             for cbk in callbacks:
                 cbk.on_step_begin(step_ix, step_begin_info)
-
-            # Get the next context
-            ctx = next(contexts)
 
             # Perform learning for each of the agents
             update_contexts = []
@@ -364,6 +362,8 @@ class ReplayExperiment:
             # Prepare for next iteration
             total_steps += 1
             if ctx['done']:
+                episode_start = True
+
                 # Perform end of episode callbacks
                 episode_end_info = {'total_steps' : total_steps, 'context': ctx,}
                 for cbk in callbacks:
@@ -372,13 +372,14 @@ class ReplayExperiment:
                 # Reset step_ix and increment current_episode
                 step_ix = 0
                 current_episode += 1
-                episode_start = True
             else:
                 step_ix += 1
 
         # Perform end of experiment callbacks
         experiment_end_info = {
             'total_steps' : total_steps,
+            'num_episodes': current_episode,
+            'num_steps': total_steps,
             'end_time': datetime.datetime.now(),
         }
         for cbk in callbacks:

@@ -133,7 +133,6 @@ def calculate_td_errors(rewards, gammas, values):
         v = vp
     return ret
 
-
 def context_return(ctxlst):
     """Calculate return from a list of contexts."""
     ret = []
@@ -148,7 +147,6 @@ def context_return(ctxlst):
         ret.append(g)
     ret.reverse()
     return ret
-
 
 
 

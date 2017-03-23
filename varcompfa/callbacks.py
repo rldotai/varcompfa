@@ -222,15 +222,18 @@ class AgentHistory(Callback):
             'max_steps'     : info['max_steps'],
             'environment'   : info['environment'],
             'policy'        : info['policy'],
+            'learners'      : info['learners'],
         }
 
     def on_experiment_end(self, info=dict()):
+        self._hist['metadata']['num_episodes'] = self._episode
         self._hist['metadata']['end_time'] = info['end_time']
         self._hist['metadata']['total_time'] = \
             (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
+
         if self._episode is None:
             self._episode = 0
         else:
@@ -246,7 +249,8 @@ class AgentHistory(Callback):
         for k, func in self._compute.items():
             ctx[k] = func(agent_ctx)
 
-        ctx['t'] =  self._t
+        # Combine and append
+        ctx ['t'] = self._t
         ctx['episode'] = self._episode
         self._hist['contexts'].append(ctx)
         self._t += 1
@@ -317,9 +321,11 @@ class History(Callback):
             'max_steps'     : info['max_steps'],
             'environment'   : info['environment'],
             'policy'        : info['policy'],
+            'learners'      : info['learners'],
         }
 
     def on_experiment_end(self, info=dict()):
+        self._hist['metadata']['num_episodes'] = self._episode
         self._hist['metadata']['end_time'] = info['end_time']
         self._hist['metadata']['total_time'] = \
             (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
@@ -377,13 +383,24 @@ class Progress(Callback):
         self.max_steps = info['max_steps']
         self.cumulative_steps = 0
         self.prev_total_steps = 0
+        # Handle leaving number of episodes unspecified
+        if self.num_episodes is None:
+            self.fmt_string = ("Episode {episode_ix} "
+                               "(total steps: {total_steps:d}, last {last_steps})")
+        else:
+            self.fmt_string = ("Episode {episode_ix} of {num_episodes} "
+                               "(total steps: {total_steps:d}, last {last_steps})")
 
     def on_episode_end(self, episode_ix, info):
         total_steps = info['total_steps']
         self.episode_steps = total_steps - self.prev_total_steps
         self.prev_total_steps = total_steps
-        msg = "Episode %d of %d (total steps: %d, last:%d)"%(
-            episode_ix+1, self.num_episodes, total_steps, self.episode_steps)
+        msg = self.fmt_string.format(
+            episode_ix=episode_ix+1,
+            num_episodes=self.num_episodes,
+            total_steps=total_steps,
+            last_steps=self.episode_steps
+        )
         # Print messages
         print(msg, file=self.stream, flush=True, end="\r")
 

@@ -222,3 +222,24 @@ def make_hashable(df):
     # dtypes
     # If it's a column of dicts, try to expand into new columns
     # and drop the old ones
+
+
+def load_df(contexts):
+    """Load contexts into a DataFrame with some preprocessing"""
+    ret = pd.DataFrame(contexts)
+    from numbers import Number
+
+    def make_hashable(elem):
+        """Try to make an item hashable."""
+        if isinstance(elem, Number):
+            return elem
+        elif isinstance(elem, np.ndarray) and elem.squeeze().ndim == 0:
+            return elem.item()
+        else:
+            return tuple(elem)
+
+    # Make it possible to hash (and therefore group) certain columns
+    ret['obs'] = ret['obs'].apply(make_hashable)
+    ret['obs_p'] = ret['obs_p'].apply(make_hashable)
+
+    return ret

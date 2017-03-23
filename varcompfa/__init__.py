@@ -31,6 +31,7 @@ from .engine import parameters
 from .engine.parameters import Constant
 from .features import BiasUnit, BinaryVector, UniformTiling, Union
 from .policies import DiscreteRandomControl
+from .utils import dump_pickle, load_pickle
 
 
 
