@@ -2,7 +2,7 @@
 The main `__init__.py` file, specifies what is imported and to what namespace
 in the `varcompfa` package.
 """
-__version__ = '0.5.0'
+__version__ = '0.6.0'
 
 # Get the initial logger
 import logging
