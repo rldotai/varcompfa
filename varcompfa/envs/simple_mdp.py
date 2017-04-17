@@ -24,8 +24,8 @@ class SimpleMDP(gym.Env):
 
     @property
     def state(self):
-        """Ensure that state is always of type `numpy.ndarray`."""
-        return np.array(self._state)
+        """The current state of the environment.."""
+        return int(self._state)
 
     def _reset(self):
         self._state = 0

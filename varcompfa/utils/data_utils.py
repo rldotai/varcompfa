@@ -62,11 +62,13 @@ def load_pickle(path_or_buf):
             base, ext = os.path.splitext(path_or_buf)
             if ext == '':
                 alt_path = base + '.pkl'
+            else:
+                alt_path = None
             try:
                 # Accomodate not specifying an extension
                 if os.path.exists(path_or_buf):
                     exists = True
-                elif os.path.exists(alt_path):
+                elif alt_path and os.path.exists(alt_path):
                     exists = True
                     path_or_buf = alt_path
                 else:

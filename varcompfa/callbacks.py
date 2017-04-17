@@ -226,7 +226,7 @@ class AgentHistory(Callback):
         }
 
     def on_experiment_end(self, info=dict()):
-        self._hist['metadata']['num_episodes'] = self._episode
+        self._hist['metadata']['num_episodes'] = self._episode + 1
         self._hist['metadata']['end_time'] = info['end_time']
         self._hist['metadata']['total_time'] = \
             (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
@@ -325,7 +325,7 @@ class History(Callback):
         }
 
     def on_experiment_end(self, info=dict()):
-        self._hist['metadata']['num_episodes'] = self._episode
+        self._hist['metadata']['num_episodes'] = self._episode + 1
         self._hist['metadata']['end_time'] = info['end_time']
         self._hist['metadata']['total_time'] = \
             (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()

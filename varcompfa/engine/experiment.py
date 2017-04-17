@@ -130,7 +130,7 @@ class LiveExperiment:
             # Reset the environment, get initial observation
             obs = self.env.reset()
             if initial_states is not None:
-                obs = self.env.state = next(initial_states)
+                obs = self.env.unwrapped.state = next(initial_states)
             # Run for at most `max_steps` iterations
             for step_ix in range(max_steps):
                 # Perform callbacks for beginning of step
