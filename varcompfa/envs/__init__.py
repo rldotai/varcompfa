@@ -2,6 +2,7 @@ from gym.envs.registration import register
 from .baird_mdp import BairdMDP
 from .binary_tree import BinaryTreeMDP
 from .boyan_chain import BoyanChainMDP
+from .chicken import ChickenMDP
 from .paper_chain import PaperChainMDP
 from .paper_complex import PaperComplexMDP
 from .simple_mdp import SimpleMDP
@@ -40,4 +41,10 @@ register(
     id='BairdMDP-v0',
     entry_point='varcompfa.envs:BairdMDP',
     nondeterministic=False,
+)
+
+register(
+    id='ChickenMDP-v0',
+    nondeterministic=False,
+    entry_point='varcompfa.envs:ChickenMDP',
 )

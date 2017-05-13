@@ -167,6 +167,8 @@ class AgentHistory(Callback):
         - x (features for `obs`)
         - xp (features for `obs_p`)
         - update_result (the value returned by `agent.update()`
+        - weights
+        - traces
         - **parameters computed as part of `agent.update()`
 
     Notes
@@ -244,6 +246,10 @@ class AgentHistory(Callback):
 
         # Preserve the current step's context, ignoring excluded keys
         ctx = {k: v for k, v in agent_ctx.items() if k not in self._exclude}
+
+        # Record weights and traces
+        ctx['weights'] = self.agent.algo.weights
+        ctx['traces'] = self.agent.algo.traces
 
         # Compute any additional values that should be tracked
         for k, func in self._compute.items():
