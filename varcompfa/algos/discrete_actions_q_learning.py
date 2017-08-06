@@ -125,3 +125,12 @@ class DiscreteQ(LearningAlgorithm):
     def load_weights(self, fname):
         """Load the weights from a file."""
         self.w = np.load(fname)
+
+    @property
+    def traces(self):
+        """Return a copy of the current eligibility trace values."""
+        return np.copy(self.z)
+
+    @property
+    def weights(self):
+        return np.copy(self.w)

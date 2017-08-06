@@ -1,11 +1,97 @@
 """Utilities for working with data, e.g., CSV files, JSON files, and so on."""
 import io
 import os
+# import pickle
 import zlib
-import pandas as pd
+import dill as pickle
 import json_tricks as jt
 import msgpack
+import pandas as pd
+import varcompfa
 
+
+def save_agent(agent, path, overwrite=False):
+    """Save an agent."""
+    # Handle path being a path or file-like object
+    # If it's a path, check if it's got an extension already else append `pkl`
+    if not isinstance(agent, varcompfa.Agent):
+        raise Exception("This function is for saving agents...")
+
+    # Accomodate not specifying an extension
+    base, ext = os.path.splitext(path)
+    if ext == '':
+        path = base + '.pkl'
+
+    if os.path.exists(path) and not overwrite:
+        raise Exception("File exists at: %s" % (path,))
+    dump_pickle(agent, path)
+
+def load_agent(path):
+    """Load an agent."""
+    # Handle path being a path or file-like object
+    # If it's a path, check if it's got an extension already,
+    # otherise try after appending `pkl`
+    base, ext = os.path.splitext(path)
+    if ext == '':
+        path = base + '.pkl'
+    agent = load_pickle(path)
+    if not isinstance(agent, varcompfa.Agent):
+        raise Exception("This function is for loading agents...")
+    return agent
+
+def dump_pickle(obj, path_or_buf=None):
+    elem = pickle.dumps(obj, protocol=4)
+    data = zlib.compress(elem)
+    if path_or_buf is None:
+        return data
+    elif isinstance(path_or_buf, str):
+        # Accomodate not specifying an extension
+        base, ext = os.path.splitext(path_or_buf)
+        if ext == '':
+            path_or_buf = base + '.pkl'
+        with open(path_or_buf, 'wb') as fh:
+            fh.write(data)
+    else:
+        path_or_buf.write(data)
+
+def load_pickle(path_or_buf):
+    """Load a pickled object."""
+    def loader(path_or_buf):
+        """Load either from a buffer or a file path."""
+        if isinstance(path_or_buf, str):
+            base, ext = os.path.splitext(path_or_buf)
+            if ext == '':
+                alt_path = base + '.pkl'
+            else:
+                alt_path = None
+            try:
+                # Accomodate not specifying an extension
+                if os.path.exists(path_or_buf):
+                    exists = True
+                elif alt_path and os.path.exists(alt_path):
+                    exists = True
+                    path_or_buf = alt_path
+                else:
+                    exists = False
+            except (TypeError, ValueError):
+                exists = False
+
+            # If it's a filepath, open and read it, else treat as bytes
+            if exists:
+                return open(path_or_buf, 'rb').read()
+            else:
+                return bytes(path_or_buf, 'ascii')
+
+        # If it's a bytes object, just return it
+        if isinstance(path_or_buf, bytes):
+            return path_or_buf
+
+        # Buffer-like
+        if hasattr(path_or_buf, 'read') and callable(path_or_buf.read):
+            return path_or_buf.read()
+        raise ValueError("Could not load `path_or_buf`")
+    elem = zlib.decompress(loader(path_or_buf))
+    return pickle.loads(elem)
 
 def dump_msgpack(obj, path_or_buf=None, **kwargs):
     """Dump an object to msgpack, using zlib for compression."""
@@ -139,3 +225,24 @@ def make_hashable(df):
     # dtypes
     # If it's a column of dicts, try to expand into new columns
     # and drop the old ones
+
+
+def load_df(contexts):
+    """Load contexts into a DataFrame with some preprocessing"""
+    ret = pd.DataFrame(contexts)
+    from numbers import Number
+
+    def make_hashable(elem):
+        """Try to make an item hashable."""
+        if isinstance(elem, Number):
+            return elem
+        elif isinstance(elem, np.ndarray) and elem.squeeze().ndim == 0:
+            return elem.item()
+        else:
+            return tuple(elem)
+
+    # Make it possible to hash (and therefore group) certain columns
+    ret['obs'] = ret['obs'].apply(make_hashable)
+    ret['obs_p'] = ret['obs_p'].apply(make_hashable)
+
+    return ret

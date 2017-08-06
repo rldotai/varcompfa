@@ -70,13 +70,13 @@ class Agent:
 
         Returns
         -------
-        action: numpy.ndarray
+        action: int or numpy.ndarray
             The action selected by the algorithm given the features `phi(x)`.
             (It is an array because `json_tricks` does not presently handle
             serializing non-array instances of numpy datatypes.
         """
         x = self.phi(obs)
-        return np.array(self.algo.act(x))
+        return self.algo.act(x)
 
     def reward_func(self, context: dict) -> float:
         """The reward function, which by default does nothing unless overriden

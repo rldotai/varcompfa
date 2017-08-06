@@ -63,6 +63,20 @@ class Identity(Feature):
         return cls()
 
 
+class Noise(Feature):
+    """A feature that adds Gaussian noise to the feature it wraps."""
+    def __init__(self, child, scale):
+        self.child = child
+        self.scale = scale
+        self._length = len(child)
+
+    def __len__(self):
+        return self._length
+
+    def __call__(self, obs):
+        return self.child(obs) + np.random.normal(loc=0.0, scale=self.scale, size=self._length)
+
+
 # class WrappedFunction(Feature):
 #     """A feature created by wrapping a function, with additional provided
 #     information to ensure that the resulting feature can be combined with other

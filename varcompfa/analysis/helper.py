@@ -1,14 +1,32 @@
-import numpy as np
 import itertools
+import numpy as np
+import gym
 import toolz
 
+
+def describe(x):
+    if np.ndim(x) == 1:
+        return pd.Series(x).describe()
+    elif np.ndim(x) == 2:
+        return pd.DataFrame(x).describe()
+    else:
+        raise Exception("Cannot handle >2-dimensional data")
 
 def grid_space(space, n=50):
     """Return a sequence of linear interval arrays for a given `space` (of the
     kind provided by OpenAI gym.
     """
     assert(isinstance(space, gym.core.Space))
-    return [np.linspace(lo, hi, num=n) for lo, hi in zip(space.low, space.high)]
+    if not hasattr(n, '__iter__'):
+        n = itertools.repeat(n)
+    arrays = [np.linspace(lo, hi, num=num) for lo, hi, num in
+              zip(space.low, space.high, n)]
+    return arrays
+
+def grid_points(space, n=50):
+    arrays = grid_space(space, n)
+    return np.array(list(itertools.product(*arrays)))
+
 
 def map2d(xdata, ydata, func):
     """Given two sequences `xdata` and `ydata`, and a function `func`, return a

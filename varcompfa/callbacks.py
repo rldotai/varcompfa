@@ -152,6 +152,9 @@ class AgentHistory(Callback):
         - max_steps
         - version
         - git_hash
+        - total_time
+        - environment
+        - control policy
     - contexts
         - total_steps
         - episode
@@ -164,10 +167,20 @@ class AgentHistory(Callback):
         - x (features for `obs`)
         - xp (features for `obs_p`)
         - update_result (the value returned by `agent.update()`
+        - weights
+        - traces
         - **parameters computed as part of `agent.update()`
 
     Notes
     -----
+    Serialization makes things difficult, but some things that are worth
+    recording (such as environment and control policy) are hard to serialize.
+    At this point I intend to use `pickle` to do this, which solves the problem
+    of serialization but introduces potentially weird issues that I have yet to
+    investigate.
+    For example, does unpickling of an object fail catastrophically if the
+    implementation of that object's class changes significantly?
+
     Currently relies on the learning agents ordering being fixed in order to
     select the right context from those returned by `update_contexts`)
     Alternative implementations are possible, as is modifying the experiment
@@ -208,14 +221,21 @@ class AgentHistory(Callback):
             'git_hash'      : info['git_hash'],
             'start_time'    : info['start_time'],
             'num_episodes'  : info['num_episodes'],
-            'max_steps'     : info['max_steps']
+            'max_steps'     : info['max_steps'],
+            'environment'   : info['environment'],
+            'policy'        : info['policy'],
+            'learners'      : info['learners'],
         }
 
     def on_experiment_end(self, info=dict()):
+        self._hist['metadata']['num_episodes'] = self._episode + 1
         self._hist['metadata']['end_time'] = info['end_time']
+        self._hist['metadata']['total_time'] = \
+            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
+
         if self._episode is None:
             self._episode = 0
         else:
@@ -227,11 +247,16 @@ class AgentHistory(Callback):
         # Preserve the current step's context, ignoring excluded keys
         ctx = {k: v for k, v in agent_ctx.items() if k not in self._exclude}
 
+        # Record weights and traces
+        ctx['weights'] = self.agent.algo.weights
+        ctx['traces'] = self.agent.algo.traces
+
         # Compute any additional values that should be tracked
         for k, func in self._compute.items():
             ctx[k] = func(agent_ctx)
 
-        ctx['t'] =  self._t
+        # Combine and append
+        ctx ['t'] = self._t
         ctx['episode'] = self._episode
         self._hist['contexts'].append(ctx)
         self._t += 1
@@ -264,14 +289,27 @@ class History(Callback):
         - max_steps
         - version
         - git_hash
+        - environment
+        - policy
     - contexts
         - total_steps
         - t (current timestep in episode)
+        - episode
         - obs
         - obs_p
         - a (action)
         - r (reward)
         - done
+
+    Notes
+    -----
+    Serialization makes things difficult, but some things that are worth
+    recording (such as environment and control policy) are hard to serialize.
+    At this point I intend to use `pickle` to do this, which solves the problem
+    of serialization but introduces potentially weird issues that I have yet to
+    investigate.
+    For example, does unpickling of an object fail catastrophically if the
+    implementation of that object's class changes significantly?
     """
     def __init__(self):
         # Create data structure that will be filled by running the experiment
@@ -279,21 +317,31 @@ class History(Callback):
         self._hist['metadata'] = dict()
         self._hist['contexts'] = list()
 
-
     def on_experiment_begin(self, info=dict()):
+        self._episode = None
         self._hist['metadata'] = {
             'version'       : info['version'],
             'git_hash'      : info['git_hash'],
             'start_time'    : info['start_time'],
             'num_episodes'  : info['num_episodes'],
-            'max_steps'     : info['max_steps']
+            'max_steps'     : info['max_steps'],
+            'environment'   : info['environment'],
+            'policy'        : info['policy'],
+            'learners'      : info['learners'],
         }
 
     def on_experiment_end(self, info=dict()):
+        self._hist['metadata']['num_episodes'] = self._episode + 1
         self._hist['metadata']['end_time'] = info['end_time']
+        self._hist['metadata']['total_time'] = \
+            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
+        if self._episode is None:
+            self._episode = 0
+        else:
+            self._episode += 1
 
     def on_episode_end(self, episode_ix, info=dict()):
         # TODO: Mark episodes where time ran out somehow?
@@ -303,7 +351,7 @@ class History(Callback):
         pass
 
     def on_step_end(self, step_ix, info=dict()):
-        ctx = {**info['context'], 't': self._t}
+        ctx = {**info['context'], 't': self._t, 'episode': self._episode}
         self._t += 1
         self._hist['contexts'].append(ctx)
 
@@ -327,77 +375,6 @@ class History(Callback):
         """Metadata from the experiment."""
         return self._hist['metadata']
 
-# TODO: Update or Remove
-# class OldHistory(Callback):
-#     """
-
-#     Records a history of the experiment, of the form:
-
-#     - start_time
-#     - end_time
-#     - num_episodes
-#     - max_steps
-#     - version
-#     - git_hash
-#     - episodes
-#         - steps (a list of contexts-- obs, action, next obs, reward, done)
-#         - update_results (a list of update results returned by the learning algos)
-#     """
-#     def __init__(self):
-#         # Create data structure that will be filled by running the experiment
-#         self._hist = {}
-
-#     def on_experiment_begin(self, info=dict()):
-#         # TODO: Compute some of these in the PolicyEval class?
-#         self._hist['version'] = info['version']
-#         self._hist['git_hash'] = info['git_hash']
-#         self._hist['start_time'] = info['start_time']
-#         self._hist['num_episodes'] = info['num_episodes']
-#         self._hist['max_steps'] = info['max_steps']
-#         self._hist['environment_id'] = info['environment'].spec.id
-#         # Set up list of episodes
-#         self._hist['episodes'] = list()
-
-#     def on_experiment_end(self, info=dict()):
-#         # TODO: Compute in the PolicyEval class?
-#         self._hist['end_time'] = info['end_time']
-
-#     def on_episode_begin(self, episode_ix, info=dict()):
-#         self.episode = {
-#             'contexts': list(),
-#             'update_results': list(),
-#         }
-
-#     def on_episode_end(self, episode_ix, info=dict()):
-#         self._hist['episodes'].append(self.episode)
-
-#     def on_step_begin(self, step_ix, info=dict()):
-#         pass
-
-#     def on_step_end(self, step_ix, info=dict()):
-#         self.episode['contexts'].append(info['context'])
-#         self.episode['update_results'].append([i for i in info['update_results']])
-
-#     def pretty_print(self):
-#         # Avoid showing warning on array scalar serialization
-#         json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=False
-#         print(json_tricks.dumps(self._hist, indent=2))
-#         json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=True
-
-#     @property
-#     def history(self):
-#         return self._hist
-
-#     def flat_contexts(self):
-#         """Return a flattened list of all steps in an episode."""
-#         episodes = self.history['episodes']
-#         return [i for ep in episodes for i in ep['contexts']]
-
-#     def flat_updates(self):
-#         """Return a flattened list of all update results."""
-#         episodes = self.history['episodes']
-#         return [i for ep in episodes for i in ep['update_results']]
-
 
 class Progress(Callback):
     """Progress display callback."""
@@ -410,18 +387,37 @@ class Progress(Callback):
     def on_experiment_begin(self, info=dict()):
         self.num_episodes = info['num_episodes']
         self.max_steps = info['max_steps']
-
-    def on_episode_begin(self, episode_ix, info=dict()):
-        msg = "Episode %d of %d (total steps: %d)"%(
-            episode_ix, self.num_episodes, info['total_steps'])
-        print(msg, end="\r", file=self.stream, flush=True)
+        self.cumulative_steps = 0
+        self.prev_total_steps = 0
+        # Handle leaving number of episodes unspecified
+        if self.num_episodes is None:
+            self.fmt_string = ("Episode {episode_ix} "
+                               "(total steps: {total_steps:d}, last {last_steps})")
+        else:
+            self.fmt_string = ("Episode {episode_ix} of {num_episodes} "
+                               "(total steps: {total_steps:d}, last {last_steps})")
 
     def on_episode_end(self, episode_ix, info):
         total_steps = info['total_steps']
-        msg = "Episode %d of %d (total steps: %d)"%(
-            episode_ix+1, self.num_episodes, total_steps)
+        self.episode_steps = total_steps - self.prev_total_steps
+        self.prev_total_steps = total_steps
+        msg = self.fmt_string.format(
+            episode_ix=episode_ix+1,
+            num_episodes=self.num_episodes,
+            total_steps=total_steps,
+            last_steps=self.episode_steps
+        )
         # Print messages
         print(msg, file=self.stream, flush=True, end="\r")
+
+    # def on_step_end(self, step_ix, info=dict()):
+    #     self.cumulative_steps += 1
+    #     msg = "Episode %d of %d, step: %d (cumulative steps: %d)"%(
+    #         self.episode_ix, self.num_episodes, step_ix,
+    #         self.cumulative_steps)
+    #     # Print messages
+    #     print(msg, file=self.stream, flush=True, end="\r")
+
 
     def on_experiment_end(self, info=dict()):
         print("\n", end="", file=self.stream, flush=True)
