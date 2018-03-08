@@ -6,6 +6,7 @@ from .chicken import ChickenMDP
 from .paper_chain import PaperChainMDP
 from .paper_complex import PaperComplexMDP
 from .simple_mdp import SimpleMDP
+from .tamar_chain import TamarChainMDP
 
 register(
     id='BoyanChainMDP-v0',
@@ -47,4 +48,10 @@ register(
     id='ChickenMDP-v0',
     nondeterministic=False,
     entry_point='varcompfa.envs:ChickenMDP',
+)
+
+register(
+    id='TamarChainMDP-v0',
+    nondeterministic=False,
+    entry_point='varcompfa.envs:TamarChainMDP',
 )

@@ -76,6 +76,25 @@ class Noise(Feature):
     def __call__(self, obs):
         return self.child(obs) + np.random.normal(loc=0.0, scale=self.scale, size=self._length)
 
+class Map(Feature):
+    """A dictionary mapping feature, initialized with a `dict` where the keys
+    are states and the values are arrays corresponding to the feature vectors.
+    """
+    __mapping = {
+    }
+    def __init__(self, dct):
+        self.mapping = {k: np.array(v) for k, v in dct.items()}
+        lengths = [len(v) for v in self.mapping.values()]
+        self._length = lengths[0]
+        assert(all([i == self._length for i in lengths]))
+        
+    def __call__(self, obs):
+        """Return the feature vector associated with `obs`."""
+        return self.mapping[obs]
+
+    def __len__(self):
+        return self._length
+    
 
 # class WrappedFunction(Feature):
 #     """A feature created by wrapping a function, with additional provided
