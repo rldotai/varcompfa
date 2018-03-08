@@ -12,7 +12,7 @@ from gym.utils import seeding
 
 
 class TamarChainMDP(gym.Env):
-    _num_states = 32
+    _num_states = 31
     action_space = spaces.Discrete(2)
     observation_space = spaces.Discrete(_num_states)
     reward_range = (-1, 0)
