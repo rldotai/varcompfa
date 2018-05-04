@@ -52,8 +52,8 @@ class LiveExperiment:
         self.policy = policy
         self._learners = tuple(learners)
 
-    def run(self, num_episodes, max_steps=100000, callbacks=list(),
-            initial_states=None, warn_step_limit=True):
+    def run(self, max_episodes=None, max_total_steps=None, max_steps=None,
+            callbacks=list(), initial_states=None, warn_step_limit=True):
         """Run an experiment.
 
         Recording the results of the experiment can be done via `Callback`
@@ -63,10 +63,13 @@ class LiveExperiment:
 
         Parameters
         ----------
-        num_episodes: int
+        max_episodes: int
             The number of episodes to run the experiment for.
+        max_total_steps: int
+            The maximum number of steps to run the experiment for.
         max_steps: int, default=100000
             The maximum number of steps allowed in an episode.
+
         callbacks: list
             A list of callbacks, objects that may perform actions at certain
             phases of the experiment's execution. (See `varcompfa.callbacks`)
@@ -96,6 +99,10 @@ class LiveExperiment:
         - `on_step_end()`
             + Called at the end of every step of every episode
         """
+        if max_episodes is None and max_total_steps is None:
+            raise Exception("Specify a maximum number of episodes or total steps")
+
+
         # Information that should be generally available
         run_params = {
             'environment': self.env,
@@ -106,8 +113,9 @@ class LiveExperiment:
         # Start of experiment callbacks
         run_begin_info = {
             **run_params,
-            'num_episodes': num_episodes,
+            'num_episodes': max_episodes,
             'max_steps': max_steps,
+            'max_total_steps': max_total_steps,
             'version': vcf.utils.current_version(),
             'git_hash': vcf.utils.current_git_hash(),
             'start_time': datetime.datetime.now(),
@@ -115,10 +123,22 @@ class LiveExperiment:
         for cbk in callbacks:
             cbk.on_experiment_begin(run_begin_info)
 
+        # Set maximum number of episodes/steps to maximum value if unspecified
+        if max_episodes is None:
+            max_episodes = sys.maxsize
+        if max_total_steps is None:
+            max_total_steps = sys.maxsize
+        if max_steps is None:
+            max_steps = sys.maxsize
+
         # Track total number of steps
         total_steps = 0
-        # Run for `num_episodes`
-        for episode_ix in range(num_episodes):
+        # Run for `max_episodes` (or until `max_total_steps` is
+        for episode_ix in range(max_episodes):
+            # Exit loop if exceeding maximum timesteps
+            if total_steps > max_total_steps:
+                break
+
             # Get learning agents ready for start of new episode
             for agent in self.learners:
                 agent.start_episode()
@@ -133,6 +153,10 @@ class LiveExperiment:
                 obs = self.env.unwrapped.state = next(initial_states)
             # Run for at most `max_steps` iterations
             for step_ix in range(max_steps):
+                # Exit loop if exceeding step limit
+                if total_steps > max_total_steps:
+                    break
+
                 # Perform callbacks for beginning of step
                 step_begin_info = {}
                 for cbk in callbacks:
@@ -227,6 +251,7 @@ class LiveExperiment:
         # Perform end of experiment callbacks
         experiment_end_info = {
             'total_steps' : total_steps,
+            'num_episodes': episode_ix,
             'end_time': datetime.datetime.now(),
         }
         for cbk in callbacks:
