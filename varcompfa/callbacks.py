@@ -20,9 +20,6 @@ class Callback:
     def __init__(self):
         pass
 
-    def _set_params(self, params):
-        self.params = params
-
     def on_experiment_begin(self, info=dict()):
         pass
 
@@ -274,6 +271,166 @@ class AgentHistory(Callback):
     def metadata(self):
         """Metadata from the experiment."""
         return self._hist['metadata']
+
+
+class ExprimentalHistory(Callback):
+    """Callback for recording an experiment's full history for multiple agents.
+
+    Currently just records the contexts as in `History` along with the weights
+    and traces for each agent, along with optional dict of additional values to
+    compute from context.
+
+    Properties
+    ----------
+    history: dict
+        The information recorded from the experiment.
+    contexts: list[dict]
+        A list of the contexts from each step of the experiment.
+    metadata: dict
+        A dictionary containing metadata about the experiment.
+    records: list[list[dict]]
+        A list of lists, one list per agent, recording information about the
+        agent's state (e.g., weights & traces) from each time step of the
+        experiment.
+
+    Details
+    -------
+    The history has the form:
+
+    - metadata
+        - start_time
+        - end_time
+        - num_episodes
+        - max_steps
+        - version
+        - git_hash
+        - total_time
+        - environment
+        - control policy
+    - contexts
+        - total_steps
+        - episode
+        - t (current timestep in episode)
+        - obs
+        - obs_p
+        - a (action)
+        - r (reward)
+        - done
+    - records (list of agent information)
+        - episode
+        - t (current timestep in episode)
+        - weights
+        - traces
+
+    Notes
+    -----
+    This is a compromise between the somewhat excessive `AgentHistory` (and
+    having to record one history per-agent) and the more bare-bones `History`,
+    where some information would be unavailable (traces, weights) or have to
+    be recomputed (parameters).
+    Here, everything (parameters, errors, etc.) is computable given the context,
+    although recomputing everything might be expensive or tedious (with some
+    stateful state-dependent paramters, for example a decaying stepsize).
+    Could potentially collect information from each update_context as in
+    `AgentHistory`, but I don't have a use for that now and it would make the
+    code more complicated.
+    """
+    def __init__(self, agents=list(), compute={}):
+        """
+        Callback for recording an experiment's full history for multiple agents.
+        See the class docstring for details.
+
+        Parameters
+        ----------
+        agents: list
+            List of learning agents to record information from.
+        compute: dict
+            Dictionary of functions for computing additional values from each
+            context.
+            The functions should accept a "context" (itself a dictionary with
+            entries reflecting the current observation, action, reward, etc.)
+            and return a value.
+            Used to compute things like state-dependent parameter values,
+            feature vectors, etc.
+        """
+        self._agents = agents
+        self._compute = compute
+        self._hist = {}
+        self._hist['metadata'] = dict()
+        self._hist['contexts'] = list()
+        self._hist['records']  = [list() for i in agents]
+
+    def on_experiment_begin(self, info=dict()):
+        self._episode = None
+
+        # Record some metadata
+        self._hist['metadata'] = {
+            'version'       : info['version'],
+            'git_hash'      : info['git_hash'],
+            'start_time'    : info['start_time'],
+            'num_episodes'  : info['num_episodes'],
+            'max_steps'     : info['max_steps'],
+            'environment'   : info['environment'],
+            'policy'        : info['policy'],
+            'learners'      : info['learners'],
+        }
+
+    def on_experiment_end(self, info=dict()):
+        self._hist['metadata']['num_episodes'] = self._episode + 1
+        self._hist['metadata']['end_time'] = info['end_time']
+        self._hist['metadata']['total_time'] = \
+            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
+
+    def on_episode_begin(self, episode_ix, info=dict()):
+        self._t = 0
+
+        if self._episode is None:
+            self._episode = 0
+        else:
+            self._episode += 1
+
+    def on_step_begin(self, step_ix, info=dict()):
+        # Information from agents (weights at time t, previous traces)
+        for ix, agent in enumerate(self._agents):
+            rec = {
+                't': self._t,
+                'episode': self._episode,
+                'weights': agent.algo.weights,
+                'traces' : agent.algo.traces,
+            }
+            self._hist['records'][ix].append(rec)
+
+    def on_step_end(self, step_ix, info=dict()):
+        # Context from environment
+        ctx = {**info['context'], 't': self._t, 'episode': self._episode}
+
+        for key, func in self._compute.items():
+            ctx[key] = func(ctx)
+
+        # Save the context information
+        self._t += 1
+        self._hist['contexts'].append(ctx)
+
+
+    @property
+    def history(self):
+        return self._hist
+
+    @property
+    def contexts(self):
+        """A list of contexts from the experiment."""
+        return self._hist['contexts']
+
+    @property
+    def metadata(self):
+        """Metadata from the experiment."""
+        return self._hist['metadata']
+
+    @property
+    def records(self):
+        """Records for each agent."""
+        return self._hist['records']
+
 
 
 # TODO: Improve this so it can track agents
