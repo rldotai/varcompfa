@@ -6,5 +6,7 @@ invoke
 pytest
 pytest-cov
 pytest-flakes
+recommonmark
+python-sphinx
 
 -e .[all]

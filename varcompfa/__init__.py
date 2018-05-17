@@ -38,3 +38,5 @@ from .utils import dump_pickle, load_pickle
 # TODO: Check that `__all__` really includes everything we wish to import
 __all__ = ["algos", "envs", "features", "policies", "misc"]
 
+# Make the current git hash available
+__commit__ = utils.current_git_hash()

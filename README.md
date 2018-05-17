@@ -14,7 +14,28 @@ pip install --editable .
 
 Look at `examples/basic_example.py` for an illustration of how to run a simple experiment.
 
-# Codebase Organization
+# Documentation
+
+The code is documented inline, although you can generate HTML/LaTeX/whatever else Sphinx supports if desired.
+
+For example, to generate HTML documentation:
+
+```bash
+cd docs
+make html
+```
+
+Or, with setuptools:
+
+```
+python setup.py build_sphinx
+```
+
+It's not perfectly well-formatted because I tend to use documentation conventions influenced by Markdown, which causes some conflicts with the `sphinx-napoleon` extension that parses the docstrings.
+
+# Remarks and Further Details
+
+## Codebase Organization
 
 The code that implements the algorithms and runs the experiments is located in `varcompfa`, which is set up as a python package.
 The algorithms are stored in `varcompfa/algos`, custom environments in `varcompfa/envs`, and so on.

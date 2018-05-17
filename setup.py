@@ -32,7 +32,7 @@ setup(
     author='adaptiveprostheticsgroup',
     author_email='',
     license='',
-    package=[package for package in find_packages(exclude=('tests*', 'docs'))
+    packages=[package for package in find_packages(exclude=('tests*', 'docs*'))
         if package.startswith('varcompfa')],
     zip_safe=False,
     # Install requirements loaded from ``requirements.txt``

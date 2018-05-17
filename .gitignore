@@ -3,6 +3,9 @@ sandbox/*
 # Data directory should probably be ignored
 data/*
 
+# Documentation
+docs/api
+
 # Created by https://www.gitignore.io/api/c,c++,linux,osx,python,sublimetext,windows
 
 

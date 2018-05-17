@@ -126,7 +126,7 @@ class AgentHistory(Callback):
     provided by `update` to get the information the agent used at each step.
 
 
-    Properties
+    Attributes
     ----------
     history: dict
         The information recorded from the experiment (contexts and metadata).
@@ -138,38 +138,41 @@ class AgentHistory(Callback):
         A dictionary containing metadata about the experiment.
 
 
-    Details
-    -------
-    The history has the form:
-
-    - metadata
-        - start_time
-        - end_time
-        - num_episodes
-        - max_steps
-        - version
-        - git_hash
-        - total_time
-        - environment
-        - control policy
-    - contexts
-        - total_steps
-        - episode
-        - t (current timestep in episode)
-        - obs
-        - obs_p
-        - a (action)
-        - r (reward)
-        - done
-        - x (features for `obs`)
-        - xp (features for `obs_p`)
-        - update_result (the value returned by `agent.update()`
-        - weights
-        - traces
-        - **parameters computed as part of `agent.update()`
-
     Notes
     -----
+
+    The history has the form:
+
+        - metadata
+            - start_time
+            - end_time
+            - num_episodes
+            - max_steps
+            - version
+            - git_hash
+            - total_time
+            - environment
+            - control policy
+        - contexts
+            - total_steps
+            - episode
+            - t (current timestep in episode)
+            - obs
+            - obs_p
+            - a (action)
+            - r (reward)
+            - done
+            - x (features for `obs`)
+            - xp (features for `obs_p`)
+            - update_result (the value returned by `agent.update()`
+            - weights
+            - traces
+            - additional parameters computed as part of `agent.update()`
+
+
+    Remarks
+    -------
+
     Serialization makes things difficult, but some things that are worth
     recording (such as environment and control policy) are hard to serialize.
     At this point I intend to use `pickle` to do this, which solves the problem
@@ -280,7 +283,7 @@ class ExprimentalHistory(Callback):
     and traces for each agent, along with optional dict of additional values to
     compute from context.
 
-    Properties
+    Attributes
     ----------
     history: dict
         The information recorded from the experiment.
@@ -293,37 +296,41 @@ class ExprimentalHistory(Callback):
         agent's state (e.g., weights & traces) from each time step of the
         experiment.
 
-    Details
-    -------
-    The history has the form:
-
-    - metadata
-        - start_time
-        - end_time
-        - num_episodes
-        - max_steps
-        - version
-        - git_hash
-        - total_time
-        - environment
-        - control policy
-    - contexts
-        - total_steps
-        - episode
-        - t (current timestep in episode)
-        - obs
-        - obs_p
-        - a (action)
-        - r (reward)
-        - done
-    - records (list of agent information)
-        - episode
-        - t (current timestep in episode)
-        - weights
-        - traces
 
     Notes
-    -----
+    -------
+
+    The history has the form::
+
+        - metadata
+            - start_time
+            - end_time
+            - num_episodes
+            - max_steps
+            - version
+            - git_hash
+            - total_time
+            - environment
+            - control policy
+        - contexts
+            - total_steps
+            - episode
+            - t (current timestep in episode)
+            - obs
+            - obs_p
+            - a (action)
+            - r (reward)
+            - done
+        - records (list of agent information)
+            - episode
+            - t (current timestep in episode)
+            - weights
+            - traces
+
+
+    Remarks
+    -------
+
     This is a compromise between the somewhat excessive `AgentHistory` (and
     having to record one history per-agent) and the more bare-bones `History`,
     where some information would be unavailable (traces, weights) or have to
@@ -437,29 +444,43 @@ class ExprimentalHistory(Callback):
 # TODO: Improve this so it can compute arbitrary values using context
 class History(Callback):
     """
-    Records a history of the experiment, of the form:
+    Records a history of the experiment.
 
-    - metadata
-        - start_time
-        - end_time
-        - num_episodes
-        - max_steps
-        - version
-        - git_hash
-        - environment
-        - policy
-    - contexts
-        - total_steps
-        - t (current timestep in episode)
-        - episode
-        - obs
-        - obs_p
-        - a (action)
-        - r (reward)
-        - done
+    Attributes
+    ----------
+    history: dict
+        The information recorded from the experiment.
+    contexts: list[dict]
+        A list of the contexts from each step of the experiment.
+    metadata: dict
+        A dictionary containing metadata about the experiment.
+
 
     Notes
     -----
+    The history is stored as attributes of the callback, structured like:
+
+        metadata
+            - start_time
+            - end_time
+            - num_episodes
+            - max_steps
+            - version
+            - git_hash
+            - environment
+            - policy
+        contexts
+            - total_steps
+            - t (current timestep in episode)
+            - episode
+            - obs
+            - obs_p
+            - a (action)
+            - r (reward)
+            - done
+
+    **Remarks**
+
     Serialization makes things difficult, but some things that are worth
     recording (such as environment and control policy) are hard to serialize.
     At this point I intend to use `pickle` to do this, which solves the problem
