@@ -20,12 +20,12 @@ class BoyanChainMDP(gym.Env):
     The canonical features for the MDP are specified in `varcompfa.features` as
     `BoyanFeatures` (see a description of the problem for details).
     """
-    initial_state = 13
+    initial_state = 12
     def __init__(self):
         self.action_space = spaces.Discrete(1)
-        self.observation_space = spaces.Discrete(14)
+        self.observation_space = spaces.Discrete(13)
         self.reward_range = (-100.0, 100.0)
-        self._terminals = tuple([0])
+        self._terminals = (0,)
         self._state = self.initial_state
         self._seed()
 
@@ -45,27 +45,22 @@ class BoyanChainMDP(gym.Env):
     def _transition(self, s, a):
         if s in self._terminals:
             ret = s
-        elif a == 0:
-            if 2 < self._state:
-                if (self.np_random.uniform() < 0.5):
-                    ret = (s - 1)
-                else:
-                    ret = (s- 2)
-            else:
+        elif s > 1:
+            if (self.np_random.uniform() < 0.5):
                 ret = (s - 1)
-        else:
-            raise Exception("Bad action passed {}".format(a))
+            else:
+                ret = (s- 2)
+        elif s == 1:
+            ret = 0
         return ret
 
     def _reward(self, s, a, sp):
         if s in self._terminals:
             return 0
-        elif 2 < s:
-            return -3
-        elif s == 2 and sp == 1:
-            return -2
         elif s == 1 and sp == 0:
-            return 0
+            return -2
+        elif s >= 2:
+            return -3
         else:
             raise Exception("Unspecified reward for transition: (%d, %d, %d)"%(s, a, sp))
 

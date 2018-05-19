@@ -9,20 +9,19 @@ class BoyanFeatures(Feature):
     for an example using the chain with these features.
     """
     __mapping = {
-         0 : np.array([0.0 , 0.0 , 0.0 , 0.0 ]),
-         1 : np.array([0.0 , 0.0 , 0.0 , 1.0 ]),
-         2 : np.array([0.0 , 0.0 , 0.25, 0.75]),
-         3 : np.array([0.0 , 0.0 , 0.5 , 0.5 ]),
-         4 : np.array([0.0 , 0.0 , 0.75, 0.25]),
-         5 : np.array([0.0 , 0.0 , 1.0 , 0.0 ]),
-         6 : np.array([0.0 , 0.25, 0.75, 0.0 ]),
-         7 : np.array([0.0 , 0.5 , 0.5 , 0.0 ]),
-         8 : np.array([0.0 , 0.75, 0.25, 0.0 ]),
-         9 : np.array([0.0 , 1.0 , 0.0 , 0.0 ]),
-        10 : np.array([0.25, 0.75, 0.0 , 0.0 ]),
-        11 : np.array([0.5 , 0.5 , 0.0 , 0.0 ]),
-        12 : np.array([0.75, 0.25, 0.0 , 0.0 ]),
-        13 : np.array([1.0 , 0.0 , 0.0 , 0.0 ]),
+         0 : np.array([0.0 , 0.0 , 0.0 , 1.0 ]),
+         1 : np.array([0.0 , 0.0 , 0.25, 0.75]),
+         2 : np.array([0.0 , 0.0 , 0.5 , 0.5 ]),
+         3 : np.array([0.0 , 0.0 , 0.75, 0.25]),
+         4 : np.array([0.0 , 0.0 , 1.0 , 0.0 ]),
+         5 : np.array([0.0 , 0.25, 0.75, 0.0 ]),
+         6 : np.array([0.0 , 0.5 , 0.5 , 0.0 ]),
+         7 : np.array([0.0 , 0.75, 0.25, 0.0 ]),
+         8 : np.array([0.0 , 1.0 , 0.0 , 0.0 ]),
+         9 : np.array([0.25, 0.75, 0.0 , 0.0 ]),
+        10 : np.array([0.5 , 0.5 , 0.0 , 0.0 ]),
+        11 : np.array([0.75, 0.25, 0.0 , 0.0 ]),
+        12 : np.array([1.0 , 0.0 , 0.0 , 0.0 ]),
     }
     def __init__(self, *args, **kwargs):
         self.mapping = {k: v.copy() for k, v in self.__mapping.items()}
