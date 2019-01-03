@@ -6,7 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = varcompfa
 SOURCEDIR     = .
-BUILDDIR      = _build
+BUILDDIR      = output
 
 # Put it first so that "make" without argument is like "make help".
 help:
