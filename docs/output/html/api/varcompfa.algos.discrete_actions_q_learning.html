@@ -1,0 +1,218 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varcompfa.algos.discrete_actions_q_learning module &#8212; varcompfa caca2f2f56c77001a4880b022be10cde45d6f915 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/my_theme.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="varcompfa.algos.discrete_actions_sarsa module" href="varcompfa.algos.discrete_actions_sarsa.html" />
+    <link rel="prev" title="varcompfa.algos.algo_base module" href="varcompfa.algos.algo_base.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="varcompfa.html">varcompfa package</a><ul>
+  <li><a href="varcompfa.algos.html">varcompfa.algos package</a><ul>
+      <li>Previous: <a href="varcompfa.algos.algo_base.html" title="previous chapter">varcompfa.algos.algo_base module</a></li>
+      <li>Next: <a href="varcompfa.algos.discrete_actions_sarsa.html" title="next chapter">varcompfa.algos.discrete_actions_sarsa module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/varcompfa.algos.discrete_actions_q_learning.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-varcompfa.algos.discrete_actions_q_learning">
+<span id="varcompfa-algos-discrete-actions-q-learning-module"></span><h1>varcompfa.algos.discrete_actions_q_learning module<a class="headerlink" href="#module-varcompfa.algos.discrete_actions_q_learning" title="Permalink to this headline">¶</a></h1>
+<p>Q-Learning using LFA with discrete actions.</p>
+<dl class="class">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ">
+<em class="property">class </em><code class="descclassname">varcompfa.algos.discrete_actions_q_learning.</code><code class="descname">DiscreteQ</code><span class="sig-paren">(</span><em>num_features</em>, <em>num_actions</em>, <em>epsilon=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/discrete_actions_q_learning.html#DiscreteQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="varcompfa.algos.algo_base.html#varcompfa.algos.algo_base.LearningAlgorithm" title="varcompfa.algos.algo_base.LearningAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.algos.algo_base.LearningAlgorithm</span></code></a></p>
+<p>Q-Learning with linear function approximation.</p>
+<p>Actions are assumed to be discrete, while states are represented via a
+feature vector. That is, <cite>Q(s,a) = [〈w, x〉]_a</cite>
+Exploration occurs via an ε-greedy policy.</p>
+<dl class="method">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.act">
+<code class="descname">act</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/discrete_actions_q_learning.html#DiscreteQ.act"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select an action following the ε-greedy policy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.from_config">
+<em class="property">classmethod </em><code class="descname">from_config</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/discrete_actions_q_learning.html#DiscreteQ.from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the algorithm from a configuration stored in a dict.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.get_config">
+<code class="descname">get_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/discrete_actions_q_learning.html#DiscreteQ.get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the configuration for the algorithm, i.e., all information that
+would be needed to instantiate it, as a <cite>dict</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.get_value">
+<code class="descname">get_value</code><span class="sig-paren">(</span><em>x</em>, <em>a=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/discrete_actions_q_learning.html#DiscreteQ.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value for a given state and action, or if action is left unspecified, just the
+value for the best action in the given state.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Vector</em><em>(</em><em>float</em><em>)</em>) – </li>
+<li><strong>a</strong> (<em>int</em>) – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.greedy_action">
+<code class="descname">greedy_action</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/discrete_actions_q_learning.html#DiscreteQ.greedy_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.greedy_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the action that would be taken following the greedy (w/r/t Q-values) policy.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>x</em>, <em>a</em>, <em>r</em>, <em>xp</em>, <em>alpha</em>, <em>gm</em>, <em>gm_p</em>, <em>lm</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/discrete_actions_q_learning.html#DiscreteQ.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update value function approximation from new experience.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – </li>
+<li><strong>a</strong> (<em>int</em>) – </li>
+<li><strong>r</strong> (<em>float</em>) – </li>
+<li><strong>xp</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – </li>
+<li><strong>alpha</strong> (<em>float</em>) – </li>
+<li><strong>gm</strong> (<em>float</em>) – </li>
+<li><strong>gm_p</strong> (<em>float</em>) – </li>
+<li><strong>lm</strong> (<em>float</em>) – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.load_weights">
+<code class="descname">load_weights</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/discrete_actions_q_learning.html#DiscreteQ.load_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.load_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the weights from a file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.save_weights">
+<code class="descname">save_weights</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/discrete_actions_q_learning.html#DiscreteQ.save_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.save_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the weights to a file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.start_episode">
+<code class="descname">start_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/discrete_actions_q_learning.html#DiscreteQ.start_episode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.start_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get ready to start a new episode.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.trace">
+<code class="descname">trace</code><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the current eligibility trace values.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.traces">
+<code class="descname">traces</code><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.traces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the current eligibility trace values.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.discrete_actions_q_learning.DiscreteQ.weights">
+<code class="descname">weights</code><a class="headerlink" href="#varcompfa.algos.discrete_actions_q_learning.DiscreteQ.weights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, rldotai.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/api/varcompfa.algos.discrete_actions_q_learning.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

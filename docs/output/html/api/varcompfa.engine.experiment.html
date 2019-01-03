@@ -1,0 +1,332 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varcompfa.engine.experiment module &#8212; varcompfa caca2f2f56c77001a4880b022be10cde45d6f915 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/my_theme.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="varcompfa.engine.parameters module" href="varcompfa.engine.parameters.html" />
+    <link rel="prev" title="varcompfa.engine.agent module" href="varcompfa.engine.agent.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="varcompfa.html">varcompfa package</a><ul>
+  <li><a href="varcompfa.engine.html">varcompfa.engine package</a><ul>
+      <li>Previous: <a href="varcompfa.engine.agent.html" title="previous chapter">varcompfa.engine.agent module</a></li>
+      <li>Next: <a href="varcompfa.engine.parameters.html" title="next chapter">varcompfa.engine.parameters module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/varcompfa.engine.experiment.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-varcompfa.engine.experiment">
+<span id="varcompfa-engine-experiment-module"></span><h1>varcompfa.engine.experiment module<a class="headerlink" href="#module-varcompfa.engine.experiment" title="Permalink to this headline">¶</a></h1>
+<p>Code for running experiments in a reproducible way.</p>
+<dl class="class">
+<dt id="varcompfa.engine.experiment.LiveExperiment">
+<em class="property">class </em><code class="descclassname">varcompfa.engine.experiment.</code><code class="descname">LiveExperiment</code><span class="sig-paren">(</span><em>environment</em>, <em>policy</em>, <em>learners=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/experiment.html#LiveExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.experiment.LiveExperiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Live experiment class, for running environments with a policy and
+(optionally) learning agents.</p>
+<dl class="method">
+<dt id="varcompfa.engine.experiment.LiveExperiment.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>environment</em>, <em>policy</em>, <em>learners=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/experiment.html#LiveExperiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.experiment.LiveExperiment.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an experiment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>env</strong> (<em>gym.Env</em>) – The environment on which to run the experiment</li>
+<li><strong>policy</strong> (<em>object</em>) – An object that has an <cite>act</cite> function, which produces a valid action
+for the environment given an observation.</li>
+<li><strong>learners</strong> (<em>sequence</em>) – A sequence of learning agents to update at each timestep.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.engine.experiment.LiveExperiment.learners">
+<code class="descname">learners</code><a class="headerlink" href="#varcompfa.engine.experiment.LiveExperiment.learners" title="Permalink to this definition">¶</a></dt>
+<dd><p>The agents that get updated during each step of the experiment.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Implementing this as a property is a concession towards making the
+tuple of learners more difficult to alter, since doing so could affect
+code that relies on their ordering.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.engine.experiment.LiveExperiment.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>max_episodes=None</em>, <em>max_total_steps=None</em>, <em>max_steps=None</em>, <em>callbacks=[]</em>, <em>initial_states=None</em>, <em>warn_step_limit=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/experiment.html#LiveExperiment.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.experiment.LiveExperiment.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run an experiment.</p>
+<p>Recording the results of the experiment can be done via <cite>Callback</cite>
+classes, which get called at certain times throughout the run.
+These classes pass <cite>dict</cite> objects containing information to the
+callbacks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>max_episodes</strong> (<em>int</em>) – The number of episodes to run the experiment for.</li>
+<li><strong>max_total_steps</strong> (<em>int</em>) – The maximum number of steps to run the experiment for.</li>
+<li><strong>max_steps</strong> (<em>int</em><em>, </em><em>default=100000</em>) – The maximum number of steps allowed in an episode.</li>
+<li><strong>callbacks</strong> (<em>list</em>) – A list of callbacks, objects that may perform actions at certain
+phases of the experiment’s execution. (See <cite>varcompfa.callbacks</cite>)
+A single callback object can have different methods which get
+called at different phases of the run’s execution.</li>
+<li><strong>initial_states</strong> (<em>iterable</em><em>, </em><em>optional</em>) – An iterable of initial states to start from, assuming the
+environment supports simply modifying <cite>state</cite>.
+Useful for systematic investigation of policies (e.g. grid search).</li>
+<li><strong>warn_step_limit</strong> (<em>boolean</em><em>, </em><em>default True</em>) – If <cite>True</cite>, log a warning when the simulation exceeds the step limit.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt><cite>on_experiment_begin()</cite></dt>
+<dd><ul class="first last">
+<li>Called once per-run, at the start of the experiment.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>on_experiment_end()</cite></dt>
+<dd><ul class="first last">
+<li>Called once per-run, at the end of the experiment.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>on_episode_begin()</cite></dt>
+<dd><ul class="first last">
+<li>Called once-per episode, prior to the start of the episode.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>on_experiment_end()</cite></dt>
+<dd><ul class="first last">
+<li>Called once-per episode, at the end of the episode.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>on_step_begin()</cite></dt>
+<dd><ul class="first last">
+<li>Called before executing every step of every episode</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>on_step_end()</cite></dt>
+<dd><ul class="first last">
+<li>Called at the end of every step of every episode</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.engine.experiment.ReplayExperiment">
+<em class="property">class </em><code class="descclassname">varcompfa.engine.experiment.</code><code class="descname">ReplayExperiment</code><span class="sig-paren">(</span><em>contexts</em>, <em>metadata</em>, <em>learners=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/experiment.html#ReplayExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.experiment.ReplayExperiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Replay experiment class, for replaying and learning from trajectories.</p>
+<dl class="method">
+<dt id="varcompfa.engine.experiment.ReplayExperiment.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>contexts</em>, <em>metadata</em>, <em>learners=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/experiment.html#ReplayExperiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.experiment.ReplayExperiment.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an experiment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>contexts</strong> (<em>list</em>) – A list of contexts describing each timestep</li>
+<li><strong>metadata</strong> (<em>dict</em>) – metadata about the experiment (some of which may get overriden)</li>
+<li><strong>learners</strong> (<em>sequence of learning agents</em>) – A sequence of learning agents to update at each timestep.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.engine.experiment.ReplayExperiment.learners">
+<code class="descname">learners</code><a class="headerlink" href="#varcompfa.engine.experiment.ReplayExperiment.learners" title="Permalink to this definition">¶</a></dt>
+<dd><p>The agents that get updated during each step of the experiment.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Implementing this as a property is a concession towards making the
+tuple of learners more difficult to alter, since doing so could affect
+code that relies on their ordering.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.engine.experiment.ReplayExperiment.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>callbacks=[]</em>, <em>max_episodes=None</em>, <em>max_steps=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/experiment.html#ReplayExperiment.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.experiment.ReplayExperiment.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run an experiment.</p>
+<p>Recording the results of the experiment can be done via <cite>Callback</cite>
+classes, which get called at certain times throughout the run.
+These classes pass <cite>dict</cite> objects containing information to the
+callbacks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>callbacks</strong> (<em>list</em>) – A list of callbacks, objects that may perform actions at certain
+phases of the experiment’s execution. (See <cite>varcompfa.callbacks</cite>)
+A single callback object can have different methods which get
+called at different phases of the run’s execution.</li>
+<li><strong>max_episodes</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of episodes to run the experiment for.</li>
+<li><strong>max_steps</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of steps allowed in an episode.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt><cite>on_experiment_begin()</cite></dt>
+<dd><ul class="first last">
+<li>Called once per-run, at the start of the experiment.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>on_experiment_end()</cite></dt>
+<dd><ul class="first last">
+<li>Called once per-run, at the end of the experiment.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>on_episode_begin()</cite></dt>
+<dd><ul class="first last">
+<li>Called once-per episode, prior to the start of the episode.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>on_experiment_end()</cite></dt>
+<dd><ul class="first last">
+<li>Called once-per episode, at the end of the episode.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>on_step_begin()</cite></dt>
+<dd><ul class="first last">
+<li>Called before executing every step of every episode</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><cite>on_step_end()</cite></dt>
+<dd><ul class="first last">
+<li>Called at the end of every step of every episode</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, rldotai.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/api/varcompfa.engine.experiment.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

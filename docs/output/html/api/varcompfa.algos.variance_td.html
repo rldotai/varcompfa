@@ -1,0 +1,609 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varcompfa.algos.variance_td module &#8212; varcompfa caca2f2f56c77001a4880b022be10cde45d6f915 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/my_theme.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="varcompfa.analysis package" href="varcompfa.analysis.html" />
+    <link rel="prev" title="varcompfa.algos.totd module" href="varcompfa.algos.totd.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="varcompfa.html">varcompfa package</a><ul>
+  <li><a href="varcompfa.algos.html">varcompfa.algos package</a><ul>
+      <li>Previous: <a href="varcompfa.algos.totd.html" title="previous chapter">varcompfa.algos.totd module</a></li>
+      <li>Next: <a href="varcompfa.analysis.html" title="next chapter">varcompfa.analysis package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/varcompfa.algos.variance_td.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-varcompfa.algos.variance_td">
+<span id="varcompfa-algos-variance-td-module"></span><h1>varcompfa.algos.variance_td module<a class="headerlink" href="#module-varcompfa.algos.variance_td" title="Permalink to this headline">¶</a></h1>
+<p>Temporal difference learning incorporating variance.</p>
+<p>Implemented following work by Martha and Adam White in the paper[0] proposing
+VTD(λ), an algorithm for adapting the bootstrapping parameter to make a greedy
+bias-variance trade off in order to reduce the MSE.</p>
+<dl class="docutils">
+<dt>[0]:    A Greedy Approach to Adapting the Trace Parameter; White &amp; White; 2016;</dt>
+<dd>arxiv:1607.00446v2</dd>
+</dl>
+<dl class="class">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD">
+<em class="property">class </em><code class="descclassname">varcompfa.algos.variance_td.</code><code class="descname">OldVarianceTD</code><span class="sig-paren">(</span><em>num_features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#OldVarianceTD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="varcompfa.algos.algo_base.html#varcompfa.algos.algo_base.LearningAlgorithm" title="varcompfa.algos.algo_base.LearningAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.algos.algo_base.LearningAlgorithm</span></code></a></p>
+<p>TD(λ) with modifications for learning the variance of the return.</p>
+<p>A previous implemetation of the VarianceTD algorithm, which learned the
+value function according to TD(λ), but estimated the variance according
+to TD(1) following the Bellman equation from the White &amp; WHite paper.</p>
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.num_features">
+<code class="descname">num_features</code><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.num_features" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – The number of features (and therefore the length of the weight vector).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.w">
+<code class="descname">w</code><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.w" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The weight vector for the value function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.z">
+<code class="descname">z</code><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.z" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The eligibility trace vector for the value function estimate.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.w_bar">
+<code class="descname">w_bar</code><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.w_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The weight vector for the variance estimate’s value functio.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.z_bar">
+<code class="descname">z_bar</code><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.z_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The eligibility trace vector for the variance estimate.</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<dl class="docutils">
+<dt>Implemented based on:</dt>
+<dd>A Greedy Approach to Adapting the Trace Parameter
+White &amp; White; 2016; arxiv:1607.00446v2</dd>
+</dl>
+<p>In contrast to the VTD(λ) algorithm as defined in the paper, this algorithm
+does not attempt to adapt lambda, instead it just learns the variance of
+the λ-return.</p>
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>num_features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#OldVarianceTD.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the learning algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_features</strong> (<em>int</em>) – The number of features, i.e. expected length of the feature vector.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.from_config">
+<em class="property">classmethod </em><code class="descname">from_config</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#OldVarianceTD.from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize from a configuration dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.get_config">
+<code class="descname">get_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#OldVarianceTD.get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the parameters needed to specify the algorithm’s state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.get_second_moment">
+<code class="descname">get_second_moment</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#OldVarianceTD.get_second_moment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.get_second_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the return’s approximate second moment for feature vector <cite>x</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.get_value">
+<code class="descname">get_value</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#OldVarianceTD.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the approximate value for feature vector <cite>x</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.get_variance">
+<code class="descname">get_variance</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#OldVarianceTD.get_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.get_variance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get approximate variance of return for feature vector <cite>x</cite>.</p>
+<p class="rubric">Notes</p>
+<p>The estimated variance has a floor of zero, as the true variance is
+always positive.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>x</em>, <em>r</em>, <em>xp</em>, <em>alpha</em>, <em>gm</em>, <em>gm_p</em>, <em>lm</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#OldVarianceTD.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update from new experience, i.e., a transition <cite>(x, r, xp)</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – The observation/features from the current timestep.</li>
+<li><strong>r</strong> (<em>float</em>) – The reward from the transition.</li>
+<li><strong>xp</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – The observation/features from the next timestep.</li>
+<li><strong>alpha</strong> (<em>float</em>) – The step-size parameter for updating the weight vector.</li>
+<li><strong>gm</strong> (<em>float</em>) – Gamma, abbreviated <cite>gm</cite>, the discount factor for the current state.</li>
+<li><strong>gm_p</strong> (<em>float</em>) – The discount factor for the next state.</li>
+<li><strong>lm</strong> (<em>float</em>) – Lambda, abbreviated <cite>lm</cite>, is the bootstrapping parameter for the
+current timestep.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Features (<cite>x</cite> and <cite>xp</cite>) are assumed to be 1D arrays of length <cite>self.n</cite>.
+Other parameters are floats but are generally expected to be in the
+interval [0, 1].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#OldVarianceTD.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset weights, traces, and other parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.start_episode">
+<code class="descname">start_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#OldVarianceTD.start_episode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.start_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get ready to start a new episode.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.OldVarianceTD.traces">
+<code class="descname">traces</code><a class="headerlink" href="#varcompfa.algos.variance_td.OldVarianceTD.traces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the current eligibility trace values.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD">
+<em class="property">class </em><code class="descclassname">varcompfa.algos.variance_td.</code><code class="descname">RewardVarianceTD</code><span class="sig-paren">(</span><em>num_features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#RewardVarianceTD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="varcompfa.algos.algo_base.html#varcompfa.algos.algo_base.LearningAlgorithm" title="varcompfa.algos.algo_base.LearningAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.algos.algo_base.LearningAlgorithm</span></code></a></p>
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.num_features">
+<code class="descname">num_features</code><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.num_features" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – The number of features (and therefore the length of the weight vector).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.z">
+<code class="descname">z</code><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.z" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The eligibility trace vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.w">
+<code class="descname">w</code><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.w" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The weight vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.h_avg">
+<code class="descname">h_avg</code><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.h_avg" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The weight vector for estimating each state’s average reward.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.h_var">
+<code class="descname">h_var</code><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.h_var" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The weight vector for estimating each state’s variance in reward.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>num_features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#RewardVarianceTD.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the learning algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_features</strong> (<em>int</em>) – The number of features, i.e. expected length of the feature vector.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.get_value">
+<code class="descname">get_value</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#RewardVarianceTD.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the approximate value for feature vector <cite>x</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>x</em>, <em>r</em>, <em>xp</em>, <em>alpha</em>, <em>gm</em>, <em>gm_p</em>, <em>lm</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#RewardVarianceTD.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update from new experience, i.e., a transition <cite>(x, r, xp)</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – The observation/features from the current timestep.</li>
+<li><strong>r</strong> (<em>float</em>) – The reward from the transition.</li>
+<li><strong>xp</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – The observation/features from the next timestep.</li>
+<li><strong>alpha</strong> (<em>float</em>) – The step-size parameter for updating the weight vector.</li>
+<li><strong>gm</strong> (<em>float</em>) – Gamma, abbreviated <cite>gm</cite>, the discount factor for the current state.</li>
+<li><strong>gm_p</strong> (<em>float</em>) – The discount factor for the next state.</li>
+<li><strong>lm</strong> (<em>float</em>) – Lambda, abbreviated <cite>lm</cite>, is the bootstrapping parameter for the
+current timestep.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Features (<cite>x</cite> and <cite>xp</cite>) are assumed to be 1D arrays of length <cite>self.n</cite>.
+Other parameters are floats but are generally expected to be in the
+interval [0, 1].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#RewardVarianceTD.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset weights, traces, and other parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.start_episode">
+<code class="descname">start_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#RewardVarianceTD.start_episode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.start_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get ready to start a new episode.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.traces">
+<code class="descname">traces</code><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.traces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the current eligibility trace values.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.RewardVarianceTD.weights">
+<code class="descname">weights</code><a class="headerlink" href="#varcompfa.algos.variance_td.RewardVarianceTD.weights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.algos.variance_td.VTD">
+<em class="property">class </em><code class="descclassname">varcompfa.algos.variance_td.</code><code class="descname">VTD</code><span class="sig-paren">(</span><em>num_features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VTD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VTD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="varcompfa.algos.algo_base.html#varcompfa.algos.algo_base.LearningAlgorithm" title="varcompfa.algos.algo_base.LearningAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.algos.algo_base.LearningAlgorithm</span></code></a></p>
+<dl class="docutils">
+<dt>VTD(λ) as described in:</dt>
+<dd>A Greedy Approach to Adapting the Trace Parameter
+White &amp; White; 2016; arxiv:1607.00446v2</dd>
+</dl>
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.VTD.num_features">
+<code class="descname">num_features</code><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.num_features" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – The number of features (and therefore the length of the weight vector).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.VTD.z">
+<code class="descname">z</code><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.z" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The eligibility trace vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.VTD.w">
+<code class="descname">w</code><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.w" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The weight vector.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VTD.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>num_features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VTD.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the learning algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_features</strong> (<em>int</em>) – The number of features, i.e. expected length of the feature vector.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="varcompfa.algos.variance_td.VTD.from_config">
+<em class="property">classmethod </em><code class="descname">from_config</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VTD.from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize from a configuration dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VTD.get_config">
+<code class="descname">get_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VTD.get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the parameters needed to specify the algorithm’s state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VTD.get_value">
+<code class="descname">get_value</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VTD.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the approximate value for feature vector <cite>x</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VTD.get_variance">
+<code class="descname">get_variance</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VTD.get_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.get_variance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get approximate variance of return for feature vector <cite>x</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VTD.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>x</em>, <em>r</em>, <em>xp</em>, <em>alpha</em>, <em>gm</em>, <em>gm_p</em>, <em>lm</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VTD.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update from new experience, i.e., a transition <cite>(x, r, xp)</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – The observation/features from the current timestep.</li>
+<li><strong>r</strong> (<em>float</em>) – The reward from the transition.</li>
+<li><strong>xp</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – The observation/features from the next timestep.</li>
+<li><strong>alpha</strong> (<em>float</em>) – The step-size parameter for updating the weight vector.</li>
+<li><strong>gm</strong> (<em>float</em>) – Gamma, abbreviated <cite>gm</cite>, the discount factor for the current state.</li>
+<li><strong>gm_p</strong> (<em>float</em>) – The discount factor for the next state.</li>
+<li><strong>lm</strong> (<em>float</em>) – Lambda, abbreviated <cite>lm</cite>, is the bootstrapping parameter for the
+current timestep.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Features (<cite>x</cite> and <cite>xp</cite>) are assumed to be 1D arrays of length <cite>self.n</cite>.
+Other parameters are floats but are generally expected to be in the
+interval [0, 1].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VTD.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VTD.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset weights, traces, and other parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VTD.start_episode">
+<code class="descname">start_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VTD.start_episode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.start_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get ready to start a new episode.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.VTD.traces">
+<code class="descname">traces</code><a class="headerlink" href="#varcompfa.algos.variance_td.VTD.traces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the current eligibility trace values.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.algos.variance_td.VarianceTD">
+<em class="property">class </em><code class="descclassname">varcompfa.algos.variance_td.</code><code class="descname">VarianceTD</code><span class="sig-paren">(</span><em>num_features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VarianceTD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="varcompfa.algos.algo_base.html#varcompfa.algos.algo_base.LearningAlgorithm" title="varcompfa.algos.algo_base.LearningAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.algos.algo_base.LearningAlgorithm</span></code></a></p>
+<p>TD(λ) with modifications for learning the variance of the return.</p>
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.VarianceTD.num_features">
+<code class="descname">num_features</code><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.num_features" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> – The number of features (and therefore the length of the weight vector).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.VarianceTD.w">
+<code class="descname">w</code><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.w" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The weight vector for the value function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.VarianceTD.z">
+<code class="descname">z</code><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.z" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The eligibility trace vector for the value function estimate.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.VarianceTD.w_bar">
+<code class="descname">w_bar</code><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.w_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The weight vector for the variance estimate’s value functio.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.VarianceTD.z_bar">
+<code class="descname">z_bar</code><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.z_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The eligibility trace vector for the variance estimate.</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<dl class="docutils">
+<dt>Implemented based on:</dt>
+<dd>A Greedy Approach to Adapting the Trace Parameter
+White &amp; White; 2016; arxiv:1607.00446v2</dd>
+</dl>
+<p>In contrast to the VTD(λ) algorithm as defined in the paper, this algorithm
+does not attempt to adapt lambda, instead it just learns the variance of
+the λ-return.</p>
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VarianceTD.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>num_features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VarianceTD.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the learning algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_features</strong> (<em>int</em>) – The number of features, i.e. expected length of the feature vector.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="varcompfa.algos.variance_td.VarianceTD.from_config">
+<em class="property">classmethod </em><code class="descname">from_config</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VarianceTD.from_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize from a configuration dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VarianceTD.get_config">
+<code class="descname">get_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VarianceTD.get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the parameters needed to specify the algorithm’s state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VarianceTD.get_second_moment">
+<code class="descname">get_second_moment</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VarianceTD.get_second_moment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.get_second_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the return’s approximate second moment for feature vector <cite>x</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VarianceTD.get_value">
+<code class="descname">get_value</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VarianceTD.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the approximate value for feature vector <cite>x</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VarianceTD.get_variance">
+<code class="descname">get_variance</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VarianceTD.get_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.get_variance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get approximate variance of return for feature vector <cite>x</cite>.</p>
+<p class="rubric">Notes</p>
+<p>The estimated variance has a floor of zero, as the true variance is
+always positive.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VarianceTD.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>x</em>, <em>r</em>, <em>xp</em>, <em>alpha</em>, <em>gm</em>, <em>gm_p</em>, <em>lm</em>, <em>lm_p</em>, <em>lm_bar</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VarianceTD.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update from new experience, i.e., a transition <cite>(x, r, xp)</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – The observation/features from the current timestep.</li>
+<li><strong>r</strong> (<em>float</em>) – The reward from the transition.</li>
+<li><strong>xp</strong> (<em>Vector</em><em>[</em><em>float</em><em>]</em>) – The observation/features from the next timestep.</li>
+<li><strong>alpha</strong> (<em>float</em>) – The step-size parameter for updating the value estimate’s weights.</li>
+<li><strong>alpha_bar</strong> (<em>float</em>) – The step-size parameter for updating the variance estimate weights.</li>
+<li><strong>gm</strong> (<em>float</em>) – Gamma, abbreviated <cite>gm</cite>, the discount factor for the current state.</li>
+<li><strong>gm_p</strong> (<em>float</em>) – The discount factor for the next state.</li>
+<li><strong>lm</strong> (<em>float</em>) – Lambda, abbreviated <cite>lm</cite>, is the value function’s bootstrapping
+parameter for the current timestep.</li>
+<li><strong>lm_p</strong> (<em>float</em>) – The boostrapping parameter for the next state.</li>
+<li><strong>lm_bar</strong> (<em>float</em>) – The variance estimate’s bootstrapping parameter for the current
+timestep.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Features (<cite>x</cite> and <cite>xp</cite>) are assumed to be 1D arrays of length <cite>self.n</cite>.
+Other parameters are floats but are generally expected to be in the
+interval [0, 1].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VarianceTD.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VarianceTD.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset weights, traces, and other parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.variance_td.VarianceTD.start_episode">
+<code class="descname">start_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/variance_td.html#VarianceTD.start_episode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.start_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get ready to start a new episode.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.variance_td.VarianceTD.traces">
+<code class="descname">traces</code><a class="headerlink" href="#varcompfa.algos.variance_td.VarianceTD.traces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the current eligibility trace values.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, rldotai.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/api/varcompfa.algos.variance_td.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,722 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varcompfa.callbacks &#8212; varcompfa caca2f2f56c77001a4880b022be10cde45d6f915 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/my_theme.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for varcompfa.callbacks</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Callbacks to execute at various points in the course of running an experiment.</span>
+
+<span class="sd">Based on Keras&#39; callbacks.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json_tricks</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Callback"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Callback">[docs]</a><span class="k">class</span> <span class="nc">Callback</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Base class used to build new callbacks.</span>
+
+<span class="sd">    For an example of when these callbacks are run, refer to the experiment</span>
+<span class="sd">    running class `varcompfa.PolicyEvaluation`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="Callback.on_experiment_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Callback.on_experiment_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Callback.on_experiment_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Callback.on_experiment_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Callback.on_episode_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Callback.on_episode_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_episode_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Callback.on_episode_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Callback.on_episode_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_episode_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Callback.on_step_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Callback.on_step_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_step_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Callback.on_step_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Callback.on_step_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_step_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="LambdaCallback"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.LambdaCallback">[docs]</a><span class="k">class</span> <span class="nc">LambdaCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A callback class used to quickly make new custom callbacks.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">on_experiment_begin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">on_experiment_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">on_episode_begin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">on_episode_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">on_step_begin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">on_step_end</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">on_experiment_begin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_experiment_begin</span> <span class="o">=</span> <span class="n">on_experiment_begin</span>
+        <span class="k">if</span> <span class="n">on_experiment_end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_experiment_end</span> <span class="o">=</span> <span class="n">on_experiment_end</span>
+        <span class="k">if</span> <span class="n">on_episode_begin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_episode_begin</span> <span class="o">=</span> <span class="n">on_episode_begin</span>
+        <span class="k">if</span> <span class="n">on_episode_end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_episode_end</span> <span class="o">=</span> <span class="n">on_episode_end</span>
+        <span class="k">if</span> <span class="n">on_step_begin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_step_begin</span> <span class="o">=</span> <span class="n">on_step_begin</span>
+        <span class="k">if</span> <span class="n">on_step_end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_step_end</span> <span class="o">=</span> <span class="n">on_step_end</span></div>
+
+
+
+<span class="k">class</span> <span class="nc">_AnnoyinglyVerboseCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An example callback that pretty-prints all information it has access to</span>
+<span class="sd">    at each point when it gets called.</span>
+
+<span class="sd">    It will likely print a lot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">on_experiment_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Started training&quot;</span><span class="p">)</span>
+        <span class="c1"># pprint(info)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">on_experiment_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End of training&quot;</span><span class="p">)</span>
+        <span class="c1"># pprint(info)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">on_episode_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Started episode: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">episode_ix</span><span class="p">)</span>
+        <span class="c1"># pprint(info)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">on_episode_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End of episode: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">episode_ix</span><span class="p">)</span>
+        <span class="c1"># pprint(info)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">on_step_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Begin step: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">step_ix</span><span class="p">)</span>
+        <span class="c1"># pprint(info)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">on_step_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End step: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">step_ix</span><span class="p">)</span>
+        <span class="c1"># pprint(info)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="CheckpointFinal"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.CheckpointFinal">[docs]</a><span class="k">class</span> <span class="nc">CheckpointFinal</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Save the agent at the end of the experiment.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="n">agent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span>
+
+<div class="viewcode-block" id="CheckpointFinal.on_experiment_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.CheckpointFinal.on_experiment_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Saving agent to: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="c1"># Avoid warning on serializing numpy array scalars</span>
+        <span class="n">json_tricks</span><span class="o">.</span><span class="n">NumpyEncoder</span><span class="o">.</span><span class="n">SHOW_SCALAR_WARNING</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">json_tricks</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">))</span>
+        <span class="n">json_tricks</span><span class="o">.</span><span class="n">NumpyEncoder</span><span class="o">.</span><span class="n">SHOW_SCALAR_WARNING</span><span class="o">=</span><span class="kc">True</span></div></div>
+
+
+<div class="viewcode-block" id="CheckpointScheduled"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.CheckpointScheduled">[docs]</a><span class="k">class</span> <span class="nc">CheckpointScheduled</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checkpoint the agent on a schedule.&quot;&quot;&quot;</span>
+    <span class="c1">#TODO: Implement or remove</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="AgentHistory"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.AgentHistory">[docs]</a><span class="k">class</span> <span class="nc">AgentHistory</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Record a history of an experiment for a particular agent, using the context</span>
+<span class="sd">    provided by `update` to get the information the agent used at each step.</span>
+
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    history: dict</span>
+<span class="sd">        The information recorded from the experiment (contexts and metadata).</span>
+<span class="sd">    contexts: list[dict]</span>
+<span class="sd">        A list of the contexts returned from the learning agent&#39;s update.</span>
+<span class="sd">        Includes the &#39;usual&#39; context as well as all the computed quantities the</span>
+<span class="sd">        agent needed to execute its update.</span>
+<span class="sd">    metadata: dict</span>
+<span class="sd">        A dictionary containing metadata about the experiment.</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    The history has the form:</span>
+
+<span class="sd">        - metadata</span>
+<span class="sd">            - start_time</span>
+<span class="sd">            - end_time</span>
+<span class="sd">            - num_episodes</span>
+<span class="sd">            - max_steps</span>
+<span class="sd">            - version</span>
+<span class="sd">            - git_hash</span>
+<span class="sd">            - total_time</span>
+<span class="sd">            - environment</span>
+<span class="sd">            - control policy</span>
+<span class="sd">        - contexts</span>
+<span class="sd">            - total_steps</span>
+<span class="sd">            - episode</span>
+<span class="sd">            - t (current timestep in episode)</span>
+<span class="sd">            - obs</span>
+<span class="sd">            - obs_p</span>
+<span class="sd">            - a (action)</span>
+<span class="sd">            - r (reward)</span>
+<span class="sd">            - done</span>
+<span class="sd">            - x (features for `obs`)</span>
+<span class="sd">            - xp (features for `obs_p`)</span>
+<span class="sd">            - update_result (the value returned by `agent.update()`</span>
+<span class="sd">            - weights</span>
+<span class="sd">            - traces</span>
+<span class="sd">            - additional parameters computed as part of `agent.update()`</span>
+
+
+<span class="sd">    Remarks</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    Serialization makes things difficult, but some things that are worth</span>
+<span class="sd">    recording (such as environment and control policy) are hard to serialize.</span>
+<span class="sd">    At this point I intend to use `pickle` to do this, which solves the problem</span>
+<span class="sd">    of serialization but introduces potentially weird issues that I have yet to</span>
+<span class="sd">    investigate.</span>
+<span class="sd">    For example, does unpickling of an object fail catastrophically if the</span>
+<span class="sd">    implementation of that object&#39;s class changes significantly?</span>
+
+<span class="sd">    Currently relies on the learning agents ordering being fixed in order to</span>
+<span class="sd">    select the right context from those returned by `update_contexts`)</span>
+<span class="sd">    Alternative implementations are possible, as is modifying the experiment</span>
+<span class="sd">    class, but those options will only be invoked if I find some pressing</span>
+<span class="sd">    reason to add/remove/reorder the learning agents over the course of a run.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AgentHistory.__init__"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.AgentHistory.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="nb">set</span><span class="p">(),</span> <span class="n">compute</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the callback.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        agent: object</span>
+<span class="sd">            The agent to record a history for.</span>
+<span class="sd">        exclude : Set[str], optional</span>
+<span class="sd">            The set of keys to ignore from `update_context`.</span>
+<span class="sd">            Useful for when some items, such as the feature vector, may be</span>
+<span class="sd">            large or otherwise not worth keeping track of.</span>
+<span class="sd">        compute : Dict, optional</span>
+<span class="sd">            A dictionary mapping keys to functions which accept a context</span>
+<span class="sd">            and return a value to track.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">agent</span> <span class="o">=</span> <span class="n">agent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exclude</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">exclude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute</span> <span class="o">=</span> <span class="n">compute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;contexts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AgentHistory.on_experiment_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.AgentHistory.on_experiment_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="c1"># Get the agent&#39;s index in the list of learners</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_ix</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;learners&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Record some metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;version&#39;</span>       <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;git_hash&#39;</span>      <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;git_hash&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;start_time&#39;</span>    <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;num_episodes&#39;</span>  <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;num_episodes&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;max_steps&#39;</span>     <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;max_steps&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;environment&#39;</span>   <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;environment&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;policy&#39;</span>        <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;policy&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;learners&#39;</span>      <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;learners&#39;</span><span class="p">],</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="AgentHistory.on_experiment_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.AgentHistory.on_experiment_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;num_episodes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;total_time&#39;</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;start_time&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AgentHistory.on_episode_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.AgentHistory.on_episode_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_episode_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="AgentHistory.on_step_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.AgentHistory.on_step_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_step_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="n">agent_ctx</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;update_contexts&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_ix</span><span class="p">]</span>
+
+        <span class="c1"># Preserve the current step&#39;s context, ignoring excluded keys</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">agent_ctx</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exclude</span><span class="p">}</span>
+
+        <span class="c1"># Record weights and traces</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s1">&#39;weights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">weights</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s1">&#39;traces&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">traces</span>
+
+        <span class="c1"># Compute any additional values that should be tracked</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">ctx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">agent_ctx</span><span class="p">)</span>
+
+        <span class="c1"># Combine and append</span>
+        <span class="n">ctx</span> <span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s1">&#39;episode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;contexts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">contexts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A list of contexts from the experiment.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;contexts&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Metadata from the experiment.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ExprimentalHistory"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.ExprimentalHistory">[docs]</a><span class="k">class</span> <span class="nc">ExprimentalHistory</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Callback for recording an experiment&#39;s full history for multiple agents.</span>
+
+<span class="sd">    Currently just records the contexts as in `History` along with the weights</span>
+<span class="sd">    and traces for each agent, along with optional dict of additional values to</span>
+<span class="sd">    compute from context.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    history: dict</span>
+<span class="sd">        The information recorded from the experiment.</span>
+<span class="sd">    contexts: list[dict]</span>
+<span class="sd">        A list of the contexts from each step of the experiment.</span>
+<span class="sd">    metadata: dict</span>
+<span class="sd">        A dictionary containing metadata about the experiment.</span>
+<span class="sd">    records: list[list[dict]]</span>
+<span class="sd">        A list of lists, one list per agent, recording information about the</span>
+<span class="sd">        agent&#39;s state (e.g., weights &amp; traces) from each time step of the</span>
+<span class="sd">        experiment.</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    The history has the form::</span>
+
+<span class="sd">        - metadata</span>
+<span class="sd">            - start_time</span>
+<span class="sd">            - end_time</span>
+<span class="sd">            - num_episodes</span>
+<span class="sd">            - max_steps</span>
+<span class="sd">            - version</span>
+<span class="sd">            - git_hash</span>
+<span class="sd">            - total_time</span>
+<span class="sd">            - environment</span>
+<span class="sd">            - control policy</span>
+<span class="sd">        - contexts</span>
+<span class="sd">            - total_steps</span>
+<span class="sd">            - episode</span>
+<span class="sd">            - t (current timestep in episode)</span>
+<span class="sd">            - obs</span>
+<span class="sd">            - obs_p</span>
+<span class="sd">            - a (action)</span>
+<span class="sd">            - r (reward)</span>
+<span class="sd">            - done</span>
+<span class="sd">        - records (list of agent information)</span>
+<span class="sd">            - episode</span>
+<span class="sd">            - t (current timestep in episode)</span>
+<span class="sd">            - weights</span>
+<span class="sd">            - traces</span>
+
+
+<span class="sd">    Remarks</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    This is a compromise between the somewhat excessive `AgentHistory` (and</span>
+<span class="sd">    having to record one history per-agent) and the more bare-bones `History`,</span>
+<span class="sd">    where some information would be unavailable (traces, weights) or have to</span>
+<span class="sd">    be recomputed (parameters).</span>
+<span class="sd">    Here, everything (parameters, errors, etc.) is computable given the context,</span>
+<span class="sd">    although recomputing everything might be expensive or tedious (with some</span>
+<span class="sd">    stateful state-dependent paramters, for example a decaying stepsize).</span>
+<span class="sd">    Could potentially collect information from each update_context as in</span>
+<span class="sd">    `AgentHistory`, but I don&#39;t have a use for that now and it would make the</span>
+<span class="sd">    code more complicated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ExprimentalHistory.__init__"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.ExprimentalHistory.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agents</span><span class="o">=</span><span class="nb">list</span><span class="p">(),</span> <span class="n">compute</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Callback for recording an experiment&#39;s full history for multiple agents.</span>
+<span class="sd">        See the class docstring for details.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        agents: list</span>
+<span class="sd">            List of learning agents to record information from.</span>
+<span class="sd">        compute: dict</span>
+<span class="sd">            Dictionary of functions for computing additional values from each</span>
+<span class="sd">            context.</span>
+<span class="sd">            The functions should accept a &quot;context&quot; (itself a dictionary with</span>
+<span class="sd">            entries reflecting the current observation, action, reward, etc.)</span>
+<span class="sd">            and return a value.</span>
+<span class="sd">            Used to compute things like state-dependent parameter values,</span>
+<span class="sd">            feature vectors, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agents</span> <span class="o">=</span> <span class="n">agents</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute</span> <span class="o">=</span> <span class="n">compute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;contexts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">agents</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ExprimentalHistory.on_experiment_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.ExprimentalHistory.on_experiment_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Record some metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;version&#39;</span>       <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;git_hash&#39;</span>      <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;git_hash&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;start_time&#39;</span>    <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;num_episodes&#39;</span>  <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;num_episodes&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;max_steps&#39;</span>     <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;max_steps&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;environment&#39;</span>   <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;environment&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;policy&#39;</span>        <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;policy&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;learners&#39;</span>      <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;learners&#39;</span><span class="p">],</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="ExprimentalHistory.on_experiment_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.ExprimentalHistory.on_experiment_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;num_episodes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;total_time&#39;</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;start_time&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ExprimentalHistory.on_episode_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.ExprimentalHistory.on_episode_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_episode_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="ExprimentalHistory.on_step_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.ExprimentalHistory.on_step_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_step_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="c1"># Information from agents (weights at time t, previous traces)</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">agent</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agents</span><span class="p">):</span>
+            <span class="n">rec</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span><span class="p">,</span>
+                <span class="s1">&#39;episode&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span><span class="p">,</span>
+                <span class="s1">&#39;weights&#39;</span><span class="p">:</span> <span class="n">agent</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span>
+                <span class="s1">&#39;traces&#39;</span> <span class="p">:</span> <span class="n">agent</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">traces</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">][</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExprimentalHistory.on_step_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.ExprimentalHistory.on_step_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_step_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="c1"># Context from environment</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">],</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span><span class="p">,</span> <span class="s1">&#39;episode&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">ctx</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+
+        <span class="c1"># Save the context information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;contexts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">contexts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A list of contexts from the experiment.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;contexts&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Metadata from the experiment.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Records for each agent.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;records&#39;</span><span class="p">]</span></div>
+
+
+
+<span class="c1"># TODO: Improve this so it can track agents</span>
+<span class="c1"># TODO: Improve this so it can compute arbitrary values using context</span>
+<div class="viewcode-block" id="History"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.History">[docs]</a><span class="k">class</span> <span class="nc">History</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Records a history of the experiment.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    history: dict</span>
+<span class="sd">        The information recorded from the experiment.</span>
+<span class="sd">    contexts: list[dict]</span>
+<span class="sd">        A list of the contexts from each step of the experiment.</span>
+<span class="sd">    metadata: dict</span>
+<span class="sd">        A dictionary containing metadata about the experiment.</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The history is stored as attributes of the callback, structured like:</span>
+
+<span class="sd">        metadata</span>
+<span class="sd">            - start_time</span>
+<span class="sd">            - end_time</span>
+<span class="sd">            - num_episodes</span>
+<span class="sd">            - max_steps</span>
+<span class="sd">            - version</span>
+<span class="sd">            - git_hash</span>
+<span class="sd">            - environment</span>
+<span class="sd">            - policy</span>
+<span class="sd">        contexts</span>
+<span class="sd">            - total_steps</span>
+<span class="sd">            - t (current timestep in episode)</span>
+<span class="sd">            - episode</span>
+<span class="sd">            - obs</span>
+<span class="sd">            - obs_p</span>
+<span class="sd">            - a (action)</span>
+<span class="sd">            - r (reward)</span>
+<span class="sd">            - done</span>
+
+<span class="sd">    **Remarks**</span>
+
+<span class="sd">    Serialization makes things difficult, but some things that are worth</span>
+<span class="sd">    recording (such as environment and control policy) are hard to serialize.</span>
+<span class="sd">    At this point I intend to use `pickle` to do this, which solves the problem</span>
+<span class="sd">    of serialization but introduces potentially weird issues that I have yet to</span>
+<span class="sd">    investigate.</span>
+<span class="sd">    For example, does unpickling of an object fail catastrophically if the</span>
+<span class="sd">    implementation of that object&#39;s class changes significantly?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Create data structure that will be filled by running the experiment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;contexts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+<div class="viewcode-block" id="History.on_experiment_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.History.on_experiment_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;version&#39;</span>       <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;git_hash&#39;</span>      <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;git_hash&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;start_time&#39;</span>    <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;num_episodes&#39;</span>  <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;num_episodes&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;max_steps&#39;</span>     <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;max_steps&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;environment&#39;</span>   <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;environment&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;policy&#39;</span>        <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;policy&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;learners&#39;</span>      <span class="p">:</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;learners&#39;</span><span class="p">],</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="History.on_experiment_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.History.on_experiment_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;num_episodes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;total_time&#39;</span><span class="p">]</span> <span class="o">=</span> \
+            <span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">][</span><span class="s1">&#39;start_time&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="History.on_episode_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.History.on_episode_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_episode_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="History.on_episode_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.History.on_episode_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_episode_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="c1"># TODO: Mark episodes where time ran out somehow?</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="History.on_step_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.History.on_step_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_step_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="History.on_step_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.History.on_step_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_step_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;context&#39;</span><span class="p">],</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span><span class="p">,</span> <span class="s1">&#39;episode&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;contexts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="History.pretty_print"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.History.pretty_print">[docs]</a>    <span class="k">def</span> <span class="nf">pretty_print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Avoid showing warning on array scalar serialization</span>
+        <span class="n">json_tricks</span><span class="o">.</span><span class="n">NumpyEncoder</span><span class="o">.</span><span class="n">SHOW_SCALAR_WARNING</span><span class="o">=</span><span class="kc">False</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">json_tricks</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">json_tricks</span><span class="o">.</span><span class="n">NumpyEncoder</span><span class="o">.</span><span class="n">SHOW_SCALAR_WARNING</span><span class="o">=</span><span class="kc">True</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">contexts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A list of contexts from the experiment.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;contexts&#39;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Metadata from the experiment.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hist</span><span class="p">[</span><span class="s1">&#39;metadata&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Progress"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Progress">[docs]</a><span class="k">class</span> <span class="nc">Progress</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Progress display callback.&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
+
+<div class="viewcode-block" id="Progress.on_experiment_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Progress.on_experiment_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_episodes</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;num_episodes&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;max_steps&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prev_total_steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Handle leaving number of episodes unspecified</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_episodes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmt_string</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Episode </span><span class="si">{episode_ix}</span><span class="s2"> &quot;</span>
+                               <span class="s2">&quot;(total steps: </span><span class="si">{total_steps:d}</span><span class="s2">, last </span><span class="si">{last_steps}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fmt_string</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Episode </span><span class="si">{episode_ix}</span><span class="s2"> of </span><span class="si">{num_episodes}</span><span class="s2"> &quot;</span>
+                               <span class="s2">&quot;(total steps: </span><span class="si">{total_steps:d}</span><span class="s2">, last </span><span class="si">{last_steps}</span><span class="s2">)&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Progress.on_episode_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Progress.on_episode_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_episode_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="n">total_steps</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;total_steps&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">episode_steps</span> <span class="o">=</span> <span class="n">total_steps</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_total_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prev_total_steps</span> <span class="o">=</span> <span class="n">total_steps</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fmt_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">episode_ix</span><span class="o">=</span><span class="n">episode_ix</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">num_episodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_episodes</span><span class="p">,</span>
+            <span class="n">total_steps</span><span class="o">=</span><span class="n">total_steps</span><span class="p">,</span>
+            <span class="n">last_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_steps</span>
+        <span class="p">)</span>
+        <span class="c1"># Print messages</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+    <span class="c1"># def on_step_end(self, step_ix, info=dict()):</span>
+    <span class="c1">#     self.cumulative_steps += 1</span>
+    <span class="c1">#     msg = &quot;Episode %d of %d, step: %d (cumulative steps: %d)&quot;%(</span>
+    <span class="c1">#         self.episode_ix, self.num_episodes, step_ix,</span>
+    <span class="c1">#         self.cumulative_steps)</span>
+    <span class="c1">#     # Print messages</span>
+    <span class="c1">#     print(msg, file=self.stream, flush=True, end=&quot;\r&quot;)</span>
+
+
+<div class="viewcode-block" id="Progress.on_experiment_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.Progress.on_experiment_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="VerboseProgress"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.VerboseProgress">[docs]</a><span class="k">class</span> <span class="nc">VerboseProgress</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;More detailed progress display callback.&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
+
+<div class="viewcode-block" id="VerboseProgress.on_experiment_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.VerboseProgress.on_experiment_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_episodes</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;num_episodes&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;max_steps&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_steps</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="VerboseProgress.on_episode_begin"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.VerboseProgress.on_episode_begin">[docs]</a>    <span class="k">def</span> <span class="nf">on_episode_begin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Episode </span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> (total steps: </span><span class="si">%d</span><span class="s2">)&quot;</span><span class="o">%</span><span class="p">(</span>
+            <span class="n">episode_ix</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_episodes</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;total_steps&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VerboseProgress.on_episode_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.VerboseProgress.on_episode_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_episode_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_ix</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="n">total_steps</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;total_steps&#39;</span><span class="p">]</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Episode </span><span class="si">%d</span><span class="s2"> of </span><span class="si">%d</span><span class="s2"> (total steps: </span><span class="si">%d</span><span class="s2">)&quot;</span><span class="o">%</span><span class="p">(</span>
+            <span class="n">episode_ix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_episodes</span><span class="p">,</span> <span class="n">total_steps</span><span class="p">)</span>
+        <span class="c1"># Print messages</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Episode steps: </span><span class="si">%d</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">total_steps</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_steps</span><span class="p">))</span>
+        <span class="c1"># Ready for next episode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_steps</span> <span class="o">=</span> <span class="n">total_steps</span></div>
+
+
+<div class="viewcode-block" id="VerboseProgress.on_experiment_end"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.VerboseProgress.on_experiment_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_experiment_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="nb">print</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="RemoteMonitor"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.RemoteMonitor">[docs]</a><span class="k">class</span> <span class="nc">RemoteMonitor</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Stream information about the experiment to a socket.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="StreamMonitor"><a class="viewcode-back" href="../../api/varcompfa.callbacks.html#varcompfa.callbacks.StreamMonitor">[docs]</a><span class="k">class</span> <span class="nc">StreamMonitor</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write information about the experiment to a stream.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, rldotai.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

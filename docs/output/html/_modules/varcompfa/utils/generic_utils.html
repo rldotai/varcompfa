@@ -1,0 +1,149 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varcompfa.utils.generic_utils &#8212; varcompfa caca2f2f56c77001a4880b022be10cde45d6f915 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/my_theme.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for varcompfa.utils.generic_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generic utilities</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pydoc</span>
+
+
+<div class="viewcode-block" id="find_module"><a class="viewcode-back" href="../../../api/varcompfa.utils.generic_utils.html#varcompfa.utils.generic_utils.find_module">[docs]</a><span class="k">def</span> <span class="nf">find_module</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find the name of the module where `obj` is defined.</span>
+
+<span class="sd">    For example, `vcf.TD` becomes `vcf.algos.td`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmodule</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span></div>
+
+<div class="viewcode-block" id="get_current_filename"><a class="viewcode-back" href="../../../api/varcompfa.utils.generic_utils.html#varcompfa.utils.generic_utils.get_current_filename">[docs]</a><span class="k">def</span> <span class="nf">get_current_filename</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Uses inspect to get the caller&#39;s filename.&quot;&quot;&quot;</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_class_string"><a class="viewcode-back" href="../../../api/varcompfa.utils.generic_utils.html#varcompfa.utils.generic_utils.get_class_string">[docs]</a><span class="k">def</span> <span class="nf">get_class_string</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the class string for an object</span>
+
+<span class="sd">    For example, `vcf.TD` becomes `vcf.algos.td.TD`, as does an instantiation</span>
+<span class="sd">    of that class.</span>
+
+<span class="sd">    May be slightly dicey because Python&#39;s object model doesn&#39;t always permit</span>
+<span class="sd">    you to find the right thing.</span>
+<span class="sd">    For example, a `numpy` array returns `numpy.ndarray`, which is the correct</span>
+<span class="sd">    type, but attempting to instantiate it the same way you would create an</span>
+<span class="sd">    array via `numpy.array([1,2])` will yield a zero-valued array with shape</span>
+<span class="sd">    `(1,2)`, rather than an array of shape `(2,)` with values `[1,2]`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">module_name</span> <span class="o">=</span> <span class="n">find_module</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">module_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">module_name</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span></div>
+
+<div class="viewcode-block" id="load_class"><a class="viewcode-back" href="../../../api/varcompfa.utils.generic_utils.html#varcompfa.utils.generic_utils.load_class">[docs]</a><span class="k">def</span> <span class="nf">load_class</span><span class="p">(</span><span class="n">class_string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load a class from a class string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    class_string: str</span>
+<span class="sd">        The canonical class string, e.g. the result of `str(obj.__class__)`,</span>
+<span class="sd">        where `obj` is an instantiation of a Python class.</span>
+
+<span class="sd">    For example, `class_string` could be `&quot;varcompfa.algos.TD.td&quot;`</span>
+
+<span class="sd">    The `pydoc` package implements this nicely via `locate`, although we could</span>
+<span class="sd">    do something similar via:</span>
+
+<span class="sd">    ```</span>
+<span class="sd">    class_data = class_string.split(&#39;.&#39;)</span>
+<span class="sd">    module_path = &#39;.&#39;.join(class_data[:-1])</span>
+<span class="sd">    class_name = class_data[-1]</span>
+<span class="sd">    module = importlib.import_module(module_path)</span>
+<span class="sd">    return getattr(module, class_name)</span>
+<span class="sd">    ```</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="n">pydoc</span><span class="o">.</span><span class="n">locate</span><span class="p">(</span><span class="n">class_string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Non-class object loaded from: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">class_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">cls</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, rldotai.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

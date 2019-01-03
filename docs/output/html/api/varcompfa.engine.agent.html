@@ -1,0 +1,249 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varcompfa.engine.agent module &#8212; varcompfa caca2f2f56c77001a4880b022be10cde45d6f915 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/my_theme.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="varcompfa.engine.experiment module" href="varcompfa.engine.experiment.html" />
+    <link rel="prev" title="varcompfa.engine package" href="varcompfa.engine.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="varcompfa.html">varcompfa package</a><ul>
+  <li><a href="varcompfa.engine.html">varcompfa.engine package</a><ul>
+      <li>Previous: <a href="varcompfa.engine.html" title="previous chapter">varcompfa.engine package</a></li>
+      <li>Next: <a href="varcompfa.engine.experiment.html" title="next chapter">varcompfa.engine.experiment module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/varcompfa.engine.agent.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-varcompfa.engine.agent">
+<span id="varcompfa-engine-agent-module"></span><h1>varcompfa.engine.agent module<a class="headerlink" href="#module-varcompfa.engine.agent" title="Permalink to this headline">¶</a></h1>
+<p>Implementation of agent wrapper classes</p>
+<dl class="class">
+<dt id="varcompfa.engine.agent.Agent">
+<em class="property">class </em><code class="descclassname">varcompfa.engine.agent.</code><code class="descname">Agent</code><span class="sig-paren">(</span><em>algo</em>, <em>phi</em>, <em>params={}</em>, <em>reward_func=None</em>, <em>metadata={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/agent.html#Agent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.agent.Agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Agent class, for encapsulating a learning algorithm, its function
+approximator, and the possibly state-dependent parameters for updating it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>algo</strong> (<em>varcompfa.algos.LearningAgent</em>) – The learning algorithm that the Agent wraps.
+It must have an <cite>update</cite> method capable of handling a dictionary
+containing the information needed to perform updates.</li>
+<li><strong>phi</strong> (<em>callable</em>) – A function that maps observations to features used by the learning algo.</li>
+<li><strong>params</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary of parameters, of the form <cite>param_name: &lt;value&gt;</cite>, where
+<cite>&lt;value&gt;</cite> can be either a constant (e.g., a float) or a callable that
+accepts a context.</li>
+<li><strong>reward_func</strong> (<em>callable</em><em>, </em><em>optional</em>) – An reward function accepts a context and returns a <cite>float</cite>.
+Modifying the reward function can be useful in some cases, e.g. for
+reward shaping or for predicting other quantities than the return.</li>
+<li><strong>metadata</strong> (<em>dict</em><em>, </em><em>optional</em>) – An optional dictionary for adding metadata to the agent, e.g. for
+annotations on the experiment it was trained on.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>We make use of contexts to make it possible to compute things without
+knowing too much in advance about what we’re computing.
+Taken to extremes, this approach would devolve into making everything a
+global variable, which is probably not a good idea.
+However, since this codebase is oriented towards reinforcement learning,
+we can restrict what the context exposes.</p>
+<p class="last">The baseline context is the state, action, reward, and next state.
+From this, we can compute the features for the state and its successor,
+and add those to the context.
+If the parameters are functions (e.g., state-dependent), we compute those
+as well and include them, passing them to the learning algorithm.
+At this point, everything necessary for the learning algorithm to perform
+an update should be available.</p>
+</div>
+<dl class="method">
+<dt id="varcompfa.engine.agent.Agent.act">
+<code class="descname">act</code><span class="sig-paren">(</span><em>obs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/agent.html#Agent.act"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.agent.Agent.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select an action according to the current observation using the
+learning algorithm (<cite>self.algo</cite>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obs</strong> (<em>numpy.ndarray</em>) – The observation that the agent uses to determine the action to take.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>action</strong> – The action selected by the algorithm given the features <cite>phi(x)</cite>.
+(It is an array because <cite>json_tricks</cite> does not presently handle
+serializing non-array instances of numpy datatypes.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int or numpy.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.engine.agent.Agent.eval_params">
+<code class="descname">eval_params</code><span class="sig-paren">(</span><em>context</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/agent.html#Agent.eval_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.agent.Agent.eval_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the parameter functions for the supplied context.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.engine.agent.Agent.get_config">
+<code class="descname">get_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/agent.html#Agent.get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.agent.Agent.get_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.engine.agent.Agent.get_td_error">
+<code class="descname">get_td_error</code><span class="sig-paren">(</span><em>context</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/agent.html#Agent.get_td_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.agent.Agent.get_td_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the TD-error at a given step.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.engine.agent.Agent.get_value">
+<code class="descname">get_value</code><span class="sig-paren">(</span><em>obs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/agent.html#Agent.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.agent.Agent.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value assigned to the current observation by the learning
+algorithm under the agent’s function approximation scheme.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.engine.agent.Agent.reward_func">
+<code class="descname">reward_func</code><span class="sig-paren">(</span><em>context</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/agent.html#Agent.reward_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.agent.Agent.reward_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>The reward function, which by default does nothing unless overriden
+during initialization.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>context</strong> (<em>dict</em>) – A basic context containing information about a single timestep</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>reward</strong> – The reward derived from the given context.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.engine.agent.Agent.start_episode">
+<code class="descname">start_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/agent.html#Agent.start_episode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.agent.Agent.start_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get ready to start a new episode.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.engine.agent.Agent.terminal_context">
+<code class="descname">terminal_context</code><span class="sig-paren">(</span><em>defaults={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/agent.html#Agent.terminal_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.agent.Agent.terminal_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a suitable context for terminal states, overriding the
+context provided by <cite>defaults</cite>.
+This entails setting <cite>done</cite> to <cite>True</cite>, and returning a zero-vector
+for the features of the current state and its successor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.engine.agent.Agent.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>context</em>, <em>check_conflict=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/engine/agent.html#Agent.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.engine.agent.Agent.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the learning agent from the current context (e.g., the
+information available at the timestep).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>context</strong> (<em>dict</em>) – A dictionary containing information about the current timestep.
+The agent will then compute the feature representation and
+context-dependent parameters to be used when updating the agent.</li>
+<li><strong>check_conflict</strong> (<em>bool</em><em> (</em><em>default True</em><em>)</em>) – If true, check if parameters passed via <cite>context</cite> have a name
+conflict with those computed as part of the update.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The parameters passed by <cite>context</cite> take precedence over the parameters
+computed as part of this function (including the feature vectors).
+By default, when this occurs a warning will be printed, but sometimes
+it is necessary/convenient to override the computed parameter values.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, rldotai.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/api/varcompfa.engine.agent.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

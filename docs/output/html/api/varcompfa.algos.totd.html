@@ -1,0 +1,209 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varcompfa.algos.totd module &#8212; varcompfa caca2f2f56c77001a4880b022be10cde45d6f915 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/my_theme.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="varcompfa.algos.variance_td module" href="varcompfa.algos.variance_td.html" />
+    <link rel="prev" title="varcompfa.algos.td module" href="varcompfa.algos.td.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="varcompfa.html">varcompfa package</a><ul>
+  <li><a href="varcompfa.algos.html">varcompfa.algos package</a><ul>
+      <li>Previous: <a href="varcompfa.algos.td.html" title="previous chapter">varcompfa.algos.td module</a></li>
+      <li>Next: <a href="varcompfa.algos.variance_td.html" title="next chapter">varcompfa.algos.variance_td module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/varcompfa.algos.totd.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-varcompfa.algos.totd">
+<span id="varcompfa-algos-totd-module"></span><h1>varcompfa.algos.totd module<a class="headerlink" href="#module-varcompfa.algos.totd" title="Permalink to this headline">¶</a></h1>
+<p>True-online TD(λ), sometimes known as temporal difference learning with ‘Dutch traces’.</p>
+<p>—</p>
+<p>0 : [van Seijen, Harm, and Richard S. Sutton. “True Online TD (lambda).”
+ICML. Vol. 14. 2014.](<a class="reference external" href="http://www.jmlr.org/proceedings/papers/v32/seijen14.pdf">http://www.jmlr.org/proceedings/papers/v32/seijen14.pdf</a>)</p>
+<dl class="class">
+<dt id="varcompfa.algos.totd.TOTD">
+<em class="property">class </em><code class="descclassname">varcompfa.algos.totd.</code><code class="descname">TOTD</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/totd.html#TOTD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.totd.TOTD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="varcompfa.algos.algo_base.html#varcompfa.algos.algo_base.LearningAlgorithm" title="varcompfa.algos.algo_base.LearningAlgorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.algos.algo_base.LearningAlgorithm</span></code></a></p>
+<p>True-online temporal difference learning with linear function approximation.</p>
+<dl class="method">
+<dt id="varcompfa.algos.totd.TOTD.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/totd.html#TOTD.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.totd.TOTD.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the learning algorithm.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<em>int</em>) – The number of features, i.e. expected length of the feature vector.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="varcompfa.algos.totd.TOTD.w">
+<code class="descname">w</code><a class="headerlink" href="#varcompfa.algos.totd.TOTD.w" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The current weight vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.totd.TOTD.w_old">
+<code class="descname">w_old</code><a class="headerlink" href="#varcompfa.algos.totd.TOTD.w_old" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The previous time-step’s weight vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.totd.TOTD.z">
+<code class="descname">z</code><a class="headerlink" href="#varcompfa.algos.totd.TOTD.z" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Vector[float]</em> – The array of the eligibility traces.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.totd.TOTD.get_config">
+<code class="descname">get_config</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/totd.html#TOTD.get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.totd.TOTD.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the parameters needed to specify the algorithm’s state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.totd.TOTD.get_value">
+<code class="descname">get_value</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/totd.html#TOTD.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.totd.TOTD.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the approximate value for feature vector <cite>x</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.totd.TOTD.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><em>x</em>, <em>r</em>, <em>xp</em>, <em>alpha</em>, <em>gm</em>, <em>gm_p</em>, <em>lm</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/totd.html#TOTD.learn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.totd.TOTD.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update from new experience, i.e. from a transition <cite>(x,r,xp)</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<em>Vector</em><em>(</em><em>float</em><em>)</em>) – The observation/features from the current timestep.</li>
+<li><strong>r</strong> (<em>float</em>) – The reward from the transition.</li>
+<li><strong>xp</strong> (<em>Vector</em><em>(</em><em>float</em><em>)</em>) – The observation/features from the next timestep.</li>
+<li><strong>alpha</strong> (<em>float</em>) – The step-size parameter for updating the weight vector.</li>
+<li><strong>gm</strong> (<em>float</em>) – Gamma, abbreviated <cite>gm</cite>, the discount factor for the current state.</li>
+<li><strong>gm_p</strong> (<em>float</em>) – The discount factor for the next state.</li>
+<li><strong>lm</strong> (<em>float</em>) – Lambda, abbreviated <cite>lm</cite>, is the bootstrapping parameter for the
+current timestep.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Features (<cite>x</cite> and <cite>xp</cite>) are assumed to be 1D arrays of length <cite>self.n</cite>.
+Other parameters are floats but are generally expected to be in the
+interval [0, 1].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.totd.TOTD.load_weights">
+<code class="descname">load_weights</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/totd.html#TOTD.load_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.totd.TOTD.load_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the weights from a file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.totd.TOTD.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/totd.html#TOTD.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.totd.TOTD.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset weights, traces, and other parameters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.totd.TOTD.save_weights">
+<code class="descname">save_weights</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/totd.html#TOTD.save_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.totd.TOTD.save_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the weights to a file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.algos.totd.TOTD.start_episode">
+<code class="descname">start_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/algos/totd.html#TOTD.start_episode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.algos.totd.TOTD.start_episode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get ready to start a new episode.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.algos.totd.TOTD.traces">
+<code class="descname">traces</code><a class="headerlink" href="#varcompfa.algos.totd.TOTD.traces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the current eligibility trace values.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, rldotai.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/api/varcompfa.algos.totd.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

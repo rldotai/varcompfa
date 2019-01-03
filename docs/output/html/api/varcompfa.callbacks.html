@@ -1,0 +1,638 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varcompfa.callbacks module &#8212; varcompfa caca2f2f56c77001a4880b022be10cde45d6f915 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/my_theme.css" type="text/css" />
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="varcompfa.configuration module" href="varcompfa.configuration.html" />
+    <link rel="prev" title="varcompfa.utils.package_utils module" href="varcompfa.utils.package_utils.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="varcompfa.html">varcompfa package</a><ul>
+      <li>Previous: <a href="varcompfa.utils.package_utils.html" title="previous chapter">varcompfa.utils.package_utils module</a></li>
+      <li>Next: <a href="varcompfa.configuration.html" title="next chapter">varcompfa.configuration module</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/varcompfa.callbacks.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-varcompfa.callbacks">
+<span id="varcompfa-callbacks-module"></span><h1>varcompfa.callbacks module<a class="headerlink" href="#module-varcompfa.callbacks" title="Permalink to this headline">¶</a></h1>
+<p>Callbacks to execute at various points in the course of running an experiment.</p>
+<p>Based on Keras’ callbacks.</p>
+<dl class="class">
+<dt id="varcompfa.callbacks.AgentHistory">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">AgentHistory</code><span class="sig-paren">(</span><em>agent</em>, <em>exclude=set()</em>, <em>compute={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#AgentHistory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.AgentHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#varcompfa.callbacks.Callback" title="varcompfa.callbacks.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.callbacks.Callback</span></code></a></p>
+<p>Record a history of an experiment for a particular agent, using the context
+provided by <cite>update</cite> to get the information the agent used at each step.</p>
+<dl class="attribute">
+<dt id="varcompfa.callbacks.AgentHistory.history">
+<code class="descname">history</code><a class="headerlink" href="#varcompfa.callbacks.AgentHistory.history" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – The information recorded from the experiment (contexts and metadata).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.callbacks.AgentHistory.contexts">
+<code class="descname">contexts</code><a class="headerlink" href="#varcompfa.callbacks.AgentHistory.contexts" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list[dict]</em> – A list of the contexts returned from the learning agent’s update.
+Includes the ‘usual’ context as well as all the computed quantities the
+agent needed to execute its update.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.callbacks.AgentHistory.metadata">
+<code class="descname">metadata</code><a class="headerlink" href="#varcompfa.callbacks.AgentHistory.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – A dictionary containing metadata about the experiment.</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>The history has the form:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="first docutils">
+<dt>metadata</dt>
+<dd><ul class="first last">
+<li>start_time</li>
+<li>end_time</li>
+<li>num_episodes</li>
+<li>max_steps</li>
+<li>version</li>
+<li>git_hash</li>
+<li>total_time</li>
+<li>environment</li>
+<li>control policy</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>contexts</dt>
+<dd><ul class="first last">
+<li>total_steps</li>
+<li>episode</li>
+<li>t (current timestep in episode)</li>
+<li>obs</li>
+<li>obs_p</li>
+<li>a (action)</li>
+<li>r (reward)</li>
+<li>done</li>
+<li>x (features for <cite>obs</cite>)</li>
+<li>xp (features for <cite>obs_p</cite>)</li>
+<li>update_result (the value returned by <cite>agent.update()</cite></li>
+<li>weights</li>
+<li>traces</li>
+<li>additional parameters computed as part of <cite>agent.update()</cite></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Serialization makes things difficult, but some things that are worth
+recording (such as environment and control policy) are hard to serialize.
+At this point I intend to use <cite>pickle</cite> to do this, which solves the problem
+of serialization but introduces potentially weird issues that I have yet to
+investigate.
+For example, does unpickling of an object fail catastrophically if the
+implementation of that object’s class changes significantly?</p>
+<p>Currently relies on the learning agents ordering being fixed in order to
+select the right context from those returned by <cite>update_contexts</cite>)
+Alternative implementations are possible, as is modifying the experiment
+class, but those options will only be invoked if I find some pressing
+reason to add/remove/reorder the learning agents over the course of a run.</p>
+<dl class="method">
+<dt id="varcompfa.callbacks.AgentHistory.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>agent</em>, <em>exclude=set()</em>, <em>compute={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#AgentHistory.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.AgentHistory.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the callback.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agent</strong> (<em>object</em>) – The agent to record a history for.</li>
+<li><strong>exclude</strong> (<em>Set</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – The set of keys to ignore from <cite>update_context</cite>.
+Useful for when some items, such as the feature vector, may be
+large or otherwise not worth keeping track of.</li>
+<li><strong>compute</strong> (<em>Dict</em><em>, </em><em>optional</em>) – A dictionary mapping keys to functions which accept a context
+and return a value to track.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">contexts</code></dt>
+<dd><p>A list of contexts from the experiment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">history</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">metadata</code></dt>
+<dd><p>Metadata from the experiment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.AgentHistory.on_episode_begin">
+<code class="descname">on_episode_begin</code><span class="sig-paren">(</span><em>episode_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#AgentHistory.on_episode_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.AgentHistory.on_episode_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.AgentHistory.on_experiment_begin">
+<code class="descname">on_experiment_begin</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#AgentHistory.on_experiment_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.AgentHistory.on_experiment_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.AgentHistory.on_experiment_end">
+<code class="descname">on_experiment_end</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#AgentHistory.on_experiment_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.AgentHistory.on_experiment_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.AgentHistory.on_step_end">
+<code class="descname">on_step_end</code><span class="sig-paren">(</span><em>step_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#AgentHistory.on_step_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.AgentHistory.on_step_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.callbacks.Callback">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">Callback</code><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class used to build new callbacks.</p>
+<p>For an example of when these callbacks are run, refer to the experiment
+running class <cite>varcompfa.PolicyEvaluation</cite>.</p>
+<dl class="method">
+<dt id="varcompfa.callbacks.Callback.on_episode_begin">
+<code class="descname">on_episode_begin</code><span class="sig-paren">(</span><em>episode_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Callback.on_episode_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Callback.on_episode_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.Callback.on_episode_end">
+<code class="descname">on_episode_end</code><span class="sig-paren">(</span><em>episode_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Callback.on_episode_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Callback.on_episode_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.Callback.on_experiment_begin">
+<code class="descname">on_experiment_begin</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Callback.on_experiment_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Callback.on_experiment_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.Callback.on_experiment_end">
+<code class="descname">on_experiment_end</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Callback.on_experiment_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Callback.on_experiment_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.Callback.on_step_begin">
+<code class="descname">on_step_begin</code><span class="sig-paren">(</span><em>step_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Callback.on_step_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Callback.on_step_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.Callback.on_step_end">
+<code class="descname">on_step_end</code><span class="sig-paren">(</span><em>step_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Callback.on_step_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Callback.on_step_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.callbacks.CheckpointFinal">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">CheckpointFinal</code><span class="sig-paren">(</span><em>agent</em>, <em>filepath</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#CheckpointFinal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.CheckpointFinal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#varcompfa.callbacks.Callback" title="varcompfa.callbacks.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.callbacks.Callback</span></code></a></p>
+<p>Save the agent at the end of the experiment.</p>
+<dl class="method">
+<dt id="varcompfa.callbacks.CheckpointFinal.on_experiment_end">
+<code class="descname">on_experiment_end</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#CheckpointFinal.on_experiment_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.CheckpointFinal.on_experiment_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.callbacks.CheckpointScheduled">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">CheckpointScheduled</code><a class="reference internal" href="../_modules/varcompfa/callbacks.html#CheckpointScheduled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.CheckpointScheduled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#varcompfa.callbacks.Callback" title="varcompfa.callbacks.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.callbacks.Callback</span></code></a></p>
+<p>Checkpoint the agent on a schedule.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.callbacks.ExprimentalHistory">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">ExprimentalHistory</code><span class="sig-paren">(</span><em>agents=[]</em>, <em>compute={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#ExprimentalHistory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#varcompfa.callbacks.Callback" title="varcompfa.callbacks.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.callbacks.Callback</span></code></a></p>
+<p>Callback for recording an experiment’s full history for multiple agents.</p>
+<p>Currently just records the contexts as in <cite>History</cite> along with the weights
+and traces for each agent, along with optional dict of additional values to
+compute from context.</p>
+<dl class="attribute">
+<dt id="varcompfa.callbacks.ExprimentalHistory.history">
+<code class="descname">history</code><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory.history" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – The information recorded from the experiment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.callbacks.ExprimentalHistory.contexts">
+<code class="descname">contexts</code><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory.contexts" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list[dict]</em> – A list of the contexts from each step of the experiment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.callbacks.ExprimentalHistory.metadata">
+<code class="descname">metadata</code><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – A dictionary containing metadata about the experiment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.callbacks.ExprimentalHistory.records">
+<code class="descname">records</code><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory.records" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list[list[dict]]</em> – A list of lists, one list per agent, recording information about the
+agent’s state (e.g., weights &amp; traces) from each time step of the
+experiment.</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>The history has the form:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">metadata</span>
+    <span class="o">-</span> <span class="n">start_time</span>
+    <span class="o">-</span> <span class="n">end_time</span>
+    <span class="o">-</span> <span class="n">num_episodes</span>
+    <span class="o">-</span> <span class="n">max_steps</span>
+    <span class="o">-</span> <span class="n">version</span>
+    <span class="o">-</span> <span class="n">git_hash</span>
+    <span class="o">-</span> <span class="n">total_time</span>
+    <span class="o">-</span> <span class="n">environment</span>
+    <span class="o">-</span> <span class="n">control</span> <span class="n">policy</span>
+<span class="o">-</span> <span class="n">contexts</span>
+    <span class="o">-</span> <span class="n">total_steps</span>
+    <span class="o">-</span> <span class="n">episode</span>
+    <span class="o">-</span> <span class="n">t</span> <span class="p">(</span><span class="n">current</span> <span class="n">timestep</span> <span class="ow">in</span> <span class="n">episode</span><span class="p">)</span>
+    <span class="o">-</span> <span class="n">obs</span>
+    <span class="o">-</span> <span class="n">obs_p</span>
+    <span class="o">-</span> <span class="n">a</span> <span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    <span class="o">-</span> <span class="n">r</span> <span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+    <span class="o">-</span> <span class="n">done</span>
+<span class="o">-</span> <span class="n">records</span> <span class="p">(</span><span class="nb">list</span> <span class="n">of</span> <span class="n">agent</span> <span class="n">information</span><span class="p">)</span>
+    <span class="o">-</span> <span class="n">episode</span>
+    <span class="o">-</span> <span class="n">t</span> <span class="p">(</span><span class="n">current</span> <span class="n">timestep</span> <span class="ow">in</span> <span class="n">episode</span><span class="p">)</span>
+    <span class="o">-</span> <span class="n">weights</span>
+    <span class="o">-</span> <span class="n">traces</span>
+</pre></div>
+</div>
+<p>This is a compromise between the somewhat excessive <cite>AgentHistory</cite> (and
+having to record one history per-agent) and the more bare-bones <cite>History</cite>,
+where some information would be unavailable (traces, weights) or have to
+be recomputed (parameters).
+Here, everything (parameters, errors, etc.) is computable given the context,
+although recomputing everything might be expensive or tedious (with some
+stateful state-dependent paramters, for example a decaying stepsize).
+Could potentially collect information from each update_context as in
+<cite>AgentHistory</cite>, but I don’t have a use for that now and it would make the
+code more complicated.</p>
+<dl class="method">
+<dt id="varcompfa.callbacks.ExprimentalHistory.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>agents=[]</em>, <em>compute={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#ExprimentalHistory.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callback for recording an experiment’s full history for multiple agents.
+See the class docstring for details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>agents</strong> (<em>list</em>) – List of learning agents to record information from.</li>
+<li><strong>compute</strong> (<em>dict</em>) – Dictionary of functions for computing additional values from each
+context.
+The functions should accept a “context” (itself a dictionary with
+entries reflecting the current observation, action, reward, etc.)
+and return a value.
+Used to compute things like state-dependent parameter values,
+feature vectors, etc.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">contexts</code></dt>
+<dd><p>A list of contexts from the experiment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">history</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">metadata</code></dt>
+<dd><p>Metadata from the experiment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.ExprimentalHistory.on_episode_begin">
+<code class="descname">on_episode_begin</code><span class="sig-paren">(</span><em>episode_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#ExprimentalHistory.on_episode_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory.on_episode_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.ExprimentalHistory.on_experiment_begin">
+<code class="descname">on_experiment_begin</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#ExprimentalHistory.on_experiment_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory.on_experiment_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.ExprimentalHistory.on_experiment_end">
+<code class="descname">on_experiment_end</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#ExprimentalHistory.on_experiment_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory.on_experiment_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.ExprimentalHistory.on_step_begin">
+<code class="descname">on_step_begin</code><span class="sig-paren">(</span><em>step_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#ExprimentalHistory.on_step_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory.on_step_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.ExprimentalHistory.on_step_end">
+<code class="descname">on_step_end</code><span class="sig-paren">(</span><em>step_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#ExprimentalHistory.on_step_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.ExprimentalHistory.on_step_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">records</code></dt>
+<dd><p>Records for each agent.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.callbacks.History">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">History</code><a class="reference internal" href="../_modules/varcompfa/callbacks.html#History"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.History" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#varcompfa.callbacks.Callback" title="varcompfa.callbacks.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.callbacks.Callback</span></code></a></p>
+<p>Records a history of the experiment.</p>
+<dl class="attribute">
+<dt id="varcompfa.callbacks.History.history">
+<code class="descname">history</code><a class="headerlink" href="#varcompfa.callbacks.History.history" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – The information recorded from the experiment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.callbacks.History.contexts">
+<code class="descname">contexts</code><a class="headerlink" href="#varcompfa.callbacks.History.contexts" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list[dict]</em> – A list of the contexts from each step of the experiment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.callbacks.History.metadata">
+<code class="descname">metadata</code><a class="headerlink" href="#varcompfa.callbacks.History.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em> – A dictionary containing metadata about the experiment.</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>The history is stored as attributes of the callback, structured like:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>metadata</dt>
+<dd><ul class="first last simple">
+<li>start_time</li>
+<li>end_time</li>
+<li>num_episodes</li>
+<li>max_steps</li>
+<li>version</li>
+<li>git_hash</li>
+<li>environment</li>
+<li>policy</li>
+</ul>
+</dd>
+<dt>contexts</dt>
+<dd><ul class="first last simple">
+<li>total_steps</li>
+<li>t (current timestep in episode)</li>
+<li>episode</li>
+<li>obs</li>
+<li>obs_p</li>
+<li>a (action)</li>
+<li>r (reward)</li>
+<li>done</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>Remarks</strong></p>
+<p>Serialization makes things difficult, but some things that are worth
+recording (such as environment and control policy) are hard to serialize.
+At this point I intend to use <cite>pickle</cite> to do this, which solves the problem
+of serialization but introduces potentially weird issues that I have yet to
+investigate.
+For example, does unpickling of an object fail catastrophically if the
+implementation of that object’s class changes significantly?</p>
+<dl class="attribute">
+<dt>
+<code class="descname">contexts</code></dt>
+<dd><p>A list of contexts from the experiment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">history</code></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">metadata</code></dt>
+<dd><p>Metadata from the experiment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.History.on_episode_begin">
+<code class="descname">on_episode_begin</code><span class="sig-paren">(</span><em>episode_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#History.on_episode_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.History.on_episode_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.History.on_episode_end">
+<code class="descname">on_episode_end</code><span class="sig-paren">(</span><em>episode_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#History.on_episode_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.History.on_episode_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.History.on_experiment_begin">
+<code class="descname">on_experiment_begin</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#History.on_experiment_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.History.on_experiment_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.History.on_experiment_end">
+<code class="descname">on_experiment_end</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#History.on_experiment_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.History.on_experiment_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.History.on_step_begin">
+<code class="descname">on_step_begin</code><span class="sig-paren">(</span><em>step_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#History.on_step_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.History.on_step_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.History.on_step_end">
+<code class="descname">on_step_end</code><span class="sig-paren">(</span><em>step_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#History.on_step_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.History.on_step_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.History.pretty_print">
+<code class="descname">pretty_print</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#History.pretty_print"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.History.pretty_print" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.callbacks.LambdaCallback">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">LambdaCallback</code><span class="sig-paren">(</span><em>on_experiment_begin=None</em>, <em>on_experiment_end=None</em>, <em>on_episode_begin=None</em>, <em>on_episode_end=None</em>, <em>on_step_begin=None</em>, <em>on_step_end=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#LambdaCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.LambdaCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#varcompfa.callbacks.Callback" title="varcompfa.callbacks.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.callbacks.Callback</span></code></a></p>
+<p>A callback class used to quickly make new custom callbacks.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.callbacks.Progress">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">Progress</code><span class="sig-paren">(</span><em>stream=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Progress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#varcompfa.callbacks.Callback" title="varcompfa.callbacks.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.callbacks.Callback</span></code></a></p>
+<p>Progress display callback.</p>
+<dl class="method">
+<dt id="varcompfa.callbacks.Progress.on_episode_end">
+<code class="descname">on_episode_end</code><span class="sig-paren">(</span><em>episode_ix</em>, <em>info</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Progress.on_episode_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Progress.on_episode_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.Progress.on_experiment_begin">
+<code class="descname">on_experiment_begin</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Progress.on_experiment_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Progress.on_experiment_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.Progress.on_experiment_end">
+<code class="descname">on_experiment_end</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#Progress.on_experiment_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.Progress.on_experiment_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.callbacks.Progress.sys">
+<code class="descname">sys</code><em class="property"> = &lt;module 'sys' (built-in)&gt;</em><a class="headerlink" href="#varcompfa.callbacks.Progress.sys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.callbacks.RemoteMonitor">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">RemoteMonitor</code><a class="reference internal" href="../_modules/varcompfa/callbacks.html#RemoteMonitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.RemoteMonitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#varcompfa.callbacks.Callback" title="varcompfa.callbacks.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.callbacks.Callback</span></code></a></p>
+<p>Stream information about the experiment to a socket.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.callbacks.StreamMonitor">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">StreamMonitor</code><a class="reference internal" href="../_modules/varcompfa/callbacks.html#StreamMonitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.StreamMonitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#varcompfa.callbacks.Callback" title="varcompfa.callbacks.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.callbacks.Callback</span></code></a></p>
+<p>Write information about the experiment to a stream.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="varcompfa.callbacks.VerboseProgress">
+<em class="property">class </em><code class="descclassname">varcompfa.callbacks.</code><code class="descname">VerboseProgress</code><span class="sig-paren">(</span><em>stream=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#VerboseProgress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.VerboseProgress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#varcompfa.callbacks.Callback" title="varcompfa.callbacks.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">varcompfa.callbacks.Callback</span></code></a></p>
+<p>More detailed progress display callback.</p>
+<dl class="method">
+<dt id="varcompfa.callbacks.VerboseProgress.on_episode_begin">
+<code class="descname">on_episode_begin</code><span class="sig-paren">(</span><em>episode_ix</em>, <em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#VerboseProgress.on_episode_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.VerboseProgress.on_episode_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.VerboseProgress.on_episode_end">
+<code class="descname">on_episode_end</code><span class="sig-paren">(</span><em>episode_ix</em>, <em>info</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#VerboseProgress.on_episode_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.VerboseProgress.on_episode_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.VerboseProgress.on_experiment_begin">
+<code class="descname">on_experiment_begin</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#VerboseProgress.on_experiment_begin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.VerboseProgress.on_experiment_begin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="varcompfa.callbacks.VerboseProgress.on_experiment_end">
+<code class="descname">on_experiment_end</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/varcompfa/callbacks.html#VerboseProgress.on_experiment_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#varcompfa.callbacks.VerboseProgress.on_experiment_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="varcompfa.callbacks.VerboseProgress.sys">
+<code class="descname">sys</code><em class="property"> = &lt;module 'sys' (built-in)&gt;</em><a class="headerlink" href="#varcompfa.callbacks.VerboseProgress.sys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, rldotai.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="../_sources/api/varcompfa.callbacks.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,265 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>varcompfa.engine.agent &#8212; varcompfa caca2f2f56c77001a4880b022be10cde45d6f915 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/my_theme.css" type="text/css" />
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for varcompfa.engine.agent</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Implementation of agent wrapper classes</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># TODO: Set up logging for the whole package</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="Agent"><a class="viewcode-back" href="../../../api/varcompfa.engine.agent.html#varcompfa.engine.agent.Agent">[docs]</a><span class="k">class</span> <span class="nc">Agent</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Agent class, for encapsulating a learning algorithm, its function</span>
+<span class="sd">    approximator, and the possibly state-dependent parameters for updating it.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    algo : varcompfa.algos.LearningAgent</span>
+<span class="sd">        The learning algorithm that the Agent wraps.</span>
+<span class="sd">        It must have an `update` method capable of handling a dictionary</span>
+<span class="sd">        containing the information needed to perform updates.</span>
+<span class="sd">    phi : callable</span>
+<span class="sd">        A function that maps observations to features used by the learning algo.</span>
+<span class="sd">    params: dict, optional</span>
+<span class="sd">        A dictionary of parameters, of the form `param_name: &lt;value&gt;`, where</span>
+<span class="sd">        `&lt;value&gt;` can be either a constant (e.g., a float) or a callable that</span>
+<span class="sd">        accepts a context.</span>
+<span class="sd">    reward_func: callable, optional</span>
+<span class="sd">        An reward function accepts a context and returns a `float`.</span>
+<span class="sd">        Modifying the reward function can be useful in some cases, e.g. for</span>
+<span class="sd">        reward shaping or for predicting other quantities than the return.</span>
+<span class="sd">    metadata: dict, optional</span>
+<span class="sd">        An optional dictionary for adding metadata to the agent, e.g. for</span>
+<span class="sd">        annotations on the experiment it was trained on.</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    We make use of contexts to make it possible to compute things without</span>
+<span class="sd">    knowing too much in advance about what we&#39;re computing.</span>
+<span class="sd">    Taken to extremes, this approach would devolve into making everything a</span>
+<span class="sd">    global variable, which is probably not a good idea.</span>
+<span class="sd">    However, since this codebase is oriented towards reinforcement learning,</span>
+<span class="sd">    we can restrict what the context exposes.</span>
+
+<span class="sd">    The baseline context is the state, action, reward, and next state.</span>
+<span class="sd">    From this, we can compute the features for the state and its successor,</span>
+<span class="sd">    and add those to the context.</span>
+<span class="sd">    If the parameters are functions (e.g., state-dependent), we compute those</span>
+<span class="sd">    as well and include them, passing them to the learning algorithm.</span>
+<span class="sd">    At this point, everything necessary for the learning algorithm to perform</span>
+<span class="sd">    an update should be available.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">reward_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span> <span class="o">=</span> <span class="n">algo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phi</span> <span class="o">=</span> <span class="n">phi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
+        <span class="c1"># Override default reward function if an alternative is provided</span>
+        <span class="k">if</span> <span class="n">reward_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reward_func</span> <span class="o">=</span> <span class="n">reward_func</span>
+
+<div class="viewcode-block" id="Agent.act"><a class="viewcode-back" href="../../../api/varcompfa.engine.agent.html#varcompfa.engine.agent.Agent.act">[docs]</a>    <span class="k">def</span> <span class="nf">act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Select an action according to the current observation using the</span>
+<span class="sd">        learning algorithm (`self.algo`).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obs : numpy.ndarray</span>
+<span class="sd">            The observation that the agent uses to determine the action to take.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        action: int or numpy.ndarray</span>
+<span class="sd">            The action selected by the algorithm given the features `phi(x)`.</span>
+<span class="sd">            (It is an array because `json_tricks` does not presently handle</span>
+<span class="sd">            serializing non-array instances of numpy datatypes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Agent.reward_func"><a class="viewcode-back" href="../../../api/varcompfa.engine.agent.html#varcompfa.engine.agent.Agent.reward_func">[docs]</a>    <span class="k">def</span> <span class="nf">reward_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The reward function, which by default does nothing unless overriden</span>
+<span class="sd">        during initialization.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        context: dict</span>
+<span class="sd">            A basic context containing information about a single timestep</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        reward: float</span>
+<span class="sd">            The reward derived from the given context.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">context</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Agent.eval_params"><a class="viewcode-back" href="../../../api/varcompfa.engine.agent.html#varcompfa.engine.agent.Agent.eval_params">[docs]</a>    <span class="k">def</span> <span class="nf">eval_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluate the parameter functions for the supplied context.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">val</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">else</span> <span class="n">val</span>
+                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+<div class="viewcode-block" id="Agent.update"><a class="viewcode-back" href="../../../api/varcompfa.engine.agent.html#varcompfa.engine.agent.Agent.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">check_conflict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the learning agent from the current context (e.g., the</span>
+<span class="sd">        information available at the timestep).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        context: dict</span>
+<span class="sd">            A dictionary containing information about the current timestep.</span>
+<span class="sd">            The agent will then compute the feature representation and</span>
+<span class="sd">            context-dependent parameters to be used when updating the agent.</span>
+<span class="sd">        check_conflict: bool (default True)</span>
+<span class="sd">            If true, check if parameters passed via `context` have a name</span>
+<span class="sd">            conflict with those computed as part of the update.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The parameters passed by `context` take precedence over the parameters</span>
+<span class="sd">        computed as part of this function (including the feature vectors).</span>
+<span class="sd">        By default, when this occurs a warning will be printed, but sometimes</span>
+<span class="sd">        it is necessary/convenient to override the computed parameter values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check if we clobber anything in `context` with `params`</span>
+        <span class="k">if</span> <span class="n">check_conflict</span><span class="p">:</span>
+            <span class="n">_intersect</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_intersect</span><span class="p">:</span>
+                <span class="n">_logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;agent.update(): parameter name conflict: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">_intersect</span><span class="p">)</span>
+
+        <span class="c1"># Compute the reward for the given context</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">**</span><span class="n">context</span><span class="p">,</span>
+            <span class="s1">&#39;r&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_func</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Compute parameters given the current context</span>
+        <span class="n">_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_params</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+
+        <span class="c1"># Create the combined context</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">ctx</span><span class="p">[</span><span class="s1">&#39;obs&#39;</span><span class="p">]),</span>
+            <span class="s1">&#39;xp&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">ctx</span><span class="p">[</span><span class="s1">&#39;obs_p&#39;</span><span class="p">]),</span>
+            <span class="o">**</span><span class="n">_params</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">ctx</span>
+        <span class="p">}</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s1">&#39;update_result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ctx</span></div>
+
+<div class="viewcode-block" id="Agent.terminal_context"><a class="viewcode-back" href="../../../api/varcompfa.engine.agent.html#varcompfa.engine.agent.Agent.terminal_context">[docs]</a>    <span class="k">def</span> <span class="nf">terminal_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
+        <span class="sd">&quot;&quot;&quot;Return a suitable context for terminal states, overriding the</span>
+<span class="sd">        context provided by `defaults`.</span>
+<span class="sd">        This entails setting `done` to `True`, and returning a zero-vector</span>
+<span class="sd">        for the features of the current state and its successor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">**</span><span class="n">defaults</span><span class="p">,</span>
+            <span class="s1">&#39;xp&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)),</span>
+            <span class="s1">&#39;done&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;r&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_params</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">ctx</span><span class="p">,</span> <span class="o">**</span><span class="n">_params</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">ctx</span></div>
+
+<div class="viewcode-block" id="Agent.get_td_error"><a class="viewcode-back" href="../../../api/varcompfa.engine.agent.html#varcompfa.engine.agent.Agent.get_td_error">[docs]</a>    <span class="k">def</span> <span class="nf">get_td_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute the TD-error at a given step.&quot;&quot;&quot;</span>
+        <span class="n">params</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_params</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="n">vx</span>      <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;obs&#39;</span><span class="p">])</span>
+        <span class="n">vx_p</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;obs_p&#39;</span><span class="p">])</span>
+        <span class="n">delta</span>   <span class="o">=</span> <span class="n">context</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;gm_p&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">vx_p</span> <span class="o">-</span> <span class="n">vx</span>
+        <span class="k">return</span> <span class="n">delta</span></div>
+
+<div class="viewcode-block" id="Agent.get_value"><a class="viewcode-back" href="../../../api/varcompfa.engine.agent.html#varcompfa.engine.agent.Agent.get_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the value assigned to the current observation by the learning</span>
+<span class="sd">        algorithm under the agent&#39;s function approximation scheme.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">obs</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;obs&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Agent.start_episode"><a class="viewcode-back" href="../../../api/varcompfa.engine.agent.html#varcompfa.engine.agent.Agent.start_episode">[docs]</a>    <span class="k">def</span> <span class="nf">start_episode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get ready to start a new episode.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">start_episode</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Agent.get_config"><a class="viewcode-back" href="../../../api/varcompfa.engine.agent.html#varcompfa.engine.agent.Agent.get_config">[docs]</a>    <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># TODO: Finish this, or eliminate it if unnecessary</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, rldotai.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
