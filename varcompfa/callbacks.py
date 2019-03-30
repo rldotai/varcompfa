@@ -114,10 +114,103 @@ class CheckpointFinal(Callback):
         json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=True
 
 
-class CheckpointScheduled(Callback):
-    """Checkpoint the agent on a schedule."""
-    #TODO: Implement or remove
-    pass
+class SaveCheckpoint(Callback):
+    """Record checkpoints of agent weights during the experiment.
+
+    Can be configured to record every `N` steps and/or `M` episodes,
+    defaulting to recording the weights at the end of every episode.
+    It also records the weights at the beginning and the end of the
+    experiment.
+    """
+    def __init__(self, agent, episode_period=None, step_period=None):
+        # Handle keyword arguments
+        if episode_period is None and step_period is None:
+            episode_period = 1
+
+        self.agent = agent
+        self.episode_period = episode_period
+        self.step_period = step_period
+
+        # Setup recording
+        self._hist = {
+            'metadata': dict(),
+            'checkpoints': list(),
+            'indices': list()
+        }
+
+    def on_experiment_begin(self, info=dict()):
+        # Get the agent's index in the list of learners
+        self._agent_ix = info['learners'].index(self.agent)
+
+        # Episode number, total steps, and episode time
+        self._episode = 0
+        self._total_steps = 0
+        self._t = 0
+
+        # Record some metadata
+        self._hist['metadata'] = {
+            'version'        : info['version'],
+            'git_hash'       : info['git_hash'],
+            'start_time'     : info['start_time'],
+            'num_episodes'   : info['num_episodes'],
+            'max_steps'      : info['max_steps'],
+            'environment'    : info['environment'],
+            'policy'         : info['policy'],
+            'agent'          : self.agent,
+            'episode_period' : self.episode_period,
+            'step_period'    : self.step_period,
+        }
+
+        # Record initial weights
+        self.create_checkpoint()
+
+    def on_experiment_end(self, info=dict()):
+        # Update experiment metadata
+        self._hist['metadata']['num_episodes'] = self._episode + 1
+        self._hist['metadata']['end_time'] = info['end_time']
+        self._hist['metadata']['total_time'] = \
+            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
+        self.metadata['total_steps'] = self._total_steps
+        self.create_checkpoint()
+
+    def on_episode_begin(self, episode_ix, info=dict()):
+        self._t = 0
+
+    def on_episode_end(self, episode_ix, info=dict()):
+        self._episode += 1
+        if self.episode_period and (self._episode % self.episode_period) == 0:
+            self.create_checkpoint()
+
+    def on_step_end(self, step_ix, info=dict()):
+        self._t += 1
+        self._total_steps +=1
+        if self.step_period and (self._t % self.step_period) == 0:
+            self.create_checkpoint()
+
+    def create_checkpoint(self):
+        """Create a checkpoint for the agent's weights at the current time"""
+        self.checkpoints.append(np.copy(self.agent.algo.weights))
+        self.indices.append([self._episode, self._total_steps, self._t])
+
+    @property
+    def history(self):
+        """All the data the callback has collected"""
+        return self._hist
+
+    @property
+    def checkpoints(self):
+        """A list of recorded checkpoints."""
+        return self._hist['checkpoints']
+
+    @property
+    def indices(self):
+        """A list of the times for when the checkpoints were created"""
+        return self._hist['indices']
+
+    @property
+    def metadata(self):
+        """Metadata from the experiment."""
+        return self._hist['metadata']
 
 
 class AgentHistory(Callback):
@@ -256,7 +349,7 @@ class AgentHistory(Callback):
             ctx[k] = func(agent_ctx)
 
         # Combine and append
-        ctx ['t'] = self._t
+        ctx['t'] = self._t
         ctx['episode'] = self._episode
         self._hist['contexts'].append(ctx)
         self._t += 1

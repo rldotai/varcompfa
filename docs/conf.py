@@ -29,7 +29,7 @@ sys.path.insert(0, PKG_DIR)
 # -- Project information -----------------------------------------------------
 
 project = 'varcompfa'
-copyright = '2018, rldotai'
+copyright = '2019, rldotai'
 author = 'rldotai'
 
 # The short X.Y version
