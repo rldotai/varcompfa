@@ -7,6 +7,7 @@ import datetime
 import logging
 import time
 import json_tricks
+import numpy as np
 import pandas as pd
 logger = logging.getLogger(__name__)
 
