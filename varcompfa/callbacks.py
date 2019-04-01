@@ -648,6 +648,107 @@ class History(Callback):
         return self._hist['metadata']
 
 
+class UpdateHistory(Callback):
+    """
+    Record information about updates made by an agent over the course of an experiment.
+
+
+    Attributes
+    ----------
+    history: dict
+        The information recorded from the experiment (contexts and metadata).
+    records: list[dict]
+        A list of the information returned from the learning agent's update.
+    metadata: dict
+        A dictionary containing metadata about the experiment.
+    """
+    def __init__(self, agent, compute=dict()):
+        """
+        Initialize the callback.
+
+        Parameters
+        ----------
+        agent: object
+            The agent to record a history for.
+        exclude : Set[str], optional
+            The set of keys to ignore from `update_context`.
+            Useful for when some items, such as the feature vector, may be
+            large or otherwise not worth keeping track of.
+        compute : Dict, optional
+            A dictionary mapping keys to functions which accept a context
+            and return a value to track.
+        """
+        self.agent = agent
+        self._compute = compute
+        self._hist = {}
+        self._hist['metadata'] = dict()
+        self._hist['records'] = list()
+
+    def on_experiment_begin(self, info=dict()):
+        # Get the agent's index in the list of learners
+        self._agent_ix = info['learners'].index(self.agent)
+        self._episode = 0
+
+        # Record some metadata
+        self._hist['metadata'] = {
+            'version'       : info['version'],
+            'git_hash'      : info['git_hash'],
+            'start_time'    : info['start_time'],
+            'num_episodes'  : info['num_episodes'],
+            'max_steps'     : info['max_steps'],
+            'environment'   : info['environment'],
+            'policy'        : info['policy'],
+            'learners'      : info['learners'],
+        }
+
+    def on_experiment_end(self, info=dict()):
+        self._hist['metadata']['num_episodes'] = self._episode + 1
+        self._hist['metadata']['end_time'] = info['end_time']
+        self._hist['metadata']['total_time'] = \
+            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
+        self.metadata['total_steps'] = self._total_steps
+
+
+    def on_episode_begin(self, episode_ix, info=dict()):
+        self._t = 0
+        self._total_steps = 0
+
+        if self._episode is None:
+            self._episode = 0
+        else:
+            self._episode += 1
+
+    def on_step_end(self, step_ix, info=dict()):
+        agent_ctx = info['update_contexts'][self._agent_ix]
+
+        ctx = {**agent_ctx['update_result']}
+        # Compute any additional values that should be tracked
+        for k, func in self._compute.items():
+            ctx[k] = func(agent_ctx)
+
+        # Combine and append
+        ctx ['t'] = self._t
+        ctx['episode'] = self._episode
+        ctx['total_steps'] = self._total_steps
+        self._hist['records'].append(ctx)
+        self._t += 1
+        self._total_steps +=1
+
+    @property
+    def history(self):
+        return self._hist
+
+    @property
+    def records(self):
+        """A list of contexts from the experiment."""
+        return self._hist['records']
+
+    @property
+    def metadata(self):
+        """Metadata from the experiment."""
+        return self._hist['metadata']
+
+
 class Progress(Callback):
     """Progress display callback."""
     import sys
