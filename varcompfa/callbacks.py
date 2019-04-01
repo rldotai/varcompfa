@@ -688,6 +688,8 @@ class UpdateHistory(Callback):
         # Get the agent's index in the list of learners
         self._agent_ix = info['learners'].index(self.agent)
         self._episode = 0
+        self._total_steps = 0
+
 
         # Record some metadata
         self._hist['metadata'] = {
@@ -711,7 +713,6 @@ class UpdateHistory(Callback):
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
-        self._total_steps = 0
 
         if self._episode is None:
             self._episode = 0
