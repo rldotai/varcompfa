@@ -601,6 +601,7 @@ class History(Callback):
             'policy'        : info['policy'],
             'learners'      : info['learners'],
         }
+        self._total_steps = 0
 
     def on_experiment_end(self, info=dict()):
         self._hist['metadata']['num_episodes'] = self._episode + 1
@@ -623,9 +624,18 @@ class History(Callback):
         pass
 
     def on_step_end(self, step_ix, info=dict()):
-        ctx = {**info['context'], 't': self._t, 'episode': self._episode}
-        self._t += 1
+        # Build record and append
+        ctx = {
+            **info['context'],
+            't': self._t,
+            'episode': self._episode,
+            'total_steps': self._total_steps
+        }
         self._hist['contexts'].append(ctx)
+
+        # Update counts
+        self._t += 1
+        self._total_steps +=1
 
     def pretty_print(self):
         # Avoid showing warning on array scalar serialization
