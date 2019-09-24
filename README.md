@@ -10,6 +10,8 @@ Codebase for the variance estimation algorithms we wish to compare.
 pip install --editable .
 ```
 
+NB: has to be installed from the git repo, because in order to mark experiments with the version of the library they were ran with, I use the `git` commit hash, which is unavailable if it's installed for non-development use.
+
 # Examples
 
 Look at `examples/basic_example.py` for an illustration of how to run a simple experiment.
