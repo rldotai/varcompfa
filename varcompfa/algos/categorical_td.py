@@ -118,13 +118,12 @@ class CategoricalTD(LearningAlgorithm):
         
         return {'loss': loss, 'grad': grad}
 
-    def get_value(self, x, a=None):
+    def get_value(self, x):
         """Get the value for a given state and action, or if action is left unspecified, just the
         value for the best action in the given state.
         Parameters
         ----------
         x  : Vector[float]
-        a  : int (optional)
         """
         dist = self.get_distribution(x)
         return np.dot(self._bins, dist)
