@@ -1,5 +1,5 @@
 """
-Categorical Q-Learning with Discrete Actions.
+Categorical Q-Learning with discrete actions for distributional RL.
 """
 import numpy as np
 from .algo_base import LearningAlgorithm
@@ -19,6 +19,24 @@ class DiscreteCategoricalQ(LearningAlgorithm):
     def __init__(
         self, n_features, n_actions, n_atoms=51, vmin=-1.0, vmax=1.0, epsilon=1e-2
     ):
+        """Initialize the algorithm.
+        
+        Parameters
+        ----------
+        n_features : Vector[float]
+            The length of the feature vector.
+        n_actions : int
+            The number of actions available in the environment.
+        n_atoms    : int
+            Number of values to interpolate between `vmin` and `vmax`.
+        vmin       : float
+            Lower limit of the possible values.
+        vmax       : float
+            Upper limit of the possible values. 
+        epsilon    : float, optiona
+            The probability of selecting a random action instead of 
+            the greedy choice when used for control.
+        """
         # Record constants
         self.num_features = n_features
         self.num_actions = n_actions
