@@ -112,17 +112,24 @@ class DiscreteCategoricalQ(LearningAlgorithm):
         T_z = np.clip(r + gm_p * self._bins, self.vmin, self.vmax)
 
         # Compute projection using Eq. 7 in Distributional RL Paper
-        m_proj = [
-            np.sum(
-                [
-                    np.clip(1 - np.abs(T_z[j] - self._bins[i]) / self._width, 0, 1)
-                    * p_nxt[j]
-                    for j in range(self.num_atoms)
-                ]
-            )
-            for i in range(self.num_atoms)
-        ]
+        # m_proj = [
+        #     np.sum(
+        #         [
+        #             np.clip(1 - np.abs(T_z[j] - self._bins[i]) / self._width, 0, 1)
+        #             * p_nxt[j]
+        #             for j in range(self.num_atoms)
+        #         ]
+        #     )
+        #     for i in range(self.num_atoms)
+        # ]
 
+        # The above can be vectorized for a significant speedup
+        outer_diff = T_z[None, :] - self._bins[:, None]
+        scaled = np.abs(outer_diff) / self._width
+        clipped = np.clip(1 - scaled, 0, 1)
+        weighted = clipped * p_nxt
+        m_proj = np.sum(weighted, axis=1)
+        
         # Cross entropy loss
         loss = -np.sum(m_proj * np.log(p_cur))
 
