@@ -2,6 +2,7 @@
 import io
 import os
 # import pickle
+import pathlib
 import zlib
 import dill as pickle
 import json_tricks as jt
@@ -81,7 +82,9 @@ def load_pickle(path_or_buf):
                 return open(path_or_buf, 'rb').read()
             else:
                 return bytes(path_or_buf, 'ascii')
-
+        # If it's a pathlib Path, try loading it
+        if isinstance(path_or_buf, pathlib.Path):
+            return open(path_or_buf, 'rb').read()
         # If it's a bytes object, just return it
         if isinstance(path_or_buf, bytes):
             return path_or_buf
