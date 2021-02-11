@@ -19,9 +19,13 @@ package_name = vcf.__name__
 vcf_logger = logging.getLogger(package_name)
 
 # Set up log message formatting
-basic_formatter = logging.Formatter('[%(asctime)s] %(message)s')
-verbose_formatter = logging.Formatter('[%(levelname)s: %(name)s: %(asctime)s] %(message)s')
-detailed_formatter = logging.Formatter('%(name)s:%(levelname)s %(module)s:%(lineno)d:  %(message)s')
+basic_formatter = logging.Formatter("[%(asctime)s] %(message)s")
+verbose_formatter = logging.Formatter(
+    "[%(levelname)s: %(name)s: %(asctime)s] %(message)s"
+)
+detailed_formatter = logging.Formatter(
+    "%(name)s:%(levelname)s %(module)s:%(lineno)d:  %(message)s"
+)
 # formatter = basic_formatter
 formatter = verbose_formatter
 
@@ -36,8 +40,8 @@ def logger_setup(level=logging.DEBUG):
     # Avoid duplicate logging thanks to OpenAI Gym
     vcf_logger.propagate = False
 
+
 def undo_logger_setup():
     vcf_logger.removeHandler(handler)
     vcf_logger.setLevel(logging.NOTSET)
     vcf_logger.propagate = True
-

@@ -9,6 +9,7 @@ import time
 import json_tricks
 import numpy as np
 import pandas as pd
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,6 +19,7 @@ class Callback:
     For an example of when these callbacks are run, refer to the experiment
     running class `varcompfa.PolicyEvaluation`.
     """
+
     def __init__(self):
         pass
 
@@ -42,13 +44,16 @@ class Callback:
 
 class LambdaCallback(Callback):
     """A callback class used to quickly make new custom callbacks."""
-    def __init__(self,
-                 on_experiment_begin=None,
-                 on_experiment_end=None,
-                 on_episode_begin=None,
-                 on_episode_end=None,
-                 on_step_begin=None,
-                 on_step_end=None):
+
+    def __init__(
+        self,
+        on_experiment_begin=None,
+        on_experiment_end=None,
+        on_episode_begin=None,
+        on_episode_end=None,
+        on_step_begin=None,
+        on_step_end=None,
+    ):
         if on_experiment_begin is not None:
             self.on_experiment_begin = on_experiment_begin
         if on_experiment_end is not None:
@@ -63,13 +68,13 @@ class LambdaCallback(Callback):
             self.on_step_end = on_step_end
 
 
-
 class _AnnoyinglyVerboseCallback(Callback):
     """An example callback that pretty-prints all information it has access to
     at each point when it gets called.
 
     It will likely print a lot.
     """
+
     def on_experiment_begin(self, info=dict()):
         print("Started training")
         # pprint(info)
@@ -81,38 +86,39 @@ class _AnnoyinglyVerboseCallback(Callback):
         print(info.keys())
 
     def on_episode_begin(self, episode_ix, info=dict()):
-        print("Started episode: %d"%episode_ix)
+        print("Started episode: %d" % episode_ix)
         # pprint(info)
         print(info.keys())
 
     def on_episode_end(self, episode_ix, info=dict()):
-        print("End of episode: %d"%episode_ix)
+        print("End of episode: %d" % episode_ix)
         # pprint(info)
         print(info.keys())
 
     def on_step_begin(self, step_ix, info=dict()):
-        print("Begin step: %d"%step_ix)
+        print("Begin step: %d" % step_ix)
         # pprint(info)
         print(info.keys())
 
     def on_step_end(self, step_ix, info=dict()):
-        print("End step: %d"%step_ix)
+        print("End step: %d" % step_ix)
         # pprint(info)
         print(info.keys())
 
 
 class CheckpointFinal(Callback):
     """Save the agent at the end of the experiment."""
+
     def __init__(self, agent, filepath):
         self.agent = agent
         self.filepath = filepath
 
     def on_experiment_end(self, info=dict()):
-        logger.info("Saving agent to: %s"%self.filepath)
+        logger.info("Saving agent to: %s" % self.filepath)
         # Avoid warning on serializing numpy array scalars
-        json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=False
-        json_tricks.dump(self.agent, open(self.filepath, 'w'))
-        json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=True
+        json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING = False
+        json_tricks.dump(self.agent, open(self.filepath, "w"))
+        json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING = True
 
 
 class SaveCheckpoint(Callback):
@@ -123,6 +129,7 @@ class SaveCheckpoint(Callback):
     It also records the weights at the beginning and the end of the
     experiment.
     """
+
     def __init__(self, agent, episode_period=None, step_period=None):
         # Handle keyword arguments
         if episode_period is None and step_period is None:
@@ -133,15 +140,11 @@ class SaveCheckpoint(Callback):
         self.step_period = step_period
 
         # Setup recording
-        self._hist = {
-            'metadata': dict(),
-            'checkpoints': list(),
-            'indices': list()
-        }
+        self._hist = {"metadata": dict(), "checkpoints": list(), "indices": list()}
 
     def on_experiment_begin(self, info=dict()):
         # Get the agent's index in the list of learners
-        self._agent_ix = info['learners'].index(self.agent)
+        self._agent_ix = info["learners"].index(self.agent)
 
         # Episode number, total steps, and episode time
         self._episode = 0
@@ -149,17 +152,17 @@ class SaveCheckpoint(Callback):
         self._t = 0
 
         # Record some metadata
-        self._hist['metadata'] = {
-            'version'        : info['version'],
-            'git_hash'       : info['git_hash'],
-            'start_time'     : info['start_time'],
-            'num_episodes'   : info['num_episodes'],
-            'max_steps'      : info['max_steps'],
-            'environment'    : info['environment'],
-            'policy'         : info['policy'],
-            'agent'          : self.agent,
-            'episode_period' : self.episode_period,
-            'step_period'    : self.step_period,
+        self._hist["metadata"] = {
+            "version": info["version"],
+            "git_hash": info["git_hash"],
+            "start_time": info["start_time"],
+            "num_episodes": info["num_episodes"],
+            "max_steps": info["max_steps"],
+            "environment": info["environment"],
+            "policy": info["policy"],
+            "agent": self.agent,
+            "episode_period": self.episode_period,
+            "step_period": self.step_period,
         }
 
         # Record initial weights
@@ -167,11 +170,12 @@ class SaveCheckpoint(Callback):
 
     def on_experiment_end(self, info=dict()):
         # Update experiment metadata
-        self._hist['metadata']['num_episodes'] = self._episode + 1
-        self._hist['metadata']['end_time'] = info['end_time']
-        self._hist['metadata']['total_time'] = \
-            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
-        self.metadata['total_steps'] = self._total_steps
+        self._hist["metadata"]["num_episodes"] = self._episode + 1
+        self._hist["metadata"]["end_time"] = info["end_time"]
+        self._hist["metadata"]["total_time"] = (
+            info["end_time"] - self._hist["metadata"]["start_time"]
+        ).total_seconds()
+        self.metadata["total_steps"] = self._total_steps
         self.create_checkpoint()
 
     def on_episode_begin(self, episode_ix, info=dict()):
@@ -184,7 +188,7 @@ class SaveCheckpoint(Callback):
 
     def on_step_end(self, step_ix, info=dict()):
         self._t += 1
-        self._total_steps +=1
+        self._total_steps += 1
         if self.step_period and (self._t % self.step_period) == 0:
             self.create_checkpoint()
 
@@ -201,17 +205,17 @@ class SaveCheckpoint(Callback):
     @property
     def checkpoints(self):
         """A list of recorded checkpoints."""
-        return self._hist['checkpoints']
+        return self._hist["checkpoints"]
 
     @property
     def indices(self):
         """A list of the times for when the checkpoints were created"""
-        return self._hist['indices']
+        return self._hist["indices"]
 
     @property
     def metadata(self):
         """Metadata from the experiment."""
-        return self._hist['metadata']
+        return self._hist["metadata"]
 
 
 class AgentHistory(Callback):
@@ -281,6 +285,7 @@ class AgentHistory(Callback):
     class, but those options will only be invoked if I find some pressing
     reason to add/remove/reorder the learning agents over the course of a run.
     """
+
     def __init__(self, agent, exclude=set(), compute=dict()):
         """
         Initialize the callback.
@@ -301,31 +306,32 @@ class AgentHistory(Callback):
         self._exclude = set(exclude)
         self._compute = compute
         self._hist = {}
-        self._hist['metadata'] = dict()
-        self._hist['contexts'] = list()
+        self._hist["metadata"] = dict()
+        self._hist["contexts"] = list()
 
     def on_experiment_begin(self, info=dict()):
         # Get the agent's index in the list of learners
-        self._agent_ix = info['learners'].index(self.agent)
+        self._agent_ix = info["learners"].index(self.agent)
         self._episode = None
 
         # Record some metadata
-        self._hist['metadata'] = {
-            'version'       : info['version'],
-            'git_hash'      : info['git_hash'],
-            'start_time'    : info['start_time'],
-            'num_episodes'  : info['num_episodes'],
-            'max_steps'     : info['max_steps'],
-            'environment'   : info['environment'],
-            'policy'        : info['policy'],
-            'learners'      : info['learners'],
+        self._hist["metadata"] = {
+            "version": info["version"],
+            "git_hash": info["git_hash"],
+            "start_time": info["start_time"],
+            "num_episodes": info["num_episodes"],
+            "max_steps": info["max_steps"],
+            "environment": info["environment"],
+            "policy": info["policy"],
+            "learners": info["learners"],
         }
 
     def on_experiment_end(self, info=dict()):
-        self._hist['metadata']['num_episodes'] = self._episode + 1
-        self._hist['metadata']['end_time'] = info['end_time']
-        self._hist['metadata']['total_time'] = \
-            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
+        self._hist["metadata"]["num_episodes"] = self._episode + 1
+        self._hist["metadata"]["end_time"] = info["end_time"]
+        self._hist["metadata"]["total_time"] = (
+            info["end_time"] - self._hist["metadata"]["start_time"]
+        ).total_seconds()
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
@@ -336,23 +342,23 @@ class AgentHistory(Callback):
             self._episode += 1
 
     def on_step_end(self, step_ix, info=dict()):
-        agent_ctx = info['update_contexts'][self._agent_ix]
+        agent_ctx = info["update_contexts"][self._agent_ix]
 
         # Preserve the current step's context, ignoring excluded keys
         ctx = {k: v for k, v in agent_ctx.items() if k not in self._exclude}
 
         # Record weights and traces
-        ctx['weights'] = self.agent.algo.weights
-        ctx['traces'] = self.agent.algo.traces
+        ctx["weights"] = self.agent.algo.weights
+        ctx["traces"] = self.agent.algo.traces
 
         # Compute any additional values that should be tracked
         for k, func in self._compute.items():
             ctx[k] = func(agent_ctx)
 
         # Combine and append
-        ctx['t'] = self._t
-        ctx['episode'] = self._episode
-        self._hist['contexts'].append(ctx)
+        ctx["t"] = self._t
+        ctx["episode"] = self._episode
+        self._hist["contexts"].append(ctx)
         self._t += 1
 
     @property
@@ -362,12 +368,12 @@ class AgentHistory(Callback):
     @property
     def contexts(self):
         """A list of contexts from the experiment."""
-        return self._hist['contexts']
+        return self._hist["contexts"]
 
     @property
     def metadata(self):
         """Metadata from the experiment."""
-        return self._hist['metadata']
+        return self._hist["metadata"]
 
 
 class ExprimentalHistory(Callback):
@@ -436,6 +442,7 @@ class ExprimentalHistory(Callback):
     `AgentHistory`, but I don't have a use for that now and it would make the
     code more complicated.
     """
+
     def __init__(self, agents=list(), compute={}):
         """
         Callback for recording an experiment's full history for multiple agents.
@@ -457,30 +464,31 @@ class ExprimentalHistory(Callback):
         self._agents = agents
         self._compute = compute
         self._hist = {}
-        self._hist['metadata'] = dict()
-        self._hist['contexts'] = list()
-        self._hist['records']  = [list() for i in agents]
+        self._hist["metadata"] = dict()
+        self._hist["contexts"] = list()
+        self._hist["records"] = [list() for i in agents]
 
     def on_experiment_begin(self, info=dict()):
         self._episode = None
 
         # Record some metadata
-        self._hist['metadata'] = {
-            'version'       : info['version'],
-            'git_hash'      : info['git_hash'],
-            'start_time'    : info['start_time'],
-            'num_episodes'  : info['num_episodes'],
-            'max_steps'     : info['max_steps'],
-            'environment'   : info['environment'],
-            'policy'        : info['policy'],
-            'learners'      : info['learners'],
+        self._hist["metadata"] = {
+            "version": info["version"],
+            "git_hash": info["git_hash"],
+            "start_time": info["start_time"],
+            "num_episodes": info["num_episodes"],
+            "max_steps": info["max_steps"],
+            "environment": info["environment"],
+            "policy": info["policy"],
+            "learners": info["learners"],
         }
 
     def on_experiment_end(self, info=dict()):
-        self._hist['metadata']['num_episodes'] = self._episode + 1
-        self._hist['metadata']['end_time'] = info['end_time']
-        self._hist['metadata']['total_time'] = \
-            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
+        self._hist["metadata"]["num_episodes"] = self._episode + 1
+        self._hist["metadata"]["end_time"] = info["end_time"]
+        self._hist["metadata"]["total_time"] = (
+            info["end_time"] - self._hist["metadata"]["start_time"]
+        ).total_seconds()
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
@@ -494,24 +502,23 @@ class ExprimentalHistory(Callback):
         # Information from agents (weights at time t, previous traces)
         for ix, agent in enumerate(self._agents):
             rec = {
-                't': self._t,
-                'episode': self._episode,
-                'weights': agent.algo.weights,
-                'traces' : agent.algo.traces,
+                "t": self._t,
+                "episode": self._episode,
+                "weights": agent.algo.weights,
+                "traces": agent.algo.traces,
             }
-            self._hist['records'][ix].append(rec)
+            self._hist["records"][ix].append(rec)
 
     def on_step_end(self, step_ix, info=dict()):
         # Context from environment
-        ctx = {**info['context'], 't': self._t, 'episode': self._episode}
+        ctx = {**info["context"], "t": self._t, "episode": self._episode}
 
         for key, func in self._compute.items():
             ctx[key] = func(ctx)
 
         # Save the context information
         self._t += 1
-        self._hist['contexts'].append(ctx)
-
+        self._hist["contexts"].append(ctx)
 
     @property
     def history(self):
@@ -520,18 +527,17 @@ class ExprimentalHistory(Callback):
     @property
     def contexts(self):
         """A list of contexts from the experiment."""
-        return self._hist['contexts']
+        return self._hist["contexts"]
 
     @property
     def metadata(self):
         """Metadata from the experiment."""
-        return self._hist['metadata']
+        return self._hist["metadata"]
 
     @property
     def records(self):
         """Records for each agent."""
-        return self._hist['records']
-
+        return self._hist["records"]
 
 
 # TODO: Improve this so it can track agents
@@ -583,31 +589,33 @@ class History(Callback):
     For example, does unpickling of an object fail catastrophically if the
     implementation of that object's class changes significantly?
     """
+
     def __init__(self):
         # Create data structure that will be filled by running the experiment
         self._hist = {}
-        self._hist['metadata'] = dict()
-        self._hist['contexts'] = list()
+        self._hist["metadata"] = dict()
+        self._hist["contexts"] = list()
 
     def on_experiment_begin(self, info=dict()):
         self._episode = None
-        self._hist['metadata'] = {
-            'version'       : info['version'],
-            'git_hash'      : info['git_hash'],
-            'start_time'    : info['start_time'],
-            'num_episodes'  : info['num_episodes'],
-            'max_steps'     : info['max_steps'],
-            'environment'   : info['environment'],
-            'policy'        : info['policy'],
-            'learners'      : info['learners'],
+        self._hist["metadata"] = {
+            "version": info["version"],
+            "git_hash": info["git_hash"],
+            "start_time": info["start_time"],
+            "num_episodes": info["num_episodes"],
+            "max_steps": info["max_steps"],
+            "environment": info["environment"],
+            "policy": info["policy"],
+            "learners": info["learners"],
         }
         self._total_steps = 0
 
     def on_experiment_end(self, info=dict()):
-        self._hist['metadata']['num_episodes'] = self._episode + 1
-        self._hist['metadata']['end_time'] = info['end_time']
-        self._hist['metadata']['total_time'] = \
-            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
+        self._hist["metadata"]["num_episodes"] = self._episode + 1
+        self._hist["metadata"]["end_time"] = info["end_time"]
+        self._hist["metadata"]["total_time"] = (
+            info["end_time"] - self._hist["metadata"]["start_time"]
+        ).total_seconds()
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
@@ -626,22 +634,22 @@ class History(Callback):
     def on_step_end(self, step_ix, info=dict()):
         # Build record and append
         ctx = {
-            **info['context'],
-            't': self._t,
-            'episode': self._episode,
-            'total_steps': self._total_steps
+            **info["context"],
+            "t": self._t,
+            "episode": self._episode,
+            "total_steps": self._total_steps,
         }
-        self._hist['contexts'].append(ctx)
+        self._hist["contexts"].append(ctx)
 
         # Update counts
         self._t += 1
-        self._total_steps +=1
+        self._total_steps += 1
 
     def pretty_print(self):
         # Avoid showing warning on array scalar serialization
-        json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=False
+        json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING = False
         print(json_tricks.dumps(self._hist, indent=2))
-        json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING=True
+        json_tricks.NumpyEncoder.SHOW_SCALAR_WARNING = True
 
     @property
     def history(self):
@@ -650,12 +658,12 @@ class History(Callback):
     @property
     def contexts(self):
         """A list of contexts from the experiment."""
-        return self._hist['contexts']
+        return self._hist["contexts"]
 
     @property
     def metadata(self):
         """Metadata from the experiment."""
-        return self._hist['metadata']
+        return self._hist["metadata"]
 
 
 class UpdateHistory(Callback):
@@ -672,6 +680,7 @@ class UpdateHistory(Callback):
     metadata: dict
         A dictionary containing metadata about the experiment.
     """
+
     def __init__(self, agent, compute=dict()):
         """
         Initialize the callback.
@@ -691,35 +700,34 @@ class UpdateHistory(Callback):
         self.agent = agent
         self._compute = compute
         self._hist = {}
-        self._hist['metadata'] = dict()
-        self._hist['records'] = list()
+        self._hist["metadata"] = dict()
+        self._hist["records"] = list()
 
     def on_experiment_begin(self, info=dict()):
         # Get the agent's index in the list of learners
-        self._agent_ix = info['learners'].index(self.agent)
+        self._agent_ix = info["learners"].index(self.agent)
         self._episode = 0
         self._total_steps = 0
 
-
         # Record some metadata
-        self._hist['metadata'] = {
-            'version'       : info['version'],
-            'git_hash'      : info['git_hash'],
-            'start_time'    : info['start_time'],
-            'num_episodes'  : info['num_episodes'],
-            'max_steps'     : info['max_steps'],
-            'environment'   : info['environment'],
-            'policy'        : info['policy'],
-            'learners'      : info['learners'],
+        self._hist["metadata"] = {
+            "version": info["version"],
+            "git_hash": info["git_hash"],
+            "start_time": info["start_time"],
+            "num_episodes": info["num_episodes"],
+            "max_steps": info["max_steps"],
+            "environment": info["environment"],
+            "policy": info["policy"],
+            "learners": info["learners"],
         }
 
     def on_experiment_end(self, info=dict()):
-        self._hist['metadata']['num_episodes'] = self._episode + 1
-        self._hist['metadata']['end_time'] = info['end_time']
-        self._hist['metadata']['total_time'] = \
-            (info['end_time'] - self._hist['metadata']['start_time']).total_seconds()
-        self.metadata['total_steps'] = self._total_steps
-
+        self._hist["metadata"]["num_episodes"] = self._episode + 1
+        self._hist["metadata"]["end_time"] = info["end_time"]
+        self._hist["metadata"]["total_time"] = (
+            info["end_time"] - self._hist["metadata"]["start_time"]
+        ).total_seconds()
+        self.metadata["total_steps"] = self._total_steps
 
     def on_episode_begin(self, episode_ix, info=dict()):
         self._t = 0
@@ -730,20 +738,20 @@ class UpdateHistory(Callback):
             self._episode += 1
 
     def on_step_end(self, step_ix, info=dict()):
-        agent_ctx = info['update_contexts'][self._agent_ix]
+        agent_ctx = info["update_contexts"][self._agent_ix]
 
-        ctx = {**agent_ctx['update_result']}
+        ctx = {**agent_ctx["update_result"]}
         # Compute any additional values that should be tracked
         for k, func in self._compute.items():
             ctx[k] = func(agent_ctx)
 
         # Combine and append
-        ctx ['t'] = self._t
-        ctx['episode'] = self._episode
-        ctx['total_steps'] = self._total_steps
-        self._hist['records'].append(ctx)
+        ctx["t"] = self._t
+        ctx["episode"] = self._episode
+        ctx["total_steps"] = self._total_steps
+        self._hist["records"].append(ctx)
         self._t += 1
-        self._total_steps +=1
+        self._total_steps += 1
 
     @property
     def history(self):
@@ -752,44 +760,50 @@ class UpdateHistory(Callback):
     @property
     def records(self):
         """A list of contexts from the experiment."""
-        return self._hist['records']
+        return self._hist["records"]
 
     @property
     def metadata(self):
         """Metadata from the experiment."""
-        return self._hist['metadata']
+        return self._hist["metadata"]
 
 
 class Progress(Callback):
     """Progress display callback."""
+
     import sys
+
     def __init__(self, stream=None):
         if stream is None:
             stream = self.sys.stdout
         self.stream = stream
 
     def on_experiment_begin(self, info=dict()):
-        self.num_episodes = info['num_episodes']
-        self.max_steps = info['max_steps']
+        self.num_episodes = info["num_episodes"]
+        self.max_steps = info["max_steps"]
         self.cumulative_steps = 0
         self.prev_total_steps = 0
         # Handle leaving number of episodes unspecified
         if self.num_episodes is None:
-            self.fmt_string = ("Episode {episode_ix} "
-                               "(total steps: {total_steps:d}, last {last_steps})")
+            self.fmt_string = (
+                "Episode {episode_ix} "
+                "(total steps: {total_steps:d}, last {last_steps})"
+            )
         else:
-            self.fmt_string = ("Episode {episode_ix} of {num_episodes} "
-                               "(total steps: {total_steps:d}, last {last_steps})")
+            self.fmt_string = (
+                "Episode {episode_ix} of {num_episodes} "
+                "(total steps: {total_steps:d}, last {last_steps})"
+            )
 
     def on_episode_end(self, episode_ix, info):
-        total_steps = info['total_steps']
+        total_steps = info["total_steps"]
         self.episode_steps = total_steps - self.prev_total_steps
         self.prev_total_steps = total_steps
         msg = self.fmt_string.format(
-            episode_ix=episode_ix+1,
+            episode_ix=episode_ix + 1,
             num_episodes=self.num_episodes,
             total_steps=total_steps,
-            last_steps=self.episode_steps
+            last_steps=self.episode_steps,
         )
         # Print messages
         print(msg, file=self.stream, flush=True, end="\r")
@@ -802,39 +816,45 @@ class Progress(Callback):
     #     # Print messages
     #     print(msg, file=self.stream, flush=True, end="\r")
 
-
     def on_experiment_end(self, info=dict()):
         print("\n", end="", file=self.stream, flush=True)
 
 
 class VerboseProgress(Callback):
     """More detailed progress display callback."""
+
     import sys
+
     def __init__(self, stream=None):
         if stream is None:
             stream = self.sys.stdout
         self.stream = stream
 
     def on_experiment_begin(self, info=dict()):
-        self.num_episodes = info['num_episodes']
-        self.max_steps = info['max_steps']
+        self.num_episodes = info["num_episodes"]
+        self.max_steps = info["max_steps"]
         self.cumulative_steps = 0
 
     def on_episode_begin(self, episode_ix, info=dict()):
-        msg = "Episode %d of %d (total steps: %d)"%(
-            episode_ix+1, self.num_episodes, info['total_steps'])
+        msg = "Episode %d of %d (total steps: %d)" % (
+            episode_ix + 1,
+            self.num_episodes,
+            info["total_steps"],
+        )
         print(msg, end="\r", file=self.stream, flush=True)
 
     def on_episode_end(self, episode_ix, info):
-        total_steps = info['total_steps']
-        msg = "Episode %d of %d (total steps: %d)"%(
-            episode_ix, self.num_episodes, total_steps)
+        total_steps = info["total_steps"]
+        msg = "Episode %d of %d (total steps: %d)" % (
+            episode_ix,
+            self.num_episodes,
+            total_steps,
+        )
         # Print messages
         print(msg, file=self.stream, flush=True)
-        print("Episode steps: %d"%(total_steps - self.cumulative_steps))
+        print("Episode steps: %d" % (total_steps - self.cumulative_steps))
         # Ready for next episode
         self.cumulative_steps = total_steps
-
 
     def on_experiment_end(self, info=dict()):
         print()
@@ -842,9 +862,11 @@ class VerboseProgress(Callback):
 
 class RemoteMonitor(Callback):
     """Stream information about the experiment to a socket."""
+
     pass
 
 
 class StreamMonitor(Callback):
     """Write information about the experiment to a stream."""
+
     pass
