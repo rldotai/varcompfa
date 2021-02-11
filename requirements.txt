@@ -1,5 +1,5 @@
 dill>=0.2.5
-gym>=0.7.0
+gym==0.7.4
 json_tricks>=3.6.0
 msgpack-python>=0.4.8
 networkx>=1.11
